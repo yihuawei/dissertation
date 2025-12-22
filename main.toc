@@ -1,0 +1,13 @@
+\contentsline {section}{List of Tables}{viii}{section*.1}%
+\contentsline {section}{List of Figures}{ix}{section*.2}%
+\contentsline {section}{\numberline {1}PREFACE}{x}{section.1}%
+\contentsline {section}{\numberline {2}heading 1: my chapter 1}{1}{section.2}%
+\contentsline {subsection}{\numberline {2.1}heading 2: Use for Your broadest Subheading Level, Centered, Bold, Title Case}{1}{subsection.2.1}%
+\contentsline {subsubsection}{\numberline {2.1.1}heading 3: Use for Your Next Heading Level, Left-aligned, Bold, Title Case}{1}{subsubsection.2.1.1}%
+\contentsline {paragraph}{Heading 4: This Heading is Left-aligned, Boldface Italics, Title Case}{1}{subsubsection.2.1.1}%
+\contentsline {section}{\numberline {3}my chapter 2}{2}{section.3}%
+\contentsline {section}{\numberline {4}my chapter 3}{3}{section.4}%
+\contentsline {subsection}{\numberline {4.1}heading 2: Use for Your broadest Subheading Level, Centered, Bold, Title Case}{4}{subsection.4.1}%
+\contentsline {section}{\numberline {5}references}{5}{section.5}%
+\contentsline {section}{\numberline {A}APPENDIX A: Numeric data}{6}{appendix.A}%
+\contentsline {section}{\numberline {B}APPENDIX B: Image data}{7}{appendix.B}%
