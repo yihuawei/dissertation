@@ -1,0 +1,50 @@
+\section{Overview of STMatch}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.55]{figure/while_loop_orig.pdf}
+    \caption{Graph pattern matching implemented as a stack-based while loop. }
+    \label{fig:while_loop_orig}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.52]{figure/getcandidates.pdf}
+    \caption{\textcolor{red}{An example of $getCandidates$  in two different warps. }}
+    \label{fig:getcandidates}
+\end{figure}
+
+\textcolor{red}{
+Our system is built around a stack-based implementation of Algorithm~\ref{alg:backtracking}. 
+The idea is to simulate the recursive procedure  by explicitly maintaining a function call stack. 
+As shown in Fig.~\ref{fig:while_loop_orig}, the call stack is composed of three arrays $C$, $Csize$ and $iter$, which store the candidate nodes, the number of candidate nodes, and the loop iterate for each recursion level. 
+A variable $l$ is used to indicate the current recursion level  and is initialized to 0. 
+Every time the execution enters the next level, we {\tt getCandidates} based on the data graph $G$, the query graph $Q$, and the current level $l$ (line 8 in Fig.~\ref{fig:while_loop_orig} corresponding to line 6 in Algorithm~\ref{alg:backtracking}). 
+%The candidate nodes are stored in $C[l]$ and the number of candidates are stored in $Csize[l]$. 
+Then, we iterate over the candidates, match each candidate node to the query node, and go to the next level (line 11 in Fig.~\ref{fig:while_loop_orig} corresponding to line 9 in Algorithm~\ref{alg:backtracking}). 
+The matching subgraphs are output at the last level (line 16 in Fig.~\ref{fig:while_loop_orig} corresponds to line 4 in Algorithm~\ref{alg:backtracking}). 
+If all candidate nodes at level $l$ have been processed, we backtrack to the previous level (line 14 in Fig.~\ref{fig:while_loop_orig} corresponding to return from $Enumerate$ function at line 9 in Algorithm~\ref{alg:backtracking}). 
+The algorithm stops when all candidate nodes at level zero have been processed (line 9 in Fig.~\ref{fig:while_loop_orig}). 
+}
+%\textcolor{red}{As an example, the left of Fig.~\ref{fig:stack} visualized the stack-based while loop implementation of Fig.~\ref{fig:loop_example_orig} and the nested for loop on the right has the same logic. The function {\tt getCandidates} is the set operation between every two for-loop expressions. To parallelize the stack-based while loop, we allocate multiple call stacks and let each thread owns one. In each thread, C[0] was initialized with only a subset of nodes of outermost loop in Fig.~\ref{fig:loop_example_orig} and the multiple stack-based while loops can be executed on their own call stacks in parallel. This parallelization strategy can also be scaled to multi-GPU, multi-CPU and distributed systems. Some of the experiments in section VIII showed that the distributed execution on 2 GPUs could achieve nearly 2x speedups} 
+
+
+\textcolor{red}{
+For GPU execution, we run the while-loop of Fig.~\ref{fig:while_loop_orig} independently on different warps. 
+A call stack is allocated for each warp. 
+Since $Csize$, $iter$ and $l$ are small, we allocate them in shared memory. 
+$C$ is allocated in global memory. 
+Different warps execute the same piece of code, but they obtain different nodes when $l=0$ with the $getCandidates$ function. 
+Fig.~\ref{fig:getcandidates} illustrates the procedure of $getCandidates$  on two different warps. 
+Suppose warp-$i$ has two nodes (node-0,1) at the first level and is current processing node-1. 
+Warp-$j$ has just started its execution, and its stack is empty. 
+The $getCandidates$ function obtains the next chunk of nodes from $V$ (node-2,3) and copies them to $C[0]$ on warp-$j$'s stack. 
+This corresponds to dividing the outermost loop of Fig.~\ref{fig:loop_example_orig} and assigning different chunks of iterations to different warps for parallel processing.  
+On warp-$i$, 
+when the execution enters the second level, the $getCandidates$ function obtains the neighbor list of node-1 and copies it $C[1]$. 
+This procedure is conducted in parallel with different threads in the warp copying different elements in the neighbor list. 
+When $l>1$, the $getCandidates$ function performs set operations according to the query pattern. 
+Different threads in the warp are assigned different nodes in the neighbor list and perform binary search simultaneously for set intersection/difference.} 
+
+
+

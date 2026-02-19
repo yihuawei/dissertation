@@ -1,0 +1,37 @@
+\section{Challenges for Parallelizing Backtracking}
+We now consider the parallelization of the nested loop in Fig.~\ref{fig:loop_example_orig} for GPU execution. 
+
+\noindent
+\textbf{Challenge 1: Load imbalance among warps. }
+As real-world graphs are irregular, the workload associated with each node in the matching procedure varies significantly. 
+If we parallelize the loop at the outermost level, the program will suffer from severe load imbalance. 
+Previous CPU systems have proposed to combine the first two loop levels and distribute the computation based on edges~\cite{mawhirter2021dryadic, 10.1145/3341301.3359633}. 
+While they work well for queries of up to four nodes, we find the load balance degrades dramatically for queries of more than five nodes. 
+Previous work has also adopted work-stealing to balance the workload in distributed systems~\cite{bhattarai2019ceci, shi2020graphpi, mawhirter2021dryadic}. 
+However, their work-stealing strategy cannot be directly applied to GPU due to the memory hierarchy and the lack of signaling mechanism on GPU. 
+Another solution is to parallelize the inner loops. 
+The subgraph-centric approach taken by the existing GPU graph pattern matching systems actually falls into this category. 
+They materialize the intermediate results of each loop level (i.e., the partial subgraphs) and distribute the partial subgraphs to different warps. 
+The downside of this approach is that it requires a synchronization at the end of each extension step and the materialization of intermediate results consumes a lot of memory. 
+
+
+
+\noindent
+\textbf{Challenge 2: Thread underutilization within a warp.} 
+Since the threads within a warp execute in a SIMD manner, it is natural to assign  each subgraph to a warp and use 32 threads to perform the set operation (at line 7 and 10 in Fig.~\ref{fig:loop_example_orig}). 
+The problem is that, because the number of elements in each set is upper bounded by the degree of nodes in the data graph, the sets usually have less than 32 nodes. 
+As shown in Table~\ref{tab:datasets}, the median degrees of most real-world graphs are much smaller than 32. 
+This leads to idle threads during execution. 
+While the problem can be easily solved by assigning multiple subgraphs to a warp in a subgraph-centric system~\cite{xiang2021cuts}, it is nontrivial if we want to parallel the loop from the outermost level and avoid the explicit storage of partial subgraphs. 
+
+
+\noindent
+\textbf{Challenge 3: Redundant computation.} 
+As pointed out in~\cite{mawhirter2021dryadic}, the nested loop conducts a lot of redundant set operations in its original form.  
+For example, the result of $N(v_0)\cap N(v_1)$ at line 10 of Fig.~\ref{fig:loop_example_orig} is the same for all iterations of the loop at line 8 because the computation is independent of $i_2$. 
+We can lift this set operation outside the loop at line 8 to eliminate the redundant computation. 
+While this code motion technique is easy to implement on CPU, it require a more careful design of data structures for storing the code motion information on GPU. 
+In particular, 
+the code-motion technique in~\cite{mawhirter2021dryadic} needs to store multiple intermediate sets for different labels in each loop level. 
+If naively applied to our system, it may cause shared memory overflow for large labeled queries. 
+

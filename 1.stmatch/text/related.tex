@@ -1,0 +1,65 @@
+\section{Related Work}
+Graph pattern matching and its related problems have been extensively studied in the past decades. 
+Numerous systems with different algorithms have been proposed. 
+As we focus on parallelizing backtracking in this work, 
+we give a summary of backtracking-based graph pattern matching systems. 
+
+\noindent
+\textbf{CPU-based systems: }
+The study of subgraph isomorphism problem dates back to 1970s. 
+Ullmann~\cite{ullmann1976algorithm} proposes the first backtracking algorithm that iteratively matches  query nodes on data graph based on a certain order. 
+Many studies follow this seminal work and propose different strategies to optimize the matching order~\cite{1323804, 10.14778/1453856.1453899, 10.14778/3342263.3342643, 10.14778/1920841.1920887}. 
+They show that a good matching order can significantly reduce the exploration space and accelerate the matching process. 
+Some recent work show that a dynamic matching order based on the local topology and label distribution of the data graph can further reduce the exploration space~\cite{10.1145/2463676.2465300, 10.1145/2882903.2915236, lee2012depth, 10.1145/3299869.3319880}. 
+A more recent work, Dryadic~\cite{mawhirter2021dryadic}, proposes to search for an optimal static matching order and optimize the computation tree instead of input adaptation. 
+It achieves  state-of-the-art performance on CPU compared with the earlier systems. 
+Since matching order is not the focus of this work, we simply adopt the matching order of Dryadic in our system. 
+However, our system can be extended with any of the previous matching order strategies. 
+
+\noindent
+\textbf{GPU-based systems: }
+There are a number of GPU systems for subgraph isomorphism. 
+All of them are subgraph-centric. 
+Some systems~\cite{tran2015fast, wang2016fast, zeng2020gsi} adopt a breadth-first extension order that favors GPU architecture. 
+They store all partial subgraphs of a certain size before exploring larger subgraphs. 
+Due to the large intermediate exploration space, the partial subgraphs can easily exceed the GPU memory limit. 
+To reduce the memory consumption, some other works adopt a hybrid DFS and BFS extension order~\cite{lin2016network, xiang2021cuts}. 
+Given a memory capacity, they pre-allocate a portion of memory for each level. 
+To generate the partial subgraphs
+for next level, they take a set of partial subgraphs at current
+level that are estimated to fit into the pre-allocated memory. 
+The procedure is repeated for each level until all matching subgraphs are found. 
+CuTS~\cite{xiang2021cuts} proposes a compact trie-based data structure to further reduce the size of intermediate subgraphs. 
+It reportedly achieves the state-of-the-art performance on GPU compared with  earlier systems. 
+Previous work has also considered exploiting multiple GPUs to accelerate pattern matching on large graphs~\cite{guo2020gpu, xiang2021cuts}. 
+PBE~\cite{guo2020gpu} proposes a matching algorithm on partitioned graphs so that each GPU only holds a portion of the data graph. 
+%\textcolor{red}{We leave it to future to extend our system for matching on partitioned input graphs. }
+%While we focus on accelerating graph pattern matching on a single GPU in this work, our system can be easily extended with the existing techniques to support multiple GPUs. 
+%Besides the general-purpose systems, 
+%there are also specialized systems for triangle counting~\cite{green2014fast, hu2018tricore, hu2021accelerating, gui2019fast} or clique counting~\cite{almasri2021k} on GPU.  
+
+
+
+
+
+
+
+
+
+\noindent
+\textbf{Distributed systems: }
+Graph pattern matching has also been studied on distributed systems~\cite{yang2021huge, bhattarai2019ceci, ren2019fast, wang2019benu, lai2016scalable, lai2017scalable, shi2020graphpi}. 
+The main challenge is to balance the workload among machines. 
+CECI~\cite{bhattarai2019ceci} proposes a compact embedding cluster index to divide the data graph into multiple embedding clusters for parallel processing. 
+They design a proactive workload balancing strategy with a search cardinality based cost function. 
+RADS~\cite{ren2019fast} proposes a region-grouped multi-round expand technique to reduce communication and minimize intermediate result storage. 
+BENU~\cite{wang2019benu} proposes a task splitting technique based on node degree to optimize the load balance among machines. 
+GraphPi~\cite{shi2020graphpi} uses a communication thread to maintain a task queue on each machine and steal work from other machines when its task is smaller than a threshold. 
+
+
+
+
+
+
+
+

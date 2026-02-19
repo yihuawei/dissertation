@@ -1,0 +1,889 @@
+\newpage
+
+\section{STMatch: Accelerating Graph Pattern Matching on GPU with Stack-Based Loop Optimizations}
+\subsection{Introduction}
+
+Graph pattern matching is widely used for retrieving information from graph-structured data in many application domains, including bioinformatics~\cite{Milo824}, social network analysis~\cite{10.1145/2488388.2488502}, and cybersecurity~\cite{noel2018review}.  
+The problem stems from the well-known subgraph isomorphism problem, which aims to find all subgraphs that are isomorphic to a given query pattern, and it is the fundamental task for many related problems, such as motif counting and clique listing~\cite{10.1145/3341301.3359633}. 
+
+Due to its importance in real applications, graph pattern matching has been extensively studied in the past decades. 
+Numerous algorithms and implementations have been proposed~\cite{ullmann1976algorithm, 1323804, 10.14778/1453856.1453899, 10.14778/3342263.3342643, 10.14778/1920841.1920887, lee2012depth, 10.1145/2882903.2915236, 10.1145/3299869.3319880, 10.1145/2463676.2465300}. 
+However, as the problem is NP-hard~\cite{hartmanis1982computers}, it is still a performance bottleneck in many applications, and it is always desirable to scale the computation to large graphs. 
+Therefore, there is a growing interest in exploiting the massive parallelism on GPU to accelerate the computation~\cite{zeng2020gsi, xiang2021cuts, tran2015fast, wang2016fast}. 
+
+
+
+Despite their different optimizations, the existing GPU graph pattern matching systems all take a subgraph-centric approach. 
+They maintain a list of valid partial subgraphs and extend them by one vertex/edge in each step until the desired pattern size is reached. 
+To extend a partial subgraph, they either add a new edge to it by performing a binary join operation~\cite{tran2015fast, wang2016fast}, or they find a match for the next pattern node by performing set operations on the neighbor lists of the  previous nodes~\cite{xiang2021cuts, zeng2020gsi}. 
+A common feature of these systems is that they need to store the partially matched subgraphs explicitly. 
+For example, GSI~\cite{zeng2020gsi} stores the partial subgraphs in a table, and it assigns each partial subgraph to a warp on GPU for extension.
+A more recent work, cuTS~\cite{xiang2021cuts}, reduces the memory consumption by using a trie-based data structure to store the partial subgraphs. It also improves GPU thread utilization by assigning each partial subgraph to a virtual warp. 
+
+The subgraph-centric implementation facilitates parallelization; however, it has several inherent issues for GPU execution. 
+First, it requires synchronization at the end of each extension step. 
+The current systems maintain a list of partial subgraphs and launch a GPU kernel to process them at every step. 
+The kernel launch and the synchronization incur an overhead. 
+Second, the partial subgraphs take a lot of memory space. 
+Although a hybrid DFS and BFS extension order can alleviate the issue~\cite{xiang2021cuts}, it requires much more kernel launches and synchronizations. 
+Third, the subgraph-centric implementation loses the implicit hierarchy of partial subgraphs and thus disables some optimizations that can be applied to the backtracking procedure (e.g., loop-invariant code motion and pattern merging~\cite{mawhirter2021dryadic}). 
+\textcolor{red}{As a result, the state-of-the-art GPU graph pattern matching system (cuTS~\cite{xiang2021cuts}) can be even slower than a highly optimized CPU implementation (Dryadic~\cite{mawhirter2021dryadic}) in many cases (See Table~\ref{tab:unlabel_result}). }
+
+
+
+To overcome the limitations of the subgraph-centric systems, we study the parallelization of backtracking on GPU in this work. 
+We first show that the subgraph-centric approach taken by the existing systems corresponds to the {\em inner-loop} parallelization of the backtracking algorithm. 
+Unlike the previous systems, we choose to parallelize the backtracking procedure from the outermost loop. 
+This eliminates the synchronization on GPU and enables our system to finish the computation with one kernel launch.  
+The main issue with this {\em outer-loop} parallelization is that it suffers from severe load imbalance. 
+We address the issue by adopting a stack-based implementation of the backtracking algorithm and proposing a two-level work-stealing technique. 
+We also observe that the intra-warp thread utilization is low when the data graph is sparse. 
+This is because most nodes in these graphs have only a few neighbors and the set operations cannot occupy all the threads in a warp. 
+To improve the thread utilization, we propose a loop-unrolling technique that combines the set operations for multiple sets and assigns them to a single warp. 
+Finally, 
+as pointed out in~\cite{mawhirter2021dryadic}, the backtracking procedure involves a lot of redundant set operations, which can be eliminated by loop-invariant code motion. 
+We adapt the code motion technique in~\cite{mawhirter2021dryadic} and show that our system can be easily and efficiently extended with this optimization. 
+
+In summary, we make the following contributions:
+\begin{enumerate}
+    \item We propose the first stack-based graph pattern matching system on GPU, which avoids the synchronization and the memory consumption issue of previous subgraph-centric systems. 
+    \item We propose a two-level work-stealing and a loop unrolling technique to improve the inter-warp and intra-warp GPU resource utilization for our system.
+    \item We implement a code-motion technique to reduce redundant computation in our system and showcase that our system is compatible with the existing optimizations for backtracking-based graph pattern matching. 
+\end{enumerate}
+
+We perform an extensive evaluation of our system using various query patterns and input graphs, and compare with three state-of-the-art graph pattern matching systems: cuTS~\cite{xiang2021cuts}, GSI~\cite{zeng2020gsi} and Dryadic~\cite{mawhirter2021dryadic}. 
+The experiments show that our system achieves 24x to 3385x speedups against cuTS and GSI on an Nvidia GeForce RTX 3090 GPU and up to 898x speedups against Dryadic. 
+
+
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------------%
+
+
+
+\subsection{Preliminaries}
+\label{sec:background}
+
+This section gives a formal definition of the graph pattern matching problem and describes the backtracking algorithm for solving the problem. 
+We also provide a brief background on GPU architecture to facilitate our discussion. 
+
+
+\subsubsection{Problem Definition}
+
+A {\em graph} $G$ is defined as $G = (V, E, L)$ consisting of a set of vertices $V$, a set of edges $E$ and a labeling function $L$ that assigns labels to the vertices and edges. 
+A graph $G' = (V', E', L')$ is a {\em subgraph} of graph $G = (V, E, L)$ if $V'\subseteq V$, $E'\subseteq E$ and $L'(v)=L(v), \forall v\in V'$. 
+A subgraph $G' = (V', E', L')$ is {\em vertex-induced} if all the edges in $E$ that connect the vertices in $V'$ are included $E'$. 
+A subgraph is {\em edge-induced} if it is connected and is not vertex-induced. 
+
+
+\begin{definition}[Isomorphism]
+  Two graphs $G_a=(V_a, E_a, L_a)$ and $G_b=(V_b, E_b, L_b)$ are isomorphic if there is a bijective function $f: V_a\Rightarrow V_b$ such that $(v_i, v_j)\in E_a$ if and only if $(f(v_i), f(v_j))\in E_b$.
+\end{definition}
+
+The graph pattern matching problem is defined as finding all the subgraphs in $G$ that are isomorphic to a given query graph $Q$. 
+The subgraphs to be found can be either vertex-induced or edge-induced. 
+If the subgraphs are edge-induced, the problem is equivalent to the subgraph isomorphism problem~\cite{ullmann1976algorithm}. 
+
+
+
+\subsubsection{Backtracking for Graph Pattern Matching}
+
+\begin{algorithm}[t]
+\footnotesize
+   \caption{Backtracking for graph pattern matching}
+   \label{alg:backtracking}
+   \KwIn{a data graph $G$ and a query graph $Q$}
+   \KwOut{all subgraphs in $G$ that are isomorphic to $Q$}
+  $\pi \gets$ generate a matching order\;
+    $\texttt{Enumerate}(G, Q, \pi, \{\}, 0)$\;
+   \SetKwFunction{Enumerate}{Enumerate}
+  \SetKwProg{Fn}{Procedure}{:}{}
+  \Fn{\Enumerate{$G, Q, \pi, m, l$}}{
+    \lIf{l = Q.size}
+    {Output $m$, \Return}
+    $u\gets \pi[l]$\;
+   $C_m(u)\gets$ getCandidates($G$, $Q$, $\pi$, $m$, $l$)\; 
+   \ForEach{$v \in C_m(u)$}{
+      Add $v$ to $m$\;
+      \texttt{Enumerate}($G$, $Q$, $\pi$, $m$, $l+1$)\;
+      Remove $v$ from $m$\;
+    }
+   }
+\end{algorithm}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.58]{1.stmatch/figure/loop_example_orig.pdf}
+    \caption{Graph pattern matching implemented as a nested loop. $N(v)$ means the neighbors of node $v$ in the data graph. }
+    \label{fig:loop_example_orig}
+\end{figure}
+
+Algorithm~\ref{alg:backtracking} shows the backtracking algorithm that is commonly used for graph pattern matching. 
+The algorithm first generates a matching order $\pi$ for the nodes in the query graph (line 1). 
+The matching order ensures that the node to be matched in the next step (i.e., $\pi[l+1]$) is connected to at least one of the nodes matched in previous steps (i.e., $\pi[0], \ldots, \pi[l]$). 
+Prior work has shown that a carefully selected matching order can effectively prune the exploration space and reduce the computation~\cite{1323804, 10.14778/1453856.1453899, 10.14778/3342263.3342643, 10.14778/1920841.1920887}. 
+After obtaining the matching order, the algorithm invokes a recursive procedure to enumerate the subgraph isomorphisms (line 2). 
+Starting from an empty subgraph, the \texttt{Enumerate} procedure gradually grows the subgraph until it reaches the size of the query graph (line 4).  
+At each step $l$, it computes a set of nodes in $G$ that match the $l$th node of the query graph (line 6). 
+Then, for each node $v$ in the candidate set, it adds the node to the partially matched subgraph $m$ (line 8) and call the \texttt{Enumerate} procedure to match the next node in the pattern (line 9). 
+Once it returns from the recursive call, which means all the subgraphs extended from $m$ have been explored, the procedure remove $v$ from $m$ and backtracks (line 10).  
+
+
+
+
+
+Although the above backtracking algorithm can be directly translated into a recursive function, many graph pattern matching/mining systems implement it as a nested loop because it is more convenient for parallelization and optimization~\cite{10.1145/3341301.3359633, mawhirter2021dryadic, shi2020graphpi, besta2021sisa, gui2021sumpa, su2021exploring}. 
+As an example, Fig.~\ref{fig:loop_example_orig} shows the nested loop for  matching the query of Fig.~\ref{fig:example_query}. 
+\setlength{\columnsep}{1.8em}%
+\begin{wrapfigure}{r}{0.12\textwidth}
+     \centering
+      %   \vspace{-.5em}
+    \includegraphics[scale=0.56]{1.stmatch/figure/example_query.pdf}
+    \vspace{-.5em}
+    \caption{A query graph.}
+    \vspace{-.5em}
+    \label{fig:example_query}
+\end{wrapfigure}
+The candidate nodes for the first loop are the nodes in the data graph that can be mapped to $u_0$. 
+The first loop iterates over all these nodes and tries to extend each node with its neighbors (line 4). 
+The second loop iterates over the candidate nodes for $u_1$ and tries to further extend the subgraph. 
+Because $u_2$ is a neighbor of $u_0$ but not a neighbor of $u_1$ in the query graph, the candidate nodes for $u_2$ must be in the neighbor list of $v_0$ but not in the neighbor list of $v_1$. 
+Thus, we compute the candidate nodes for $u_2$ as $N(v_0)-N(v_1)$. 
+Similarly, the third loop computes the candidate nodes for $u_3$ as $N(v_0)\cap N(v_1) \cap N(v_2)$ since $u_3$ is neighboring to $u_0$, $u_1$ and $u_2$. 
+
+
+\subsubsection{GPU Architecture}
+There are two types of parallelism on GPU: SIMT (Single Instruction Multiple Threads) and MIMD (Multiple Instruction Multiple Data). 
+The GPU threads are organized into {\em warps}, and the threads within a warp execute the same instruction simultaneously.  
+For branch statements, if different threads in a warp need to execute different branches, they have to execute one by one. 
+The situation is called {\em thread divergence}, and it hurts the performance because only a portion of the threads in a warp can be active at a time. 
+The warp is the smallest scheduling unit on GPU. 
+Different warps can execute different instructions on different data. 
+The warps are further organized into {\em threadblocks} (also called cooperative thread arrays) and are launched together onto the streaming multiprocessors.  
+
+A GPU typically has tens of streaming multiprocessors. 
+Each streaming multiprocessor has a number of registers and a programmable cache called {\em shared memory}. 
+Although it is possible to declare more register variables than the physical registers in a CUDA program, the variables will be spilled to constant memory, which may significantly slow down the program. 
+All the threads in a threadblock can access the shared memory. 
+The shared memory is much faster than the GPU global memory but also much smaller. The typical size of shared memory on a streaming multiprocessor is tens of KB. 
+When a threadblock uses more shared memory than what is available on a streaming multiprocessor, it cannot be launched. 
+A modern GPU can run more than 1K threads simultaneously on a streaming processing, but the shared memory usually puts a limit on the number of threads that can be active. 
+
+
+
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------------%
+
+
+\subsection{Challenges for Parallelizing Backtracking}
+We now consider the parallelization of the nested loop in Fig.~\ref{fig:loop_example_orig} for GPU execution. 
+
+\noindent
+\textbf{Challenge 1: Load imbalance among warps. }
+As real-world graphs are irregular, the workload associated with each node in the matching procedure varies significantly. 
+If we parallelize the loop at the outermost level, the program will suffer from severe load imbalance. 
+Previous CPU systems have proposed to combine the first two loop levels and distribute the computation based on edges~\cite{mawhirter2021dryadic, 10.1145/3341301.3359633}. 
+While they work well for queries of up to four nodes, we find the load balance degrades dramatically for queries of more than five nodes. 
+Previous work has also adopted work-stealing to balance the workload in distributed systems~\cite{bhattarai2019ceci, shi2020graphpi, mawhirter2021dryadic}. 
+However, their work-stealing strategy cannot be directly applied to GPU due to the memory hierarchy and the lack of signaling mechanism on GPU. 
+Another solution is to parallelize the inner loops. 
+The subgraph-centric approach taken by the existing GPU graph pattern matching systems actually falls into this category. 
+They materialize the intermediate results of each loop level (i.e., the partial subgraphs) and distribute the partial subgraphs to different warps. 
+The downside of this approach is that it requires a synchronization at the end of each extension step and the materialization of intermediate results consumes a lot of memory. 
+
+
+
+\noindent
+\textbf{Challenge 2: Thread underutilization within a warp.} 
+Since the threads within a warp execute in a SIMD manner, it is natural to assign  each subgraph to a warp and use 32 threads to perform the set operation (at line 7 and 10 in Fig.~\ref{fig:loop_example_orig}). 
+The problem is that, because the number of elements in each set is upper bounded by the degree of nodes in the data graph, the sets usually have less than 32 nodes. 
+As shown in Table~\ref{tab:datasets}, the median degrees of most real-world graphs are much smaller than 32. 
+This leads to idle threads during execution. 
+While the problem can be easily solved by assigning multiple subgraphs to a warp in a subgraph-centric system~\cite{xiang2021cuts}, it is nontrivial if we want to parallel the loop from the outermost level and avoid the explicit storage of partial subgraphs. 
+
+
+\noindent
+\textbf{Challenge 3: Redundant computation.} 
+As pointed out in~\cite{mawhirter2021dryadic}, the nested loop conducts a lot of redundant set operations in its original form.  
+For example, the result of $N(v_0)\cap N(v_1)$ at line 10 of Fig.~\ref{fig:loop_example_orig} is the same for all iterations of the loop at line 8 because the computation is independent of $i_2$. 
+We can lift this set operation outside the loop at line 8 to eliminate the redundant computation. 
+While this code motion technique is easy to implement on CPU, it require a more careful design of data structures for storing the code motion information on GPU. 
+In particular, 
+the code-motion technique in~\cite{mawhirter2021dryadic} needs to store multiple intermediate sets for different labels in each loop level. 
+If naively applied to our system, it may cause shared memory overflow for large labeled queries. 
+
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------------%
+
+\subsection{Overview of STMatch}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.55]{1.stmatch/figure/while_loop_orig.pdf}
+    \caption{Graph pattern matching implemented as a stack-based while loop. }
+    \label{fig:while_loop_orig}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.52]{1.stmatch/figure/getcandidates.pdf}
+    \caption{\textcolor{red}{An example of $getCandidates$  in two different warps. }}
+    \label{fig:getcandidates}
+\end{figure}
+
+\textcolor{red}{
+Our system is built around a stack-based implementation of Algorithm~\ref{alg:backtracking}. 
+The idea is to simulate the recursive procedure  by explicitly maintaining a function call stack. 
+As shown in Fig.~\ref{fig:while_loop_orig}, the call stack is composed of three arrays $C$, $Csize$ and $iter$, which store the candidate nodes, the number of candidate nodes, and the loop iterate for each recursion level. 
+A variable $l$ is used to indicate the current recursion level  and is initialized to 0. 
+Every time the execution enters the next level, we {\tt getCandidates} based on the data graph $G$, the query graph $Q$, and the current level $l$ (line 8 in Fig.~\ref{fig:while_loop_orig} corresponding to line 6 in Algorithm~\ref{alg:backtracking}). 
+%The candidate nodes are stored in $C[l]$ and the number of candidates are stored in $Csize[l]$. 
+Then, we iterate over the candidates, match each candidate node to the query node, and go to the next level (line 11 in Fig.~\ref{fig:while_loop_orig} corresponding to line 9 in Algorithm~\ref{alg:backtracking}). 
+The matching subgraphs are output at the last level (line 16 in Fig.~\ref{fig:while_loop_orig} corresponds to line 4 in Algorithm~\ref{alg:backtracking}). 
+If all candidate nodes at level $l$ have been processed, we backtrack to the previous level (line 14 in Fig.~\ref{fig:while_loop_orig} corresponding to return from $Enumerate$ function at line 9 in Algorithm~\ref{alg:backtracking}). 
+The algorithm stops when all candidate nodes at level zero have been processed (line 9 in Fig.~\ref{fig:while_loop_orig}). 
+}
+
+\textcolor{red}{
+For GPU execution, we run the while-loop of Fig.~\ref{fig:while_loop_orig} independently on different warps. 
+A call stack is allocated for each warp. 
+Since $Csize$, $iter$ and $l$ are small, we allocate them in shared memory. 
+$C$ is allocated in global memory. 
+Different warps execute the same piece of code, but they obtain different nodes when $l=0$ with the $getCandidates$ function. 
+Fig.~\ref{fig:getcandidates} illustrates the procedure of $getCandidates$  on two different warps. 
+Suppose warp-$i$ has two nodes (node-0,1) at the first level and is current processing node-1. 
+Warp-$j$ has just started its execution, and its stack is empty. 
+The $getCandidates$ function obtains the next chunk of nodes from $V$ (node-2,3) and copies them to $C[0]$ on warp-$j$'s stack. 
+This corresponds to dividing the outermost loop of Fig.~\ref{fig:loop_example_orig} and assigning different chunks of iterations to different warps for parallel processing.  
+On warp-$i$, 
+when the execution enters the second level, the $getCandidates$ function obtains the neighbor list of node-1 and copies it $C[1]$. 
+This procedure is conducted in parallel with different threads in the warp copying different elements in the neighbor list. 
+When $l>1$, the $getCandidates$ function performs set operations according to the query pattern. 
+Different threads in the warp are assigned different nodes in the neighbor list and perform binary search simultaneously for set intersection/difference.} 
+
+
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------------%
+
+\subsection{Load Balancing with Two-Level Work Stealing}
+
+
+
+
+To balance the workload among warps, we propose a two-level work stealing technique.  
+The idea is to let an idle warp steal work from other warps in the same threadblock first,  
+and only when there is no warp to steal within the threadblock, we let it steal from other threadblocks. 
+We use this two-level stealing mechanism for two reasons. 
+First, as there are thousands of warps on GPU, selecting the best target to steal from all  warps is expensive, whereas finding a good target within the threadblock is much easier. 
+Second, migrating work within a threadblock is cheaper than across threadblocks. 
+Since the stack of each warp is stored in the shared memory, work stealing within a threadblock can be done efficient in shared memory, whereas stealing across threadblocks has to go through global memory. 
+This section gives a detailed description of our two-level work stealing technique. 
+
+
+\subsubsection{Stealing Within a Threadblock}
+\label{sec:local_steal}
+
+\begin{algorithm}[t]
+\footnotesize
+   \caption{Selecting a target warp within a threadblock}
+   \label{alg:select_target}
+   \KwIn{stacks of all warps in the threadblock: $stks$; index of the calling warp: $cur\_idx$; number of warps in the threadblock: $NW$; query graph: $Q$}
+   \KwOut{index of the target warp: $target\_idx$; the first level in the target that can be split: $target\_level$}
+  $target\_idx\gets -1$\;
+  $target\_level\gets -1$\;
+  $target\_left\_task\gets 0$\;
+  \For{$l\gets0$ \KwTo $StopLevel$}{
+  \For{$idx\gets0$ \KwTo $NW-1$}{
+  \lIf{$idx=cur\_idx$}{\textbf{continue}}
+  $left\_task\gets stks[idx].Csize[l] - stks[idx].iter[l] - 1$\;
+  \If{$left\_task > target\_left\_task$}{
+  $target\_idx\gets idx$\;
+  $target\_level\gets l$\;
+  $target\_left\_task\gets left\_task$\;
+  }
+  }
+  \If{$target\_idx \neq -1$}{\Return $target\_idx$, $target\_level$}
+  }
+  \Return $-1$, $-1$\;
+\end{algorithm}
+
+
+The work stealing procedure is inserted at line 9 of Fig.~\ref{fig:while_loop_orig}. 
+Before a warp breaks out of the loop, it checks the stacks of other warps in the same threadblock and selects the one with the most remaining work. 
+The selection procedure is shown in Algorithm~\ref{alg:select_target}. 
+Starting from level zero, we check the stack level-by-level (line 4). 
+Since the actual remaining work on a warp is unknown, we estimate it as the number of unexplored nodes at each level on the stack (line 7), and we assume that a warp with more unexplored nodes at a smaller level has more remaining work. 
+Once we find a warp with at least one unexplored node at level $l$ (line 8), we store its index to $target\_idx$ and the number of unexplored nodes to $target\_left\_task$. 
+The procedure scans all the warps in the threadblock (line 5). If it later finds another warp that has more unexplored nodes at the same level, it updates the target warp (line 8-11). 
+The selection procedure returns as soon as it finds a target at a certain level (line 12-13).  
+If it cannot find a target after checking all levels, the procedure returns $-1$ (line 14) . 
+
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.53]{1.stmatch/figure/stealing_example.pdf}
+    \caption{An example of dividing and copying tasks from a target warp.}
+    \label{fig:stealiing_example}
+\end{figure}
+
+After the idle warp finds a target warp, it divides the remaining tasks in the target warp and copies half of them to its own stack. 
+The procedure is illustrated in Fig.~\ref{fig:stealiing_example}. 
+Suppose we want to match the query graph of Fig.~\ref{fig:example_query} to the data graph in Fig.~\ref{fig:getcandidates}. 
+As shown in Fig.~\ref{fig:stealiing_example}, the target warp has node 0 and 1 at level zero and has matched node 1 to $u_0$; it has no work left at level zero. 
+The four neighbors of node 1 (i.e., node 0,2,3,4) are stored in the second level of the stack, and they are the candidates for $u_1$. 
+Suppose the warp has processed node 0 at level one and is processing node 2; it has two remaining nodes: 3 and 4. 
+We split the two nodes. Node 3 is kept in the target warp, and node 4 is migrated to the stealer warp. 
+$Csize[1]$ of the target warp is changed to $3$ since one node in $C[1]$ has been migrated to the stealer.  
+The stealer copies the matching nodes from the target to its own stack from level zero to $target\_level-1$. 
+The $Csize$ are all set 1 and the $iter$ are all set to zero for these levels. 
+In this example, $target\_level$ is one, so we copy the matching node at level zero of the target (which is node 1) and set $Csize[0]$ of the stealer to 1. 
+For $target\_level$, we copy the stolen nodes (node 4 in this case) from the target to the stealer and set $C[target\_level]$ to be the number of stolen nodes. 
+This completes the setup of both the target and the stealer stack. 
+
+%Note that during the stealing process we need to lock the target and the stealer stack to ensure consistency. 
+%This is achieved by allocating a mutex lock for every warp (on shared memory). 
+%We also need to add a lock function at line 6 and an unlock function at line 9 and 16 in the while-loop of Fig.~\ref{fig:while_loop_orig}. 
+%The lock and unlock function are implemented with the CUDA {\tt atomicCAS} and {\tt atomicExch} instruction. 
+%The lock instructions themselves incur little overhead to the program since the mutex can be allocated in shared memory. 
+The most expensive part of the stealing procedure is the copying of candidate nodes stored in global memory. 
+Because of the overhead, we want to avoid stealing when there is not enough work left in the target warp. 
+This can be achieved by adjusting the $StopLevel$ at line 4 of Algorithm~\ref{alg:select_target}. 
+
+\subsubsection{Stealing Across ThreadBlocks}
+\label{sec:global_steal}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.53]{1.stmatch/figure/global_steal.pdf}
+    \caption{Work stealing across threadblocks.}
+    \label{fig:steal_across_block}
+\end{figure}
+
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+            \node[shape=circle,draw,inner sep=.4pt] (char) {#1};}}
+\newcommand*\squared[1]{\tikz[baseline=(char.base)]{
+            \node[shape=rectangle,draw,inner sep=1pt] (char) {#1};}}
+
+If a warp cannot find a target to steal in the same threadblock, it goes to   other threadblocks. 
+However, this cannot be done in the same way as stealing within a threadblock. 
+Since the stack of each warp is allocated in shared memory, a warp does not have direct access to warps in a different threadblock. 
+We cannot let a warp check the stacks of warps in a different threadblock and pull tasks from a target.  
+Instead, we have to let the target warp detect an idle warp and push tasks to it. 
+The procedure is illustrated in Fig.~\ref{fig:steal_across_block}. 
+We maintain two arrays of $NB$ elements in global memory where $NB$ is the total number of threadblocks. 
+Each element in the $is\_idle$ array is a bitmap indicating idle status of warps in the threadblock. 
+Each slot of the $global\_stks$ array stores the tasks that the stealer receives from a target. 
+When a warp fails to steal from warps in the same threadblock, \circled{1} it marks itself as idle in the $is\_idle$ array and \circled{2} spins wait on the idle status. 
+During the matching process, a warp checks the status of other warps periodically. 
+This is achieved by adding a {\tt steal\_across\_block} function between line 6 and line 7 in Fig.~\ref{fig:while_loop_orig}. 
+Every time a warp enters a level, it checks if it has unexplored nodes in the previous levels. 
+To make sure the workload is large enough to justify the stealing overhead, we call this function only when the level is smaller than $DetectLevel$ (which is a configurable parameter in our system). 
+If the warp has unexplored nodes in the previous levels, \squared{1} it scans the $is\_idle$ array to see if there is a threadblock where all the warps are marked idle. 
+If it finds an idle threadblock, \squared{2} it divides and copies its tasks to the $global\_stk$ of that threadblock. 
+The divide-and-copy procedure is the same as shown in Fig.~\ref{fig:stealiing_example}. After it finishes copying the stack to global memory, \squared{3} the target warp clears the idle mask for all warps in the stealer threadblock. 
+ \circled{3} Then, \textcolor{red}{all warps in the stealer threadblock are activated}, and warp zero will get the tasks and copy them to its local stack. 
+The other warps will go back to the beginning of the while-loop. 
+Since these warps do not have any remaining tasks, they will enter the stealing procedure again quickly, and they will try to steal from warp zero. 
+With this, we prioritize stealing within a threadblock and avoid global stealing as much as possible. 
+The program will eventually stop when all the threadblocks are idle. 
+
+
+
+
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------------%
+
+\subsection{Improving Thread Utilization with Loop Unrolling} 
+
+
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.55]{1.stmatch/figure/while_loop_unrolled.pdf}
+    \caption{\textcolor{red}{An unrolled version of the loop in Fig.~\ref{fig:while_loop_orig}.} }
+    \label{fig:while_loop_unrolled}
+\end{figure}
+
+
+
+With the original loop of Fig.~\ref{fig:while_loop_orig}, a warp performs one set operation at a time. 
+If the sets have only a few elements, most of the threads will be idle. 
+To improve thread utilization, we can unroll the loop iteration at each recursion level and perform the set operations of the unrolled iterations together.  
+%As an example, if we unroll the loop at line 5 of Fig.~\ref{fig:loop_example_orig},  we can combine $N(v_0)-N(v_1)$ for multiple $v_1$'s and process them simultaneously. 
+
+\textcolor{red}{Fig.~\ref{fig:while_loop_unrolled} shows the unrolled while-loop. 
+The idea is to add an unroll dimension to $C$ and $Csize$ so that the candidate nodes of multiple iterations can be stored at the same time. 
+In addition to $iter$ that stores the iterate number of the original loop, 
+we use an $uiter$ to store the index of unrolled iterations. 
+The program iterates over the unrolled iterations and the original loop iterations alternatively. 
+Every time the execution enters the next level, we compute the candidate nodes for all the unrolled iterations together (line 9). 
+Then, we iterate over the candidates in each of the unrolled iterations, match each candidate node to the query node, and go to the next level (line 15). 
+If all the unrolled iterations at level $l$ have been processed, we backtrack to the previous level and increment the iterate of the previous level by the unroll size (line 22). }
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.53]{1.stmatch/figure/combined_set_operation.pdf}
+    \caption{Perform multiple set operations in one warp.}
+    \label{fig:combined_set_operation}
+\end{figure}
+
+With the unrolled loop, we can combine multiple set operations and process them using one warp. 
+Fig.~\ref{fig:combined_set_operation} shows the implementation of combined set operation. 
+We consider the general case where $M$ $set_1$'s need to intersect (or difference) with $M$ $set_2$'s. 
+Each thread in the warp gets one element from $set_1$'s at a time. 
+We first compute a prefix sum of the set sizes ($size\_scan$) and use it to get the set index ($set\_idx$) and the offset in the set ($set\_ofs$) for that element. 
+Then, we obtain the value of that element from $C[l][set\_idx][set\_ofs]$. 
+The value and the corresponding $set2[set\_idx]$ are given to a binary search procedure, which produces a result of 0 or 1. 
+For intersection operation, 1 means the value is found in $set2[set\_idx]$; for difference operation, 1 means the value is not found in $set2[set\_idx]$. 
+Next, with the $bsearch\_res$, we compute the output offset for each element that needs to be written to the output. 
+This corresponds to counting the number of 1's prior to that element in the same set, and it can be efficiently implemented with the {\tt \_\_ballot\_sync()} and {\tt \_\_popc()} primitive provided by CUDA.  
+Finally, these elements are written  to the result sets consecutively based on $set\_idx$ and $output\_ofs$. 
+It is obvious that this combined set operation has a higher thread utilization than computing them one-by-one. 
+
+The divide-and-copy procedure in Fig.~\ref{fig:stealiing_example} needs to be slightly modified to enable working stealing for the unrolled loop. 
+We use the same procedure for dividing and copying the tasks in the current unrolled iteration. 
+But for the remaining unrolled iterations, we need to set the $Csize$ to zero in the stealer stack since the tasks in these iterations are not stolen from the target.  
+We also need to copy $uiter$ from level zero to $target\_level$. 
+
+%Note that the unrolled loop is exactly the same as the original loop with only the set operations of  unrolled iterations combined together. 
+%In terms of effect, unrolling is similar to the hybrid DFS and BFS extension used in subgraph-centric systems~\cite{xiang2021cuts}. 
+%However, our stack-based implementation preserves the structure of the original loop and thus is compatible with optimizations for the backtracking algorithm. 
+%Some of these optimizations are hard to be applied to the subgraph-centric systems. 
+%We will show an example in the next section. 
+
+
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------------%
+
+\subsection{Reducing Redundancy With Loop-Invariant Code Motion}
+\label{sec:code_motion}
+
+To show that our system is compatible with the existing optimizations for backtracking-based graph pattern matching, we implement the code motion technique proposed in~\cite{mawhirter2021dryadic} in our system. 
+The idea is to lift the loop-invariant part of the set operations to upper levels so that they will not be computed repeatedly. 
+For example, the $N(v_0)\cap N(v_1)$ operation at line 10 of Fig.~\ref{fig:loop_example_orig} can be moved outside of the loop at line 8. 
+We can store the result of $N(v_0)\cap N(v_1)$ and use the cached result for every iteration of the inner loop. 
+
+
+While it is straightforward to apply code motion to the nested loop in Fig.~\ref{fig:loop_example_orig}, it is nontrivial to incorporate this optimization into the existing subgraph-centric systems on GPU. 
+In these systems, because the computation is driven by the subgraphs, the set operation is associated with each individual subgraph and the hierarchy of the set operations is lost. 
+It is not obvious how to identify the loop-invariant operations and lift them for a batch of subgraphs. 
+Although the hierarchy of set operations can be recovered from the subgraphs, maintaining a data structure to store the information is expensive. 
+
+\begin{figure}
+    \centering
+    \subfloat[Set dependence graph]{
+    \includegraphics[scale=0.53]{1.stmatch/figure/dependence_graph.pdf}
+    \label{fig:dependence_graph}
+    } \hfil
+    \subfloat[A compact storage]{
+    \includegraphics[scale=0.53]{1.stmatch/figure/dependence_graph_array.pdf}
+    \label{fig:dependence_graph_array}
+    } 
+    \caption{The set dependence graph for unlabeled query of Fig.~\ref{fig:example_query}.}
+    \label{fig:code_motion_unlabeled}
+\end{figure}
+
+\begin{figure}
+\centering
+     \subfloat[Separate label sets]{
+    \includegraphics[scale=0.53]{1.stmatch/figure/colored_dependence_graph.pdf}
+    \label{fig:colored_dependence_graph}
+    }\hfil
+     \subfloat[Merged label sets]{
+    \includegraphics[scale=0.53]{1.stmatch/figure/improved_colored_dependence_graph.pdf}
+    \label{fig:colored_dependence_graph_improved}
+    }
+    \caption{The set dependence graph for labeled query of Fig.~\ref{fig:example_query}. `' denotes the label(s) of nodes in a set.}
+    \label{fig:my_label}
+\end{figure}
+
+Since our stack-based implementation is a direct simulation of the original nested loop, our system can be easily extended to support code motion. 
+ To perform the lifted set operations, we need to maintain more than one sets for each level in the stack. 
+Therefore, we change the first dimension of $C$ and $Csize$ from $PAT\_SIZE$ to the total number of sets of all levels. 
+We also need to change the set operations in the {\tt getCandidates} function to compute and use the results of the lifted operations. 
+As an example, Fig.~\ref{fig:dependence_graph} shows the sets in the loop of Fig.~\ref{fig:loop_example_orig} after code motion. 
+In addition to the candidate sets ($C_0\sim C_4$), we store an {\em intermediate set} $C_{21}$ for  $N(v_0)\cap N(v_1)$. 
+The arrows indicate the dependence among the sets: $C_1$ is used for computing $C_2$ and $C_{21}$, and $C_{21}$ is used for computing $C_3$. 
+For any query graph, we can obtain such a dependence graph with a simple code motion analysis~\cite{mawhirter2021dryadic}. 
+
+To pass  set dependence information to  {\tt getCandidates} function efficiently, we propose a compact storage of the dependence graph as shown in Fig.~\ref{fig:dependence_graph_array}. 
+The $row\_ptr$ array indicates the starting position of the sets in each level, and the $set\_ops$ array stores the set operations for each set. 
+The set operation is represented with three numbers. 
+The first number indicates whether the set operation has $N(v_{l-1})$ as the first operand at level $l$. 
+In this example, since $C_1=N(v_0)$, the first number in the first element of $set\_ops$ is 1. 
+If the first number is 0, the set operation has $N(v_{l-1})$ as the second operand. 
+The second number in $set\_op$ indicates whether the set operation is intersection or difference. 
+For $C_2$, we need to compute $C_1-N(v_1)$, so we have 0 as the second number. For $C_{21}$, we need to compute $C_1\cap N(v_1)$, so we have 1 as the second number. 
+The third number is the index of the set that the current set depends on. 
+The two arrays take only tens of bytes and are stored in shared memory. 
+The {\tt getCandidates} function reads in the two arrays and performs set operations accordingly at each level. 
+
+One limitation of the original code motion technique in~\cite{mawhirter2021dryadic} is that it needs to store multiple intermediate sets for different labels. 
+To see this point, let us consider again the matching of query graph of Fig.~\ref{fig:example_query}. 
+Suppose we restrict $u_1$ to label `a', $u_2$ to label `b', and $u_3$ to label `c'. The dependence graph in Fig.~\ref{fig:dependence_graph} will not work -- if $C_1$ only stores nodes of label `a', we cannot have nodes of label `b' in $C_2$. 
+To fix this problem, \cite{mawhirter2021dryadic} separates the candidate sets from the intermediate sets and stores nodes of different labels in different sets, as shown in Fig.~\ref{fig:colored_dependence_graph}. 
+If a set of label `x' is dependent on a set in the previous level, they add an intermediate set of label `x'. 
+The labels are propagated from the bottom to the top level. 
+The total number of sets is at least $n(n-1)/2$ where $n$ is the number of nodes in the query graph. 
+While this is not a problem on CPU, it may cause shared memory overflow in our system as we store $Csize$ for all the sets of all unrolled iterations in shared memory. 
+To reduce the usage of shared memory, we merge the intermediate sets of different labels that are split from the same unlabeled set into one set with multiple labels. 
+For example, $C_{12}$ and $C_{13}$ in Fig.~\ref{fig:colored_dependence_graph} can be merged into one set with label `2,3', as shown in Fig.~\ref{fig:colored_dependence_graph_improved}. 
+The larger the query graph, the more sets we save with this method. 
+This enables us to support larger query graphs without affecting the efficiency. 
+
+
+For work stealing, the candidate sets are divided and copied in the same way as in Fig.~\ref{fig:stealiing_example}. 
+We also copy all the intermediate sets that are used by sets after $target\_level$ so that they need not be computed again by the stealer. 
+
+
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------------%
+
+\subsection{Experimental Results}
+In this section, we compare our system with two state-of-the-art GPU graph pattern matching systems: cuTS~\cite{xiang2021cuts} and GSI~\cite{zeng2020gsi}, and a state-of-the-art CPU system: Dryadic~\cite{mawhirter2021dryadic}. 
+GSI achieves consistently better (or equal) performance than many previous CPU and GPU implementations such as CFL-Match~\cite{10.1145/2882903.2915236}, CBWJ~\cite{10.14778/3342263.3342643},
+VF3~\cite{7907163}, GPSM~\cite{tran2015fast} and Gunrock~\cite{wang2016fast}. 
+CuTS has shown even better performance than GSI. 
+However, because cuTS\footnote{\url{ https://doi.org/10.5281/zenodo.5154114}} does not support labeled queries, we also compare with GSI\footnote{\url{https://github.com/pkumod/GSI}} for labeled matching tasks. 
+
+
+
+\subsubsection{Experimental Setup}
+\label{sec:setup}
+
+
+\begin{table}[t]
+\centering
+\ssmall
+\begin{tabular}{c|c|c|c|c|c}
+{\bf Graph}       & {\bf \# nodes} & {\bf \# edges} & {\bf Max deg.} & {\bf Med deg.} & {\bf Deg. $>$ 4096 }        \\ \hline 
+WikiVote      & 7K       & 100K    &1065 & 3  & 0 \\ \hline
+Enron         & 37K     & 183K   &1383 & 3  & 0     \\ \hline
+MiCo      & 96K       & 1.1M      &1359 & 18 & 0    \\ \hline
+YouTube      & 1.1M       & 3.0M      &28754 & 1 & 0.06\%     \\ \hline
+LiveJournal      & 4M       & 34.7M     &14815 & 6 & 0.12\%        \\ \hline
+Orkut     & 3.1M       & 117.2M     &33313 &  45 &  1.13\%    \\ \hline
+Friendster     & 65.6M       & 1.8B     &5214 &  9 &  9.1e-8\%    \\ \hline
+\end{tabular}
+\caption{Graph datasets.}
+\label{tab:datasets}
+\end{table}
+
+\noindent
+\textbf{Platform: } 
+\textcolor{red}{Our experiments are conducted on a dual socket machine with four Nvidia RTX3090 GPUs, two Intel Xeon Gold 6226R 2.9GHz CPUs (32 cores in total), and 512GB RAM.}
+We use GCC9.4.0 and NVCC11.2 with O2 level optimization to compile the code. 
+
+\noindent
+\textbf{Datasets and query graphs: }
+Table~\ref{tab:datasets} lists the data graphs used in our experiments. 
+These graph are obtained from the SNAP~\cite{snapnets} repository and are commonly used for evaluating graph pattern matching systems. 
+For query graphs, we first adopt the queries from cuTS.  
+CuTS uses directed query graphs. The 33 directed queries used in their experiments actually have only six undirected patterns.
+While our system supports both directed and undirected graphs, we use undirected graph in our evaluation because it is a more common setup in the graph pattern matching literature~\cite{zeng2020gsi, tran2015fast, 10.14778/1920841.1920887, 10.1145/2882903.2915236, mawhirter2021dryadic}. 
+The 33 queries in cuTS experiments are covered by $q_7$, $q_8$, $q_{15}$, $q_{16}$, $q_{23}$, $q_{24}$ in our experiments, among which $q_8$, $q_{16}$ and $q_{24}$ are cliques (i.e., fully connected graphs). 
+Then, we randomly select six query graphs from size-5, size-6, size-7 motifs, respectively. 
+In total, we test with 24 distinct query graphs\textcolor{red}{: $q_1\sim q_8$  of size-5, $q_9\sim q_{16}$ of size-6, and $q_{17}\sim q_{24}$ of size-7.}
+Our system supports both labeled and unlabeled graphs. 
+To evaluate the performance of labeled matching, we follow the setup in Dryadic~\cite{mawhirter2021dryadic} and randomly assign ten labels to the data and query graphs. 
+For fairness, we use the same matching order of query nodes (adopted from Dryadic) for all  systems. 
+
+\noindent
+\textbf{Settings: }
+In all experiments, we set the $StopLevel$ in Algorithm~\ref{alg:select_target} to 2, and the $DetectLevel$ for global work-stealing in Section~\ref{sec:global_steal} to 1. 
+The unrolling size is set to 8. 
+We set the {\em MAX\_DEGREE} of array $C$ to 4096. 
+The size of array $C$ is {\em NUM\_SETS}$\times${\em UNROLL}$\times${\em MAX\_DEGREE}$\times${\em NUM\_WARPS}. 
+For queries of no more than seven nodes, we have {\em NUM\_SETS}$\leq$15 (this number is determined by the code motion analysis). 
+The maximum number of active warps on our GPU is $82\times 32 = 2624$. 
+Thus, besides the storage of data graph, our system consumes a fixed 4.8GB GPU memory for queries of up to seven nodes. 
+For graphs whose max degrees are larger than 4096, we store the extra nodes in the sets with more than 4096 nodes on CPU. 
+Because real-world graphs are skewed and few nodes have degrees greater than 4096 (last column in Table~\ref{tab:datasets}), it is very rare for the program to access CPU memory. 
+\textcolor{red}{We run cuTS and GSI with the same number of total warps on GPU, and run Dryadic with 64 threads on CPU.} 
+
+
+\subsubsection{Overall Performance}
+
+\begin{figure*}[t]
+\centering
+  \ssmall
+\subfloat[Edge-induced]{
+\begin{tabular}{|c|ccc|ccc|cc|}
+\hline
+                            & \multicolumn{3}{c|}{\textbf{WikiVote}}                                                    & \multicolumn{3}{c|}{\textbf{Enron}}                                                       & \multicolumn{2}{c|}{\textbf{MiCo}}                           \\ \cline{2-9} 
+\multirow{-2}{*}{\textbf{}} & \multicolumn{1}{c|}{\textbf{Our}} & \multicolumn{1}{c|}{\textbf{Dryadic}} & \textbf{cuTS} & \multicolumn{1}{c|}{\textbf{Our}} & \multicolumn{1}{c|}{\textbf{Dryadic}} & \textbf{cuTS} & \multicolumn{1}{c|}{\textbf{Our}} & \textbf{Dryadic}         \\ \hline
+$q_{1}$                           & \multicolumn{1}{c|}{492}          & \multicolumn{1}{c|}{4534}             & 168512        & \multicolumn{1}{c|}{349}          & \multicolumn{1}{c|}{3002}             & 155051        & \multicolumn{1}{c|}{22367}        & 128527                   \\ \hline
+$q_{2}$                            & \multicolumn{1}{c|}{1689}         & \multicolumn{1}{c|}{9543}             & 110529        & \multicolumn{1}{c|}{2033}         & \multicolumn{1}{c|}{7814}             & 89721         & \multicolumn{1}{c|}{96785}        & 105408                   \\ \hline
+$q_{3}$                           & \multicolumn{1}{c|}{131}          & \multicolumn{1}{c|}{3045}             & 41077         & \multicolumn{1}{c|}{137}          & \multicolumn{1}{c|}{2866}             & 36946         & \multicolumn{1}{c|}{20327}        & 46350                    \\ \hline
+$q_{4}$                            & \multicolumn{1}{c|}{295}          & \multicolumn{1}{c|}{3451}             & 31679         & \multicolumn{1}{c|}{355}          & \multicolumn{1}{c|}{4151}             & 25935         & \multicolumn{1}{c|}{32288}        & 70327                    \\ \hline
+$q_{5}$                            & \multicolumn{1}{c|}{246}          & \multicolumn{1}{c|}{1647}             & 15612         & \multicolumn{1}{c|}{185}          & \multicolumn{1}{c|}{2411}             & 16357         & \multicolumn{1}{c|}{26398}        & 142830                   \\ \hline
+$q_{6}$                            & \multicolumn{1}{c|}{109}          & \multicolumn{1}{c|}{713}              & 29449         & \multicolumn{1}{c|}{73}           & \multicolumn{1}{c|}{593}              & 24455         & \multicolumn{1}{c|}{14330}        & 23623                    \\ \hline
+$q_{7}$                            & \multicolumn{1}{c|}{23}           & \multicolumn{1}{c|}{679}              & 11845         & \multicolumn{1}{c|}{32}           & \multicolumn{1}{c|}{808}              & 12502         & \multicolumn{1}{c|}{4153}         & 171986                   \\ \hline
+$q_{8}$                            & \multicolumn{1}{c|}{36}           & \multicolumn{1}{c|}{120}              & 9602          & \multicolumn{1}{c|}{62}           & \multicolumn{1}{c|}{146}              & 9990          & \multicolumn{1}{c|}{1597}         & 23267                    \\ \hline
+$q_{9}$                           & \multicolumn{1}{c|}{2932}         & \multicolumn{1}{c|}{5271}             & $\times$          & \multicolumn{1}{c|}{2095}         & \multicolumn{1}{c|}{6860}             & $\times$          & \multicolumn{1}{c|}{1408189}      & 4028865                  \\ \hline
+$q_{10}$                           & \multicolumn{1}{c|}{27904}        & \multicolumn{1}{c|}{215643}           & $\times$          & \multicolumn{1}{c|}{33514}        & \multicolumn{1}{c|}{362646}           & $\times$          & \multicolumn{1}{c|}{4752770}      &$-$ \\ \hline
+$q_{11}$                           & \multicolumn{1}{c|}{1858}         & \multicolumn{1}{c|}{41214}            & $\times$          & \multicolumn{1}{c|}{1641}         & \multicolumn{1}{c|}{61693}            & $\times$          & \multicolumn{1}{c|}{1358694}      &$-$ \\ \hline
+$q_{12}$                           & \multicolumn{1}{c|}{8993}         & \multicolumn{1}{c|}{315366}           & $\times$          & \multicolumn{1}{c|}{9807}         & \multicolumn{1}{c|}{510956}           & $\times$          & \multicolumn{1}{c|}{5636367}      &$-$ \\ \hline
+$q_{13}$                           & \multicolumn{1}{c|}{7485}         & \multicolumn{1}{c|}{54704}            & $\times$          & \multicolumn{1}{c|}{5995}         & \multicolumn{1}{c|}{61520}            & $\times$          & \multicolumn{1}{c|}{4368254}      &$-$ \\ \hline
+$q_{14}$                           & \multicolumn{1}{c|}{651}          & \multicolumn{1}{c|}{1423}             & 165745        & \multicolumn{1}{c|}{981}          & \multicolumn{1}{c|}{2071}             & 204686        & \multicolumn{1}{c|}{1827655}      &9364411 \\ \hline
+$q_{15}$                           & \multicolumn{1}{c|}{88}           & \multicolumn{1}{c|}{598}              & 137895        & \multicolumn{1}{c|}{107}          & \multicolumn{1}{c|}{886}              & 160304        & \multicolumn{1}{c|}{196210}       & 1237420                  \\ \hline
+$q_{16}$                           & \multicolumn{1}{c|}{48}           & \multicolumn{1}{c|}{288}              & 131286        & \multicolumn{1}{c|}{47}           & \multicolumn{1}{c|}{305}              & 160022        & \multicolumn{1}{c|}{56089}        & 92557                    \\ \hline
+$q_{17}$                           & \multicolumn{1}{c|}{5599}         & \multicolumn{1}{c|}{5963}             & $\times$          & \multicolumn{1}{c|}{5228}         & \multicolumn{1}{c|}{9167}             & $\times$          & \multicolumn{1}{c|}{$-$}      & $-$                  \\ \hline
+$q_{18}$                           & \multicolumn{1}{c|}{39178}        & \multicolumn{1}{c|}{235003}           & $\times$          & \multicolumn{1}{c|}{31010}        & \multicolumn{1}{c|}{344761}           & $\times$          & \multicolumn{1}{c|}{$-$}      & $-$                  \\ \hline
+$q_{19}$                           & \multicolumn{1}{c|}{9634}         & \multicolumn{1}{c|}{131236}           & $\times$          & \multicolumn{1}{c|}{13417}        & \multicolumn{1}{c|}{162903}           & $\times$          & \multicolumn{1}{c|}{$-$}      & $-$                  \\ \hline
+$q_{20}$                           & \multicolumn{1}{c|}{3608}         & \multicolumn{1}{c|}{31267}            & $\times$          & \multicolumn{1}{c|}{3995}         & \multicolumn{1}{c|}{38992}            & $\times$          & \multicolumn{1}{c|}{$-$}      & $-$                  \\ \hline
+$q_{21}$                           & \multicolumn{1}{c|}{2000}         & \multicolumn{1}{c|}{5361}             & $\times$          & \multicolumn{1}{c|}{4150}         & \multicolumn{1}{c|}{7917}             & $\times$          & \multicolumn{1}{c|}{$-$}      & $-$                  \\ \hline
+$q_{22}$                           & \multicolumn{1}{c|}{2075}         & \multicolumn{1}{c|}{33991}            & $\times$          & \multicolumn{1}{c|}{2194}         & \multicolumn{1}{c|}{41391}            & $\times$          & \multicolumn{1}{c|}{$-$}      & $-$                  \\ \hline
+$q_{23}$                           & \multicolumn{1}{c|}{265}          & \multicolumn{1}{c|}{1645}             & $\times$          & \multicolumn{1}{c|}{338}          & \multicolumn{1}{c|}{2607}             & $\times$          & \multicolumn{1}{c|}{8926635}      & $-$                  \\ \hline
+$q_{24}$                           & \multicolumn{1}{c|}{139}          & \multicolumn{1}{c|}{531}              & $\times$          & \multicolumn{1}{c|}{129}          & \multicolumn{1}{c|}{608}              & $\times$          & \multicolumn{1}{c|}{1982441}      & 2530072                  \\ \hline
+\end{tabular}
+\label{tab:unlabel_edge_induced}}\hfil
+\subfloat[Vertex-induced]{
+\begin{tabular}{|cc|cc|cc|}
+\hline
+\multicolumn{2}{|c|}{\textbf{WikiVote}}               & \multicolumn{2}{c|}{\textbf{Enron}}                  & \multicolumn{2}{c|}{\textbf{MiCo}}                                                              \\ \hline
+\multicolumn{1}{|c|}{\textbf{Our}} & \textbf{Dryadic} & \multicolumn{1}{c|}{\textbf{Our}} & \textbf{Dryadic} & \multicolumn{1}{c|}{\textbf{Our}}                                    & \textbf{Dryadic}         \\ \hline
+\multicolumn{1}{|c|}{296}          & 3169             & \multicolumn{1}{c|}{229}          & 2216             & \multicolumn{1}{c|}{5365}                                            & 36026                    \\ \hline
+\multicolumn{1}{|c|}{850}          & 6949             & \multicolumn{1}{c|}{1075}         & 4863             & \multicolumn{1}{c|}{20383}                                           & 69869                    \\ \hline
+\multicolumn{1}{|c|}{106}          & 1429             & \multicolumn{1}{c|}{101}          & 731              & \multicolumn{1}{c|}{1946}                                            & 14486                    \\ \hline
+\multicolumn{1}{|c|}{186}          & 1471             & \multicolumn{1}{c|}{206}          & 674              & \multicolumn{1}{c|}{3339}                                            & 12361                    \\ \hline
+\multicolumn{1}{|c|}{194}          & 1767             & \multicolumn{1}{c|}{133}          & 640              & \multicolumn{1}{c|}{3439}                                            & 13105                    \\ \hline
+\multicolumn{1}{|c|}{65}           & 468              & \multicolumn{1}{c|}{41}           & 200              & \multicolumn{1}{c|}{882}                                             & 2397                     \\ \hline
+\multicolumn{1}{|c|}{28}           & 178              & \multicolumn{1}{c|}{34}           & 96               & \multicolumn{1}{c|}{6255}                                            & 23963                    \\ \hline
+\multicolumn{1}{|c|}{36}           & 120              & \multicolumn{1}{c|}{62}           & 146              & \multicolumn{1}{c|}{1597}                                            & 23267                    \\ \hline
+\multicolumn{1}{|c|}{2088}         & 14515            & \multicolumn{1}{c|}{1455}         & 4947             & \multicolumn{1}{c|}{82274}                                           & 487075                   \\ \hline
+\multicolumn{1}{|c|}{6380}         & 63026            & \multicolumn{1}{c|}{8871}         & 40426            & \multicolumn{1}{c|}{109851}                                          & 801632                   \\ \hline
+\multicolumn{1}{|c|}{707}          & 8921             & \multicolumn{1}{c|}{388}          & 2355             & \multicolumn{1}{c|}{4837}                                            & 34842                    \\ \hline
+\multicolumn{1}{|c|}{21384}        & 294242           & \multicolumn{1}{c|}{22693}        & 144714           & \multicolumn{1}{c|}{1173245}                                         & 9161840                  \\ \hline
+\multicolumn{1}{|c|}{2668}         & 80389            & \multicolumn{1}{c|}{1659}         & 22919            & \multicolumn{1}{c|}{43399}                                           & 762982                   \\ \hline
+\multicolumn{1}{|c|}{497}          & 2279             & \multicolumn{1}{c|}{814}          & 1480             & \multicolumn{1}{c|}{275703}                                          & 923136                   \\ \hline
+\multicolumn{1}{|c|}{86}           & 579              & \multicolumn{1}{c|}{110}          & 307              & \multicolumn{1}{c|}{315526}                                          & 1298950                  \\ \hline
+\multicolumn{1}{|c|}{48}           & 288              & \multicolumn{1}{c|}{47}           & 305              & \multicolumn{1}{c|}{56089}                                           & 92557                    \\ \hline
+\multicolumn{1}{|c|}{2216}         & 7667             & \multicolumn{1}{c|}{1399}         & 2639             & \multicolumn{1}{c|}{2159917}                                         & 4488633                  \\ \hline
+\multicolumn{1}{|c|}{6729}         & 16586            & \multicolumn{1}{c|}{4469}         & 4681             & \multicolumn{1}{c|}{750974} & 896309 \\ \hline
+\multicolumn{1}{|c|}{2301}         & 3968             & \multicolumn{1}{c|}{1091}         & 1437             & \multicolumn{1}{c|}{142918}                                          & 164562                   \\ \hline
+\multicolumn{1}{|c|}{2037}         & 13433            & \multicolumn{1}{c|}{1645}         & 5007             & \multicolumn{1}{c|}{1889880}                        & 		2854831 \\ \hline
+\multicolumn{1}{|c|}{1567}         & 4236             & \multicolumn{1}{c|}{2732}         & 2860             & \multicolumn{1}{c|}{$-$}                        & $-$ \\ \hline
+\multicolumn{1}{|c|}{996}          & 3940             & \multicolumn{1}{c|}{902}          & 1770             & \multicolumn{1}{c|}{3235240}                                         & 6674460                  \\ \hline
+\multicolumn{1}{|c|}{285}          & 1089             & \multicolumn{1}{c|}{356}          & 535              & \multicolumn{1}{c|}{17854918}                                        & $-$                 \\ \hline
+\multicolumn{1}{|c|}{139}          & 531              & \multicolumn{1}{c|}{129}          & 608              & \multicolumn{1}{c|}{1982441}                                         & 2530072                  \\ \hline
+\end{tabular}}
+ \captionof{table}{Execution time (in milliseconds) of different systems for unlabeled matching. `$\times$' indicates program failure \textcolor{red}{due to out-of-memory}. `$-$' indicates timeout after 8 hours. CuTS only supports edge-induced matching. It fails for all queries on MiCo.}
+\label{tab:unlabel_result}
+ \end{figure*}
+
+
+\begin{figure*}[t]
+    \centering
+        \includegraphics[scale=.53]{1.stmatch/figure/scalability.pdf}
+    \caption{\textcolor{red}{Speedups of labeled and unlabeled size-6 queries across multiple GPUs. }}
+    \label{fig:scalability}
+\end{figure*}
+ 
+ \begin{table*}
+ \centering
+  \ssmall
+\begin{tabular}{|c|ccc|ccc|ccc|cc|cc|cc|cc|}
+\hline
+\multirow{2}{*}{} & \multicolumn{3}{c|}{\textbf{WikiVote}}                                                   & \multicolumn{3}{c|}{\textbf{Enron}}                                                      & \multicolumn{3}{c|}{\textbf{YouTube}}                                                    & \multicolumn{2}{c|}{\textbf{MiCo}}                    & \multicolumn{2}{c|}{\textbf{LiveJournal}}            & \multicolumn{2}{c|}{\textbf{Orkut}}                  & \multicolumn{2}{c|}{\textbf{Friendster}}             \\ \cline{2-18} 
+                  & \multicolumn{1}{c|}{\textbf{Our}} & \multicolumn{1}{c|}{\textbf{Dryadic}} & \textbf{GSI} & \multicolumn{1}{c|}{\textbf{Our}} & \multicolumn{1}{c|}{\textbf{Dryadic}} & \textbf{GSI} & \multicolumn{1}{c|}{\textbf{Our}} & \multicolumn{1}{c|}{\textbf{Dryadic}} & \textbf{GSI} & \multicolumn{1}{c|}{\textbf{Our}} & \textbf{Dryadic} & \multicolumn{1}{c|}{\textbf{Our}} & \textbf{Dryadic} & \multicolumn{1}{c|}{\textbf{Our}} & \textbf{Dryadic} & \multicolumn{1}{c|}{\textbf{Our}} & \textbf{Dryadic} \\ \hline
+$q_{1}$                 & \multicolumn{1}{c|}{6}            & \multicolumn{1}{c|}{52}               & 307          & \multicolumn{1}{c|}{8}            & \multicolumn{1}{c|}{41}               & 527          & \multicolumn{1}{c|}{28}           & \multicolumn{1}{c|}{188}              & $\times$         & \multicolumn{1}{c|}{49}            & 231              & \multicolumn{1}{c|}{558}          & 7524             & \multicolumn{1}{c|}{6701}         & 459615           & \multicolumn{1}{c|}{59850}        & 290752           \\ \hline
+$q_{2}$                  & \multicolumn{1}{c|}{6}            & \multicolumn{1}{c|}{43}               & 276          & \multicolumn{1}{c|}{9}            & \multicolumn{1}{c|}{44}               & 514          & \multicolumn{1}{c|}{51}           & \multicolumn{1}{c|}{204}              & 11656        & \multicolumn{1}{c|}{44}            & 335              & \multicolumn{1}{c|}{534}          & 6402             & \multicolumn{1}{c|}{7874}         & 91568            & \multicolumn{1}{c|}{59998}        & 420521           \\ \hline
+$q_{3}$                  & \multicolumn{1}{c|}{4}            & \multicolumn{1}{c|}{37}               & 193          & \multicolumn{1}{c|}{8}            & \multicolumn{1}{c|}{26}               & 415          & \multicolumn{1}{c|}{22}           & \multicolumn{1}{c|}{66}               & 9856         & \multicolumn{1}{c|}{12}            & 168              & \multicolumn{1}{c|}{224}          & 3101             & \multicolumn{1}{c|}{359}          & 7595             & \multicolumn{1}{c|}{5681}         & 35879            \\ \hline
+$q_{4}$                  & \multicolumn{1}{c|}{5}            & \multicolumn{1}{c|}{37}               & 194          & \multicolumn{1}{c|}{7}            & \multicolumn{1}{c|}{34}               & 445          & \multicolumn{1}{c|}{24}           & \multicolumn{1}{c|}{876}              & 9596         & \multicolumn{1}{c|}{31}            & 243              & \multicolumn{1}{c|}{403}          & 4518             & \multicolumn{1}{c|}{2014}         & 17267            & \multicolumn{1}{c|}{6563}         & 199131           \\ \hline
+$q_{5}$                  & \multicolumn{1}{c|}{4}            & \multicolumn{1}{c|}{29}               & 179          & \multicolumn{1}{c|}{7}            & \multicolumn{1}{c|}{31}               & 440          & \multicolumn{1}{c|}{25}           & \multicolumn{1}{c|}{79}               & 9425         & \multicolumn{1}{c|}{30}            & 132              & \multicolumn{1}{c|}{388}          & 3082             & \multicolumn{1}{c|}{2456}         & 3723             & \multicolumn{1}{c|}{5788}         & 35462            \\ \hline
+$q_{6}$                  & \multicolumn{1}{c|}{4}            & \multicolumn{1}{c|}{32}               & 193          & \multicolumn{1}{c|}{8}            & \multicolumn{1}{c|}{28}               & 399          & \multicolumn{1}{c|}{23}           & \multicolumn{1}{c|}{124}              & 9694         & \multicolumn{1}{c|}{30}            & 163              & \multicolumn{1}{c|}{385}          & 4360             & \multicolumn{1}{c|}{987}          & 5326             & \multicolumn{1}{c|}{8289}         & 38578            \\ \hline
+$q_{7}$                   & \multicolumn{1}{c|}{4}            & \multicolumn{1}{c|}{31}               & 170          & \multicolumn{1}{c|}{6}            & \multicolumn{1}{c|}{31}               & 426          & \multicolumn{1}{c|}{22}           & \multicolumn{1}{c|}{92}               & 9498         & \multicolumn{1}{c|}{11}            & 155              & \multicolumn{1}{c|}{232}          & 3682             & \multicolumn{1}{c|}{332}          & 3221             & \multicolumn{1}{c|}{4829}         & 39381            \\ \hline
+$q_{8}$                  & \multicolumn{1}{c|}{4}            & \multicolumn{1}{c|}{36}               & 170          & \multicolumn{1}{c|}{7}            & \multicolumn{1}{c|}{34}               & 433          & \multicolumn{1}{c|}{22}           & \multicolumn{1}{c|}{97}               & 10150        & \multicolumn{1}{c|}{29}            & 205              & \multicolumn{1}{c|}{361}          & 4667             & \multicolumn{1}{c|}{550}          & 2602             & \multicolumn{1}{c|}{5400}         & 39469            \\ \hline
+$q_{9}$                  & \multicolumn{1}{c|}{4}            & \multicolumn{1}{c|}{28}               & 336          & \multicolumn{1}{c|}{6}            & \multicolumn{1}{c|}{139}              & 631          & \multicolumn{1}{c|}{23}           & \multicolumn{1}{c|}{84}               & 11531        & \multicolumn{1}{c|}{59}            & 1358             & \multicolumn{1}{c|}{1188}         & 58189            & \multicolumn{1}{c|}{7778}         & 12585            & \multicolumn{1}{c|}{6331}         & 55096            \\ \hline
+$q_{10}$                 & \multicolumn{1}{c|}{6}            & \multicolumn{1}{c|}{77}               & 3453         & \multicolumn{1}{c|}{10}           & \multicolumn{1}{c|}{104}              & 6371         & \multicolumn{1}{c|}{54}           & \multicolumn{1}{c|}{605}              & $\times$         & \multicolumn{1}{c|}{108}           & 4937             & \multicolumn{1}{c|}{2083}         & 133943           & \multicolumn{1}{c|}{16867}        & 800817           & \multicolumn{1}{c|}{21219}        & 631370           \\ \hline
+$q_{11}$                 & \multicolumn{1}{c|}{5}            & \multicolumn{1}{c|}{50}               & 454          & \multicolumn{1}{c|}{8}            & \multicolumn{1}{c|}{83}               & 1019         & \multicolumn{1}{c|}{27}           & \multicolumn{1}{c|}{406}              & 26830        & \multicolumn{1}{c|}{92}            & 2468             & \multicolumn{1}{c|}{1479}         & 130529           & \multicolumn{1}{c|}{1585}         & 1423820          & \multicolumn{1}{c|}{9975}         & 273557           \\ \hline
+$q_{12}$                & \multicolumn{1}{c|}{7}            & \multicolumn{1}{c|}{50}               & 532          & \multicolumn{1}{c|}{10}           & \multicolumn{1}{c|}{65}               & 1043         & \multicolumn{1}{c|}{320}          & \multicolumn{1}{c|}{461}              & 34503        & \multicolumn{1}{c|}{362}           & 2693             & \multicolumn{1}{c|}{5943}         & 127701           & \multicolumn{1}{c|}{16316}        & 415670           & \multicolumn{1}{c|}{10472}        & 239624           \\ \hline
+$q_{13}$                & \multicolumn{1}{c|}{6}            & \multicolumn{1}{c|}{60}               & 434          & \multicolumn{1}{c|}{9}            & \multicolumn{1}{c|}{48}               & 754          & \multicolumn{1}{c|}{42}           & \multicolumn{1}{c|}{173}              & 11659        & \multicolumn{1}{c|}{86}            & 2048             & \multicolumn{1}{c|}{1487}         & 121818           & \multicolumn{1}{c|}{3788}         & 503492           & \multicolumn{1}{c|}{8078}         & 109472           \\ \hline
+$q_{14}$                 & \multicolumn{1}{c|}{5}            & \multicolumn{1}{c|}{28}               & 183          & \multicolumn{1}{c|}{7}            & \multicolumn{1}{c|}{40}               & 450          & \multicolumn{1}{c|}{39}           & \multicolumn{1}{c|}{120}              & 9898         & \multicolumn{1}{c|}{436}           & 1550             & \multicolumn{1}{c|}{6927}         & 110435           & \multicolumn{1}{c|}{1288}         & 6013             & \multicolumn{1}{c|}{7726}         & 66602            \\ \hline
+$q_{15}$                 & \multicolumn{1}{c|}{4}            & \multicolumn{1}{c|}{35}               & 211          & \multicolumn{1}{c|}{7}            & \multicolumn{1}{c|}{40}               & 424          & \multicolumn{1}{c|}{23}           & \multicolumn{1}{c|}{128}              & 9640         & \multicolumn{1}{c|}{88}            & 2230             & \multicolumn{1}{c|}{1212}         & 156588           & \multicolumn{1}{c|}{814}          & 5933             & \multicolumn{1}{c|}{5816}         & 71651            \\ \hline
+$q_{16}$                & \multicolumn{1}{c|}{5}            & \multicolumn{1}{c|}{49}               & 219          & \multicolumn{1}{c|}{8}            & \multicolumn{1}{c|}{39}               & 409          & \multicolumn{1}{c|}{35}           & \multicolumn{1}{c|}{152}              & 9759         & \multicolumn{1}{c|}{456}           & 2592             & \multicolumn{1}{c|}{6695}         & 172881           & \multicolumn{1}{c|}{1115}         & 5438             & \multicolumn{1}{c|}{6800}         & 73175            \\ \hline
+$q_{17}$                & \multicolumn{1}{c|}{7}            & \multicolumn{1}{c|}{43}               & 209          & \multicolumn{1}{c|}{10}           & \multicolumn{1}{c|}{39}               & 468          & \multicolumn{1}{c|}{86}           & \multicolumn{1}{c|}{155}              & 10053        & \multicolumn{1}{c|}{7313}          & 44682            & \multicolumn{1}{c|}{241432}       & 4163993          & \multicolumn{1}{c|}{7064}         & 18595            & \multicolumn{1}{c|}{12417}        & 115459           \\ \hline
+$q_{18}$                & \multicolumn{1}{c|}{8}            & \multicolumn{1}{c|}{48}               & 236          & \multicolumn{1}{c|}{11}           & \multicolumn{1}{c|}{53}               & 469          & \multicolumn{1}{c|}{65}           & \multicolumn{1}{c|}{277}              & 9851         & \multicolumn{1}{c|}{7337}          & 59603            & \multicolumn{1}{c|}{247403}       & 7811903          & \multicolumn{1}{c|}{11116}        & 39459            & \multicolumn{1}{c|}{20339}        & 139946           \\ \hline
+$q_{19}$                & \multicolumn{1}{c|}{10}           & \multicolumn{1}{c|}{75}               & 251          & \multicolumn{1}{c|}{11}           & \multicolumn{1}{c|}{55}               & 513          & \multicolumn{1}{c|}{70}           & \multicolumn{1}{c|}{319}              & 9718         & \multicolumn{1}{c|}{7176}          & 55240            & \multicolumn{1}{c|}{228997}       & 7362388          & \multicolumn{1}{c|}{7777}         & 53865            & \multicolumn{1}{c|}{14304}        & 155747           \\ \hline
+$q_{20}$                 & \multicolumn{1}{c|}{6}            & \multicolumn{1}{c|}{55}               & 224          & \multicolumn{1}{c|}{13}           & \multicolumn{1}{c|}{53}               & 492          & \multicolumn{1}{c|}{179}          & \multicolumn{1}{c|}{253}              & 10582        & \multicolumn{1}{c|}{1129}          & 61624            & \multicolumn{1}{c|}{30353}        & 6278270          & \multicolumn{1}{c|}{6859}         & 27509            & \multicolumn{1}{c|}{11451}        & 136761           \\ \hline
+$q_{21}$                & \multicolumn{1}{c|}{6}            & \multicolumn{1}{c|}{61}               & 224          & \multicolumn{1}{c|}{10}           & \multicolumn{1}{c|}{63}               & 439          & \multicolumn{1}{c|}{54}           & \multicolumn{1}{c|}{219}              & 10429        & \multicolumn{1}{c|}{7273}          & 46943            & \multicolumn{1}{c|}{201273}       & 4233415          & \multicolumn{1}{c|}{4286}         & 20143            & \multicolumn{1}{c|}{12280}        & 134500           \\ \hline
+$q_{22}$                 & \multicolumn{1}{c|}{6}            & \multicolumn{1}{c|}{55}               & 202          & \multicolumn{1}{c|}{9}            & \multicolumn{1}{c|}{48}               & 465          & \multicolumn{1}{c|}{62}           & \multicolumn{1}{c|}{244}              & 10033        & \multicolumn{1}{c|}{1518}          & 56191            & \multicolumn{1}{c|}{35000}        & 7102923          & \multicolumn{1}{c|}{2685}         & 23024            & \multicolumn{1}{c|}{8449}         & 138652           \\ \hline
+$q_{23}$                 & \multicolumn{1}{c|}{6}            & \multicolumn{1}{c|}{48}               & 233          & \multicolumn{1}{c|}{9}            & \multicolumn{1}{c|}{44}               & 454          & \multicolumn{1}{c|}{64}           & \multicolumn{1}{c|}{324}              & 10149        & \multicolumn{1}{c|}{1522}          & 48920            & \multicolumn{1}{c|}{32808}        & 5669286          & \multicolumn{1}{c|}{1645}         & 20310            & \multicolumn{1}{c|}{7799}         & 140028           \\ \hline
+$q_{24}$                 & \multicolumn{1}{c|}{6}            & \multicolumn{1}{c|}{42}               & 203          & \multicolumn{1}{c|}{9}            & \multicolumn{1}{c|}{52}               & 442          & \multicolumn{1}{c|}{58}           & \multicolumn{1}{c|}{289}              & 10133        & \multicolumn{1}{c|}{7312}          & 65286            & \multicolumn{1}{c|}{196941}       & 7166516          & \multicolumn{1}{c|}{3395}         & 19515            & \multicolumn{1}{c|}{10332}        & 146617           \\ \hline
+\end{tabular}
+    \caption{Execution time (in milliseconds) of different systems for labeled edge-induced matching. GSI fails for all queries on MiCo, LiveJournal, Orkut and Friendster.}
+    \vspace{-.5em}
+\label{tab:label_edge_induced}
+\end{table*}
+
+
+
+GSI and cuTS are subgraph isomorphism systems: they obtain edge-induced subgraphs that are isomorphic to the query graph. 
+Thus, we configure our system and Dryadic to run edge-induced matching (by removing the set difference operations) and compare with the two systems. 
+\textcolor{red}{Table~\ref{tab:unlabel_result}(a)} lists the execution time of unlabeled edge-induced queries \textcolor{red}{on a single GPU}. 
+We do not list the execution time of GSI in this table because it either aborts or is dominated by cuTS. 
+We can see that Dryadic consistently outperforms cuTS, while our system outperforms both Dryadic and cuTS for all testcases. 
+Compared with cuTS, our system achieves up to 3385x speedups with an average of 694x. Compared with Dryadic, our system achieves up to 52x speedups with an average of 11x. 
+
+
+Table~\ref{tab:label_edge_induced} lists the execution time of  labeled edge-induced queries \textcolor{red}{on a single GPU}.  
+Our system shows consistently better performance than the other two systems. 
+It achieves 24x to 991x speedups against GSI, and 1.4x to to 898x speedups against Dryadic. 
+The speedups are more significant on larger data graphs. 
+The average speedup against GSI is 67x, 89x and 306x for WikiVote, Enron and YouTube, respectively. 
+The average speedup against Dryadic grows from 6x to 56x for different graphs. 
+The results indicate that our system scales better on large graphs compared to GSI and Dryadic. 
+
+
+We also compare with Dryadic for vertex-induced matching. 
+For $q_8$, $q_{16}$ and $q_{24}$ which are cliques, vertex-induced matching is the same as edge-induced. 
+The execution time of unlabeled queries is shown in \textcolor{red}{Table~\ref{tab:unlabel_result}(b)}. 
+Our system outperforms Dryadic for all testcases with  a maximum speedup of 30x and an average speedup of 6x. 
+
+
+
+\textcolor{red}{
+Our system can be easily run on multiple GPUs by duplicating the input graph and dividing the outermost loop iterations (i.e., $V$ in Fig.~\ref{fig:getcandidates}) across GPUs. 
+Fig.~\ref{fig:scalability} shows the speedups of running labeled and unlabeled $q_9\sim q_{16}$ on LiveJournal, Orkut and MiCo with two and four GPUs. 
+Our system can also be extended to run on distributed GPU clusters with slight changes in the work-stealing procedure to take the communication cost across machines into consideration. } 
+
+\subsubsection{Benefits of Proposed Techniques}
+
+\begin{figure*}[t]
+    \centering
+    \subfloat[Enron]{
+     \includegraphics[scale=0.53]{1.stmatch/figure/benefit_enron.pdf}
+    }\hfil
+     \subfloat[MiCo]{
+     \includegraphics[scale=0.53]{1.stmatch/figure/benefit_mico.pdf}
+    }\\
+     \subfloat[YouTube]{
+     \includegraphics[scale=0.53]{1.stmatch/figure/benefit_youtube.pdf}
+    }\hfil
+     \subfloat[LiveJournal]{
+     \includegraphics[scale=0.53]{1.stmatch/figure/benefit_livejournal.pdf}
+    }
+       \caption{\textcolor{red}{Speedups of labeled size-6 queries with and without work-stealing and loop unrolling. }}
+    \label{fig:effects}
+\end{figure*}
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=.53]{1.stmatch/figure/utilization.pdf}
+    \caption{\textcolor{red}{Thread utilization with different unrolling sizes. }}
+    \label{fig:utilization}
+\end{figure}
+
+
+To show the effectiveness of our work-stealing and loop unrolling techniques, we perform an ablation study on our system. 
+We first run a {\tt naive} version without work-stealing and loop unrolling. 
+Then, we allow the warps to steal workloads from other warps within the threadblock ({\tt localsteal}) and across threadblocks ({\tt local+globalsteal}). 
+Last, we unroll the loops and make each warp perform multiple set operations simultaneously ({\tt unroll+local+globalsteal}). 
+
+Fig.~\ref{fig:effects} shows the execution time of different versions for labeled size-6 queries on different graphs. 
+We can see that local work-stealing brings the most benefit to our system, achieving more than 2x speedups for almost all testcases. 
+Global work-stealing further improves the performance on MiCo and LiveJournal where the workload is large enough to justify the overhead of copying stacks among threadblocks. 
+It achieves 1.3x to 2.0x speedups on top of local work-stealing on MiCo graph and 1.1x to 1.3x speedups on LiveJournal. 
+Global stealing is less effective on Enron and YouTube as the workload in each warp is already small after applying local work-stealing. 
+The execution time with global stealing is almost the same as without global stealing on these two graphs, indicating that the overhead of our global work-stealing technique is small. 
+\textcolor{red}{To show direct evidence of improvement brought by work-stealing, we profile our system with Nvidia Nsight and obtain warp occupancy with and without work-stealing. The occupancy numbers are labeled in the figures, and they are consistent with the speedups. }
+
+
+After applying loop unrolling, the performance is further improved.  
+\textcolor{red}{Fig.~\ref{fig:utilization} shows the thread utilization of various queries with different unrolling sizes. As expected, a larger unrolling size leads to higher utilization. }
+Due to increased thread utilization, loop unrolling achieves 1.1x to 2.6x speedups on top of {\tt local+globalsteal} on MiCo, and 1.1 to 1.9x speedups on LiveJournal. 
+Compared to naive version, work-stealing and loop unrolling together achieve up to 12x speedups. 
+All the versions above use code motion. 
+If we disable code motion, the naive baseline will be about 3x slower. 
+
+
+
+
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------------%
+\subsection{Related Work}
+Graph pattern matching and its related problems have been extensively studied in the past decades. 
+Numerous systems with different algorithms have been proposed. 
+As we focus on parallelizing backtracking in this work, 
+we give a summary of backtracking-based graph pattern matching systems. 
+
+\noindent
+\textbf{CPU-based systems: }
+The study of subgraph isomorphism problem dates back to 1970s. 
+Ullmann~\cite{ullmann1976algorithm} proposes the first backtracking algorithm that iteratively matches  query nodes on data graph based on a certain order. 
+Many studies follow this seminal work and propose different strategies to optimize the matching order~\cite{1323804, 10.14778/1453856.1453899, 10.14778/3342263.3342643, 10.14778/1920841.1920887}. 
+They show that a good matching order can significantly reduce the exploration space and accelerate the matching process. 
+Some recent work show that a dynamic matching order based on the local topology and label distribution of the data graph can further reduce the exploration space~\cite{10.1145/2463676.2465300, 10.1145/2882903.2915236, lee2012depth, 10.1145/3299869.3319880}. 
+A more recent work, Dryadic~\cite{mawhirter2021dryadic}, proposes to search for an optimal static matching order and optimize the computation tree instead of input adaptation. 
+It achieves  state-of-the-art performance on CPU compared with the earlier systems. 
+Since matching order is not the focus of this work, we simply adopt the matching order of Dryadic in our system. 
+However, our system can be extended with any of the previous matching order strategies. 
+
+\noindent
+\textbf{GPU-based systems: }
+There are a number of GPU systems for subgraph isomorphism. 
+All of them are subgraph-centric. 
+Some systems~\cite{tran2015fast, wang2016fast, zeng2020gsi} adopt a breadth-first extension order that favors GPU architecture. 
+They store all partial subgraphs of a certain size before exploring larger subgraphs. 
+Due to the large intermediate exploration space, the partial subgraphs can easily exceed the GPU memory limit. 
+To reduce the memory consumption, some other works adopt a hybrid DFS and BFS extension order~\cite{lin2016network, xiang2021cuts}. 
+Given a memory capacity, they pre-allocate a portion of memory for each level. 
+To generate the partial subgraphs
+for next level, they take a set of partial subgraphs at current
+level that are estimated to fit into the pre-allocated memory. 
+The procedure is repeated for each level until all matching subgraphs are found. 
+CuTS~\cite{xiang2021cuts} proposes a compact trie-based data structure to further reduce the size of intermediate subgraphs. 
+It reportedly achieves the state-of-the-art performance on GPU compared with  earlier systems. 
+Previous work has also considered exploiting multiple GPUs to accelerate pattern matching on large graphs~\cite{guo2020gpu, xiang2021cuts}. 
+PBE~\cite{guo2020gpu} proposes a matching algorithm on partitioned graphs so that each GPU only holds a portion of the data graph. 
+
+\noindent
+\textbf{Distributed systems: }
+Graph pattern matching has also been studied on distributed systems~\cite{yang2021huge, bhattarai2019ceci, ren2019fast, wang2019benu, lai2016scalable, lai2017scalable, shi2020graphpi}. 
+The main challenge is to balance the workload among machines. 
+CECI~\cite{bhattarai2019ceci} proposes a compact embedding cluster index to divide the data graph into multiple embedding clusters for parallel processing. 
+They design a proactive workload balancing strategy with a search cardinality based cost function. 
+RADS~\cite{ren2019fast} proposes a region-grouped multi-round expand technique to reduce communication and minimize intermediate result storage. 
+BENU~\cite{wang2019benu} proposes a task splitting technique based on node degree to optimize the load balance among machines. 
+GraphPi~\cite{shi2020graphpi} uses a communication thread to maintain a task queue on each machine and steal work from other machines when its task is smaller than a threshold. 
+
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------------%
+
+\subsection{Conclusion}
+In this work, we study the parallelization of backtracking-based graph pattern matching on GPU. 
+We propose a stack-based implementation that avoids the synchronization and memory consumption issues of previous systems. 
+We also show that the performance of our system can be improved by applying a series of loop optimizations. 
+The experiments show that our system significantly outperforms the state-of-the-art solutions. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

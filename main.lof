@@ -1,2 +1,21 @@
-\contentsline {figure}{\numberline {1}{\ignorespaces Old capital museum\relax }}{1}{figure.caption.3}%
-\contentsline {figure}{\numberline {2}{\ignorespaces Kinnick stadium\relax }}{3}{figure.caption.5}%
+\contentsline {figure}{\numberline {1}{\ignorespaces Graph pattern matching implemented as a nested loop. $N(v)$ means the neighbors of node $v$ in the data graph. \relax }}{4}{figure.caption.4}%
+\contentsline {figure}{\numberline {2}{\ignorespaces A query graph.\relax }}{5}{figure.caption.5}%
+\contentsline {figure}{\numberline {3}{\ignorespaces Graph pattern matching implemented as a stack-based while loop. \relax }}{8}{figure.caption.6}%
+\contentsline {figure}{\numberline {4}{\ignorespaces \leavevmode {\color {red}An example of $getCandidates$ in two different warps. }\relax }}{9}{figure.caption.7}%
+\contentsline {figure}{\numberline {5}{\ignorespaces An example of dividing and copying tasks from a target warp.\relax }}{11}{figure.caption.9}%
+\contentsline {figure}{\numberline {6}{\ignorespaces Work stealing across threadblocks.\relax }}{12}{figure.caption.10}%
+\contentsline {figure}{\numberline {7}{\ignorespaces \leavevmode {\color {red}An unrolled version of the loop in Fig.\nobreakspace {}\ref {fig:while_loop_orig}.} \relax }}{13}{figure.caption.11}%
+\contentsline {figure}{\numberline {8}{\ignorespaces Perform multiple set operations in one warp.\relax }}{14}{figure.caption.12}%
+\contentsline {figure}{\numberline {9}{\ignorespaces The set dependence graph for unlabeled query of Fig.\nobreakspace {}\ref {fig:example_query}.\relax }}{16}{figure.caption.13}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Set dependence graph}}}{16}{subfigure.9.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {A compact storage}}}{16}{subfigure.9.2}%
+\contentsline {figure}{\numberline {10}{\ignorespaces The set dependence graph for labeled query of Fig.\nobreakspace {}\ref {fig:example_query}. `' denotes the label(s) of nodes in a set.\relax }}{16}{figure.caption.14}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Separate label sets}}}{16}{subfigure.10.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Merged label sets}}}{16}{subfigure.10.2}%
+\contentsline {figure}{\numberline {11}{\ignorespaces \leavevmode {\color {red}Speedups of labeled and unlabeled size-6 queries across multiple GPUs. }\relax }}{30}{figure.caption.17}%
+\contentsline {figure}{\numberline {12}{\ignorespaces \leavevmode {\color {red}Speedups of labeled size-6 queries with and without work-stealing and loop unrolling. }\relax }}{30}{figure.caption.19}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Enron}}}{30}{subfigure.12.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {MiCo}}}{30}{subfigure.12.2}%
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {YouTube}}}{30}{subfigure.12.3}%
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {LiveJournal}}}{30}{subfigure.12.4}%
+\contentsline {figure}{\numberline {13}{\ignorespaces \leavevmode {\color {red}Thread utilization with different unrolling sizes. }\relax }}{30}{figure.caption.20}%

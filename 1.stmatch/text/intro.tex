@@ -1,0 +1,59 @@
+\section{Introduction}
+
+Graph pattern matching is widely used for retrieving information from graph-structured data in many application domains, including bioinformatics~\cite{Milo824}, social network analysis~\cite{10.1145/2488388.2488502}, and cybersecurity~\cite{noel2018review}.  
+The problem stems from the well-known subgraph isomorphism problem, which aims to find all subgraphs that are isomorphic to a given query pattern, and it is the fundamental task for many related problems, such as motif counting and clique listing~\cite{10.1145/3341301.3359633}. 
+
+Due to its importance in real applications, graph pattern matching has been extensively studied in the past decades. 
+Numerous algorithms and implementations have been proposed~\cite{ullmann1976algorithm, 1323804, 10.14778/1453856.1453899, 10.14778/3342263.3342643, 10.14778/1920841.1920887, lee2012depth, 10.1145/2882903.2915236, 10.1145/3299869.3319880, 10.1145/2463676.2465300}. 
+However, as the problem is NP-hard~\cite{hartmanis1982computers}, it is still a performance bottleneck in many applications, and it is always desirable to scale the computation to large graphs. 
+Therefore, there is a growing interest in exploiting the massive parallelism on GPU to accelerate the computation~\cite{zeng2020gsi, xiang2021cuts, tran2015fast, wang2016fast}. 
+
+
+
+Despite their different optimizations, the existing GPU graph pattern matching systems all take a subgraph-centric approach. 
+They maintain a list of valid partial subgraphs and extend them by one vertex/edge in each step until the desired pattern size is reached. 
+To extend a partial subgraph, they either add a new edge to it by performing a binary join operation~\cite{tran2015fast, wang2016fast}, or they find a match for the next pattern node by performing set operations on the neighbor lists of the  previous nodes~\cite{xiang2021cuts, zeng2020gsi}. 
+A common feature of these systems is that they need to store the partially matched subgraphs explicitly. 
+For example, GSI~\cite{zeng2020gsi} stores the partial subgraphs in a table, and it assigns each partial subgraph to a warp on GPU for extension.
+A more recent work, cuTS~\cite{xiang2021cuts}, reduces the memory consumption by using a trie-based data structure to store the partial subgraphs. It also improves GPU thread utilization by assigning each partial subgraph to a virtual warp. 
+
+The subgraph-centric implementation facilitates parallelization; however, it has several inherent issues for GPU execution. 
+First, it requires synchronization at the end of each extension step. 
+The current systems maintain a list of partial subgraphs and launch a GPU kernel to process them at every step. 
+The kernel launch and the synchronization incur an overhead. 
+Second, the partial subgraphs take a lot of memory space. 
+Although a hybrid DFS and BFS extension order can alleviate the issue~\cite{xiang2021cuts}, it requires much more kernel launches and synchronizations. 
+Third, the subgraph-centric implementation loses the implicit hierarchy of partial subgraphs and thus disables some optimizations that can be applied to the backtracking procedure (e.g., loop-invariant code motion and pattern merging~\cite{mawhirter2021dryadic}). 
+\textcolor{red}{As a result, the state-of-the-art GPU graph pattern matching system (cuTS~\cite{xiang2021cuts}) can be even slower than a highly optimized CPU implementation (Dryadic~\cite{mawhirter2021dryadic}) in many cases (See Table~\ref{tab:unlabel_result}). }
+
+
+
+To overcome the limitations of the subgraph-centric systems, we study the parallelization of backtracking on GPU in this work. 
+We first show that the subgraph-centric approach taken by the existing systems corresponds to the {\em inner-loop} parallelization of the backtracking algorithm. 
+Unlike the previous systems, we choose to parallelize the backtracking procedure from the outermost loop. 
+This eliminates the synchronization on GPU and enables our system to finish the computation with one kernel launch.  
+The main issue with this {\em outer-loop} parallelization is that it suffers from severe load imbalance. 
+We address the issue by adopting a stack-based implementation of the backtracking algorithm and proposing a two-level work-stealing technique. 
+We also observe that the intra-warp thread utilization is low when the data graph is sparse. 
+This is because most nodes in these graphs have only a few neighbors and the set operations cannot occupy all the threads in a warp. 
+To improve the thread utilization, we propose a loop-unrolling technique that combines the set operations for multiple sets and assigns them to a single warp. 
+Finally, 
+as pointed out in~\cite{mawhirter2021dryadic}, the backtracking procedure involves a lot of redundant set operations, which can be eliminated by loop-invariant code motion. 
+We adapt the code motion technique in~\cite{mawhirter2021dryadic} and show that our system can be easily and efficiently extended with this optimization. 
+
+In summary, we make the following contributions:
+\begin{enumerate}
+    \item We propose the first stack-based graph pattern matching system on GPU, which avoids the synchronization and the memory consumption issue of previous subgraph-centric systems. 
+    \item We propose a two-level work-stealing and a loop unrolling technique to improve the inter-warp and intra-warp GPU resource utilization for our system.
+    \item We implement a code-motion technique to reduce redundant computation in our system and showcase that our system is compatible with the existing optimizations for backtracking-based graph pattern matching. 
+\end{enumerate}
+
+We perform an extensive evaluation of our system using various query patterns and input graphs, and compare with three state-of-the-art graph pattern matching systems: cuTS~\cite{xiang2021cuts}, GSI~\cite{zeng2020gsi} and Dryadic~\cite{mawhirter2021dryadic}. 
+The experiments show that our system achieves 24x to 3385x speedups against cuTS and GSI on an Nvidia GeForce RTX 3090 GPU and up to 898x speedups against Dryadic. 
+
+
+
+
+
+
+

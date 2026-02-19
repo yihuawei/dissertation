@@ -1,0 +1,279 @@
+\section{Experimental Results}
+In this section, we compare our system with two state-of-the-art GPU graph pattern matching systems: cuTS~\cite{xiang2021cuts} and GSI~\cite{zeng2020gsi}, and a state-of-the-art CPU system: Dryadic~\cite{mawhirter2021dryadic}. 
+GSI achieves consistently better (or equal) performance than many previous CPU and GPU implementations such as CFL-Match~\cite{10.1145/2882903.2915236}, CBWJ~\cite{10.14778/3342263.3342643},
+VF3~\cite{7907163}, GPSM~\cite{tran2015fast} and Gunrock~\cite{wang2016fast}. 
+CuTS has shown even better performance than GSI. 
+However, because cuTS\footnote{\url{ https://doi.org/10.5281/zenodo.5154114}} does not support labeled queries, we also compare with GSI\footnote{\url{https://github.com/pkumod/GSI}} for labeled matching tasks. 
+
+
+
+\subsection{Experimental Setup}
+\label{sec:setup}
+
+
+\begin{table}[t]
+\centering
+\ssmall
+\begin{tabular}{c|c|c|c|c|c}
+{\bf Graph}       & {\bf \# nodes} & {\bf \# edges} & {\bf Max deg.} & {\bf Med deg.} & {\bf Deg. $>$ 4096 }        \\ \hline 
+WikiVote      & 7K       & 100K    &1065 & 3  & 0 \\ \hline
+Enron         & 37K     & 183K   &1383 & 3  & 0     \\ \hline
+MiCo      & 96K       & 1.1M      &1359 & 18 & 0    \\ \hline
+YouTube      & 1.1M       & 3.0M      &28754 & 1 & 0.06\%     \\ \hline
+LiveJournal      & 4M       & 34.7M     &14815 & 6 & 0.12\%        \\ \hline
+Orkut     & 3.1M       & 117.2M     &33313 &  45 &  1.13\%    \\ \hline
+Friendster     & 65.6M       & 1.8B     &5214 &  9 &  9.1e-8\%    \\ \hline
+\end{tabular}
+\caption{Graph datasets.}
+\label{tab:datasets}
+\end{table}
+
+\noindent
+\textbf{Platform: } 
+\textcolor{red}{Our experiments are conducted on a dual socket machine with four Nvidia RTX3090 GPUs, two Intel Xeon Gold 6226R 2.9GHz CPUs (32 cores in total), and 512GB RAM.}
+We use GCC9.4.0 and NVCC11.2 with O2 level optimization to compile the code. 
+
+\noindent
+\textbf{Datasets and query graphs: }
+Table~\ref{tab:datasets} lists the data graphs used in our experiments. 
+These graph are obtained from the SNAP~\cite{snapnets} repository and are commonly used for evaluating graph pattern matching systems. 
+For query graphs, we first adopt the queries from cuTS.  
+CuTS uses directed query graphs. The 33 directed queries used in their experiments actually have only six undirected patterns.
+While our system supports both directed and undirected graphs, we use undirected graph in our evaluation because it is a more common setup in the graph pattern matching literature~\cite{zeng2020gsi, tran2015fast, 10.14778/1920841.1920887, 10.1145/2882903.2915236, mawhirter2021dryadic}. 
+The 33 queries in cuTS experiments are covered by $q_7$, $q_8$, $q_{15}$, $q_{16}$, $q_{23}$, $q_{24}$ in our experiments, among which $q_8$, $q_{16}$ and $q_{24}$ are cliques (i.e., fully connected graphs). 
+Then, we randomly select six query graphs from size-5, size-6, size-7 motifs, respectively. 
+In total, we test with 24 distinct query graphs\textcolor{red}{: $q_1\sim q_8$  of size-5, $q_9\sim q_{16}$ of size-6, and $q_{17}\sim q_{24}$ of size-7.}
+Our system supports both labeled and unlabeled graphs. 
+To evaluate the performance of labeled matching, we follow the setup in Dryadic~\cite{mawhirter2021dryadic} and randomly assign ten labels to the data and query graphs. 
+For fairness, we use the same matching order of query nodes (adopted from Dryadic) for all  systems. 
+
+\noindent
+\textbf{Settings: }
+In all experiments, we set the $StopLevel$ in Algorithm~\ref{alg:select_target} to 2, and the $DetectLevel$ for global work-stealing in Section~\ref{sec:global_steal} to 1. 
+The unrolling size is set to 8. 
+We set the {\em MAX\_DEGREE} of array $C$ to 4096. 
+The size of array $C$ is {\em NUM\_SETS}$\times${\em UNROLL}$\times${\em MAX\_DEGREE}$\times${\em NUM\_WARPS}. 
+For queries of no more than seven nodes, we have {\em NUM\_SETS}$\leq$15 (this number is determined by the code motion analysis). 
+The maximum number of active warps on our GPU is $82\times 32 = 2624$. 
+Thus, besides the storage of data graph, our system consumes a fixed 4.8GB GPU memory for queries of up to seven nodes. 
+For graphs whose max degrees are larger than 4096, we store the extra nodes in the sets with more than 4096 nodes on CPU. 
+Because real-world graphs are skewed and few nodes have degrees greater than 4096 (last column in Table~\ref{tab:datasets}), it is very rare for the program to access CPU memory. 
+\textcolor{red}{We run cuTS and GSI with the same number of total warps on GPU, and run Dryadic with 64 threads on CPU.} 
+
+
+\subsection{Overall Performance}
+
+\begin{figure*}[t]
+\centering
+  \ssmall
+\subfloat[Edge-induced]{
+\begin{tabular}{|c|ccc|ccc|cc|}
+\hline
+                            & \multicolumn{3}{c|}{\textbf{WikiVote}}                                                    & \multicolumn{3}{c|}{\textbf{Enron}}                                                       & \multicolumn{2}{c|}{\textbf{MiCo}}                           \\ \cline{2-9} 
+\multirow{-2}{*}{\textbf{}} & \multicolumn{1}{c|}{\textbf{Our}} & \multicolumn{1}{c|}{\textbf{Dryadic}} & \textbf{cuTS} & \multicolumn{1}{c|}{\textbf{Our}} & \multicolumn{1}{c|}{\textbf{Dryadic}} & \textbf{cuTS} & \multicolumn{1}{c|}{\textbf{Our}} & \textbf{Dryadic}         \\ \hline
+$q_{1}$                           & \multicolumn{1}{c|}{492}          & \multicolumn{1}{c|}{4534}             & 168512        & \multicolumn{1}{c|}{349}          & \multicolumn{1}{c|}{3002}             & 155051        & \multicolumn{1}{c|}{22367}        & 128527                   \\ \hline
+$q_{2}$                            & \multicolumn{1}{c|}{1689}         & \multicolumn{1}{c|}{9543}             & 110529        & \multicolumn{1}{c|}{2033}         & \multicolumn{1}{c|}{7814}             & 89721         & \multicolumn{1}{c|}{96785}        & 105408                   \\ \hline
+$q_{3}$                           & \multicolumn{1}{c|}{131}          & \multicolumn{1}{c|}{3045}             & 41077         & \multicolumn{1}{c|}{137}          & \multicolumn{1}{c|}{2866}             & 36946         & \multicolumn{1}{c|}{20327}        & 46350                    \\ \hline
+$q_{4}$                            & \multicolumn{1}{c|}{295}          & \multicolumn{1}{c|}{3451}             & 31679         & \multicolumn{1}{c|}{355}          & \multicolumn{1}{c|}{4151}             & 25935         & \multicolumn{1}{c|}{32288}        & 70327                    \\ \hline
+$q_{5}$                            & \multicolumn{1}{c|}{246}          & \multicolumn{1}{c|}{1647}             & 15612         & \multicolumn{1}{c|}{185}          & \multicolumn{1}{c|}{2411}             & 16357         & \multicolumn{1}{c|}{26398}        & 142830                   \\ \hline
+$q_{6}$                            & \multicolumn{1}{c|}{109}          & \multicolumn{1}{c|}{713}              & 29449         & \multicolumn{1}{c|}{73}           & \multicolumn{1}{c|}{593}              & 24455         & \multicolumn{1}{c|}{14330}        & 23623                    \\ \hline
+$q_{7}$                            & \multicolumn{1}{c|}{23}           & \multicolumn{1}{c|}{679}              & 11845         & \multicolumn{1}{c|}{32}           & \multicolumn{1}{c|}{808}              & 12502         & \multicolumn{1}{c|}{4153}         & 171986                   \\ \hline
+$q_{8}$                            & \multicolumn{1}{c|}{36}           & \multicolumn{1}{c|}{120}              & 9602          & \multicolumn{1}{c|}{62}           & \multicolumn{1}{c|}{146}              & 9990          & \multicolumn{1}{c|}{1597}         & 23267                    \\ \hline
+$q_{9}$                           & \multicolumn{1}{c|}{2932}         & \multicolumn{1}{c|}{5271}             & $\times$          & \multicolumn{1}{c|}{2095}         & \multicolumn{1}{c|}{6860}             & $\times$          & \multicolumn{1}{c|}{1408189}      & 4028865                  \\ \hline
+$q_{10}$                           & \multicolumn{1}{c|}{27904}        & \multicolumn{1}{c|}{215643}           & $\times$          & \multicolumn{1}{c|}{33514}        & \multicolumn{1}{c|}{362646}           & $\times$          & \multicolumn{1}{c|}{4752770}      &$-$ \\ \hline
+$q_{11}$                           & \multicolumn{1}{c|}{1858}         & \multicolumn{1}{c|}{41214}            & $\times$          & \multicolumn{1}{c|}{1641}         & \multicolumn{1}{c|}{61693}            & $\times$          & \multicolumn{1}{c|}{1358694}      &$-$ \\ \hline
+$q_{12}$                           & \multicolumn{1}{c|}{8993}         & \multicolumn{1}{c|}{315366}           & $\times$          & \multicolumn{1}{c|}{9807}         & \multicolumn{1}{c|}{510956}           & $\times$          & \multicolumn{1}{c|}{5636367}      &$-$ \\ \hline
+$q_{13}$                           & \multicolumn{1}{c|}{7485}         & \multicolumn{1}{c|}{54704}            & $\times$          & \multicolumn{1}{c|}{5995}         & \multicolumn{1}{c|}{61520}            & $\times$          & \multicolumn{1}{c|}{4368254}      &$-$ \\ \hline
+$q_{14}$                           & \multicolumn{1}{c|}{651}          & \multicolumn{1}{c|}{1423}             & 165745        & \multicolumn{1}{c|}{981}          & \multicolumn{1}{c|}{2071}             & 204686        & \multicolumn{1}{c|}{1827655}      &9364411 \\ \hline
+$q_{15}$                           & \multicolumn{1}{c|}{88}           & \multicolumn{1}{c|}{598}              & 137895        & \multicolumn{1}{c|}{107}          & \multicolumn{1}{c|}{886}              & 160304        & \multicolumn{1}{c|}{196210}       & 1237420                  \\ \hline
+$q_{16}$                           & \multicolumn{1}{c|}{48}           & \multicolumn{1}{c|}{288}              & 131286        & \multicolumn{1}{c|}{47}           & \multicolumn{1}{c|}{305}              & 160022        & \multicolumn{1}{c|}{56089}        & 92557                    \\ \hline
+$q_{17}$                           & \multicolumn{1}{c|}{5599}         & \multicolumn{1}{c|}{5963}             & $\times$          & \multicolumn{1}{c|}{5228}         & \multicolumn{1}{c|}{9167}             & $\times$          & \multicolumn{1}{c|}{$-$}      & $-$                  \\ \hline
+$q_{18}$                           & \multicolumn{1}{c|}{39178}        & \multicolumn{1}{c|}{235003}           & $\times$          & \multicolumn{1}{c|}{31010}        & \multicolumn{1}{c|}{344761}           & $\times$          & \multicolumn{1}{c|}{$-$}      & $-$                  \\ \hline
+$q_{19}$                           & \multicolumn{1}{c|}{9634}         & \multicolumn{1}{c|}{131236}           & $\times$          & \multicolumn{1}{c|}{13417}        & \multicolumn{1}{c|}{162903}           & $\times$          & \multicolumn{1}{c|}{$-$}      & $-$                  \\ \hline
+$q_{20}$                           & \multicolumn{1}{c|}{3608}         & \multicolumn{1}{c|}{31267}            & $\times$          & \multicolumn{1}{c|}{3995}         & \multicolumn{1}{c|}{38992}            & $\times$          & \multicolumn{1}{c|}{$-$}      & $-$                  \\ \hline
+$q_{21}$                           & \multicolumn{1}{c|}{2000}         & \multicolumn{1}{c|}{5361}             & $\times$          & \multicolumn{1}{c|}{4150}         & \multicolumn{1}{c|}{7917}             & $\times$          & \multicolumn{1}{c|}{$-$}      & $-$                  \\ \hline
+$q_{22}$                           & \multicolumn{1}{c|}{2075}         & \multicolumn{1}{c|}{33991}            & $\times$          & \multicolumn{1}{c|}{2194}         & \multicolumn{1}{c|}{41391}            & $\times$          & \multicolumn{1}{c|}{$-$}      & $-$                  \\ \hline
+$q_{23}$                           & \multicolumn{1}{c|}{265}          & \multicolumn{1}{c|}{1645}             & $\times$          & \multicolumn{1}{c|}{338}          & \multicolumn{1}{c|}{2607}             & $\times$          & \multicolumn{1}{c|}{8926635}      & $-$                  \\ \hline
+$q_{24}$                           & \multicolumn{1}{c|}{139}          & \multicolumn{1}{c|}{531}              & $\times$          & \multicolumn{1}{c|}{129}          & \multicolumn{1}{c|}{608}              & $\times$          & \multicolumn{1}{c|}{1982441}      & 2530072                  \\ \hline
+\end{tabular}
+\label{tab:unlabel_edge_induced}}\hfil
+\subfloat[Vertex-induced]{
+\begin{tabular}{|cc|cc|cc|}
+\hline
+\multicolumn{2}{|c|}{\textbf{WikiVote}}               & \multicolumn{2}{c|}{\textbf{Enron}}                  & \multicolumn{2}{c|}{\textbf{MiCo}}                                                              \\ \hline
+\multicolumn{1}{|c|}{\textbf{Our}} & \textbf{Dryadic} & \multicolumn{1}{c|}{\textbf{Our}} & \textbf{Dryadic} & \multicolumn{1}{c|}{\textbf{Our}}                                    & \textbf{Dryadic}         \\ \hline
+\multicolumn{1}{|c|}{296}          & 3169             & \multicolumn{1}{c|}{229}          & 2216             & \multicolumn{1}{c|}{5365}                                            & 36026                    \\ \hline
+\multicolumn{1}{|c|}{850}          & 6949             & \multicolumn{1}{c|}{1075}         & 4863             & \multicolumn{1}{c|}{20383}                                           & 69869                    \\ \hline
+\multicolumn{1}{|c|}{106}          & 1429             & \multicolumn{1}{c|}{101}          & 731              & \multicolumn{1}{c|}{1946}                                            & 14486                    \\ \hline
+\multicolumn{1}{|c|}{186}          & 1471             & \multicolumn{1}{c|}{206}          & 674              & \multicolumn{1}{c|}{3339}                                            & 12361                    \\ \hline
+\multicolumn{1}{|c|}{194}          & 1767             & \multicolumn{1}{c|}{133}          & 640              & \multicolumn{1}{c|}{3439}                                            & 13105                    \\ \hline
+\multicolumn{1}{|c|}{65}           & 468              & \multicolumn{1}{c|}{41}           & 200              & \multicolumn{1}{c|}{882}                                             & 2397                     \\ \hline
+\multicolumn{1}{|c|}{28}           & 178              & \multicolumn{1}{c|}{34}           & 96               & \multicolumn{1}{c|}{6255}                                            & 23963                    \\ \hline
+\multicolumn{1}{|c|}{36}           & 120              & \multicolumn{1}{c|}{62}           & 146              & \multicolumn{1}{c|}{1597}                                            & 23267                    \\ \hline
+\multicolumn{1}{|c|}{2088}         & 14515            & \multicolumn{1}{c|}{1455}         & 4947             & \multicolumn{1}{c|}{82274}                                           & 487075                   \\ \hline
+\multicolumn{1}{|c|}{6380}         & 63026            & \multicolumn{1}{c|}{8871}         & 40426            & \multicolumn{1}{c|}{109851}                                          & 801632                   \\ \hline
+\multicolumn{1}{|c|}{707}          & 8921             & \multicolumn{1}{c|}{388}          & 2355             & \multicolumn{1}{c|}{4837}                                            & 34842                    \\ \hline
+\multicolumn{1}{|c|}{21384}        & 294242           & \multicolumn{1}{c|}{22693}        & 144714           & \multicolumn{1}{c|}{1173245}                                         & 9161840                  \\ \hline
+\multicolumn{1}{|c|}{2668}         & 80389            & \multicolumn{1}{c|}{1659}         & 22919            & \multicolumn{1}{c|}{43399}                                           & 762982                   \\ \hline
+\multicolumn{1}{|c|}{497}          & 2279             & \multicolumn{1}{c|}{814}          & 1480             & \multicolumn{1}{c|}{275703}                                          & 923136                   \\ \hline
+\multicolumn{1}{|c|}{86}           & 579              & \multicolumn{1}{c|}{110}          & 307              & \multicolumn{1}{c|}{315526}                                          & 1298950                  \\ \hline
+\multicolumn{1}{|c|}{48}           & 288              & \multicolumn{1}{c|}{47}           & 305              & \multicolumn{1}{c|}{56089}                                           & 92557                    \\ \hline
+\multicolumn{1}{|c|}{2216}         & 7667             & \multicolumn{1}{c|}{1399}         & 2639             & \multicolumn{1}{c|}{2159917}                                         & 4488633                  \\ \hline
+\multicolumn{1}{|c|}{6729}         & 16586            & \multicolumn{1}{c|}{4469}         & 4681             & \multicolumn{1}{c|}{750974} & 896309 \\ \hline
+\multicolumn{1}{|c|}{2301}         & 3968             & \multicolumn{1}{c|}{1091}         & 1437             & \multicolumn{1}{c|}{142918}                                          & 164562                   \\ \hline
+\multicolumn{1}{|c|}{2037}         & 13433            & \multicolumn{1}{c|}{1645}         & 5007             & \multicolumn{1}{c|}{1889880}                        & 		2854831 \\ \hline
+\multicolumn{1}{|c|}{1567}         & 4236             & \multicolumn{1}{c|}{2732}         & 2860             & \multicolumn{1}{c|}{$-$}                        & $-$ \\ \hline
+\multicolumn{1}{|c|}{996}          & 3940             & \multicolumn{1}{c|}{902}          & 1770             & \multicolumn{1}{c|}{3235240}                                         & 6674460                  \\ \hline
+\multicolumn{1}{|c|}{285}          & 1089             & \multicolumn{1}{c|}{356}          & 535              & \multicolumn{1}{c|}{17854918}                                        & $-$                 \\ \hline
+\multicolumn{1}{|c|}{139}          & 531              & \multicolumn{1}{c|}{129}          & 608              & \multicolumn{1}{c|}{1982441}                                         & 2530072                  \\ \hline
+\end{tabular}}
+ \captionof{table}{Execution time (in milliseconds) of different systems for unlabeled matching. `$\times$' indicates program failure \textcolor{red}{due to out-of-memory}. `$-$' indicates timeout after 8 hours. CuTS only supports edge-induced matching. It fails for all queries on MiCo.}
+\label{tab:unlabel_result}
+ \end{figure*}
+
+
+\begin{figure*}[t]
+    \centering
+        \includegraphics[scale=.53]{figure/scalability.pdf}
+    \caption{\textcolor{red}{Speedups of labeled and unlabeled size-6 queries across multiple GPUs. }}
+    \label{fig:scalability}
+\end{figure*}
+ 
+ \begin{table*}
+ \centering
+  \ssmall
+\begin{tabular}{|c|ccc|ccc|ccc|cc|cc|cc|cc|}
+\hline
+\multirow{2}{*}{} & \multicolumn{3}{c|}{\textbf{WikiVote}}                                                   & \multicolumn{3}{c|}{\textbf{Enron}}                                                      & \multicolumn{3}{c|}{\textbf{YouTube}}                                                    & \multicolumn{2}{c|}{\textbf{MiCo}}                    & \multicolumn{2}{c|}{\textbf{LiveJournal}}            & \multicolumn{2}{c|}{\textbf{Orkut}}                  & \multicolumn{2}{c|}{\textbf{Friendster}}             \\ \cline{2-18} 
+                  & \multicolumn{1}{c|}{\textbf{Our}} & \multicolumn{1}{c|}{\textbf{Dryadic}} & \textbf{GSI} & \multicolumn{1}{c|}{\textbf{Our}} & \multicolumn{1}{c|}{\textbf{Dryadic}} & \textbf{GSI} & \multicolumn{1}{c|}{\textbf{Our}} & \multicolumn{1}{c|}{\textbf{Dryadic}} & \textbf{GSI} & \multicolumn{1}{c|}{\textbf{Our}} & \textbf{Dryadic} & \multicolumn{1}{c|}{\textbf{Our}} & \textbf{Dryadic} & \multicolumn{1}{c|}{\textbf{Our}} & \textbf{Dryadic} & \multicolumn{1}{c|}{\textbf{Our}} & \textbf{Dryadic} \\ \hline
+$q_{1}$                 & \multicolumn{1}{c|}{6}            & \multicolumn{1}{c|}{52}               & 307          & \multicolumn{1}{c|}{8}            & \multicolumn{1}{c|}{41}               & 527          & \multicolumn{1}{c|}{28}           & \multicolumn{1}{c|}{188}              & $\times$         & \multicolumn{1}{c|}{49}            & 231              & \multicolumn{1}{c|}{558}          & 7524             & \multicolumn{1}{c|}{6701}         & 459615           & \multicolumn{1}{c|}{59850}        & 290752           \\ \hline
+$q_{2}$                  & \multicolumn{1}{c|}{6}            & \multicolumn{1}{c|}{43}               & 276          & \multicolumn{1}{c|}{9}            & \multicolumn{1}{c|}{44}               & 514          & \multicolumn{1}{c|}{51}           & \multicolumn{1}{c|}{204}              & 11656        & \multicolumn{1}{c|}{44}            & 335              & \multicolumn{1}{c|}{534}          & 6402             & \multicolumn{1}{c|}{7874}         & 91568            & \multicolumn{1}{c|}{59998}        & 420521           \\ \hline
+$q_{3}$                  & \multicolumn{1}{c|}{4}            & \multicolumn{1}{c|}{37}               & 193          & \multicolumn{1}{c|}{8}            & \multicolumn{1}{c|}{26}               & 415          & \multicolumn{1}{c|}{22}           & \multicolumn{1}{c|}{66}               & 9856         & \multicolumn{1}{c|}{12}            & 168              & \multicolumn{1}{c|}{224}          & 3101             & \multicolumn{1}{c|}{359}          & 7595             & \multicolumn{1}{c|}{5681}         & 35879            \\ \hline
+$q_{4}$                  & \multicolumn{1}{c|}{5}            & \multicolumn{1}{c|}{37}               & 194          & \multicolumn{1}{c|}{7}            & \multicolumn{1}{c|}{34}               & 445          & \multicolumn{1}{c|}{24}           & \multicolumn{1}{c|}{876}              & 9596         & \multicolumn{1}{c|}{31}            & 243              & \multicolumn{1}{c|}{403}          & 4518             & \multicolumn{1}{c|}{2014}         & 17267            & \multicolumn{1}{c|}{6563}         & 199131           \\ \hline
+$q_{5}$                  & \multicolumn{1}{c|}{4}            & \multicolumn{1}{c|}{29}               & 179          & \multicolumn{1}{c|}{7}            & \multicolumn{1}{c|}{31}               & 440          & \multicolumn{1}{c|}{25}           & \multicolumn{1}{c|}{79}               & 9425         & \multicolumn{1}{c|}{30}            & 132              & \multicolumn{1}{c|}{388}          & 3082             & \multicolumn{1}{c|}{2456}         & 3723             & \multicolumn{1}{c|}{5788}         & 35462            \\ \hline
+$q_{6}$                  & \multicolumn{1}{c|}{4}            & \multicolumn{1}{c|}{32}               & 193          & \multicolumn{1}{c|}{8}            & \multicolumn{1}{c|}{28}               & 399          & \multicolumn{1}{c|}{23}           & \multicolumn{1}{c|}{124}              & 9694         & \multicolumn{1}{c|}{30}            & 163              & \multicolumn{1}{c|}{385}          & 4360             & \multicolumn{1}{c|}{987}          & 5326             & \multicolumn{1}{c|}{8289}         & 38578            \\ \hline
+$q_{7}$                   & \multicolumn{1}{c|}{4}            & \multicolumn{1}{c|}{31}               & 170          & \multicolumn{1}{c|}{6}            & \multicolumn{1}{c|}{31}               & 426          & \multicolumn{1}{c|}{22}           & \multicolumn{1}{c|}{92}               & 9498         & \multicolumn{1}{c|}{11}            & 155              & \multicolumn{1}{c|}{232}          & 3682             & \multicolumn{1}{c|}{332}          & 3221             & \multicolumn{1}{c|}{4829}         & 39381            \\ \hline
+$q_{8}$                  & \multicolumn{1}{c|}{4}            & \multicolumn{1}{c|}{36}               & 170          & \multicolumn{1}{c|}{7}            & \multicolumn{1}{c|}{34}               & 433          & \multicolumn{1}{c|}{22}           & \multicolumn{1}{c|}{97}               & 10150        & \multicolumn{1}{c|}{29}            & 205              & \multicolumn{1}{c|}{361}          & 4667             & \multicolumn{1}{c|}{550}          & 2602             & \multicolumn{1}{c|}{5400}         & 39469            \\ \hline
+$q_{9}$                  & \multicolumn{1}{c|}{4}            & \multicolumn{1}{c|}{28}               & 336          & \multicolumn{1}{c|}{6}            & \multicolumn{1}{c|}{139}              & 631          & \multicolumn{1}{c|}{23}           & \multicolumn{1}{c|}{84}               & 11531        & \multicolumn{1}{c|}{59}            & 1358             & \multicolumn{1}{c|}{1188}         & 58189            & \multicolumn{1}{c|}{7778}         & 12585            & \multicolumn{1}{c|}{6331}         & 55096            \\ \hline
+$q_{10}$                 & \multicolumn{1}{c|}{6}            & \multicolumn{1}{c|}{77}               & 3453         & \multicolumn{1}{c|}{10}           & \multicolumn{1}{c|}{104}              & 6371         & \multicolumn{1}{c|}{54}           & \multicolumn{1}{c|}{605}              & $\times$         & \multicolumn{1}{c|}{108}           & 4937             & \multicolumn{1}{c|}{2083}         & 133943           & \multicolumn{1}{c|}{16867}        & 800817           & \multicolumn{1}{c|}{21219}        & 631370           \\ \hline
+$q_{11}$                 & \multicolumn{1}{c|}{5}            & \multicolumn{1}{c|}{50}               & 454          & \multicolumn{1}{c|}{8}            & \multicolumn{1}{c|}{83}               & 1019         & \multicolumn{1}{c|}{27}           & \multicolumn{1}{c|}{406}              & 26830        & \multicolumn{1}{c|}{92}            & 2468             & \multicolumn{1}{c|}{1479}         & 130529           & \multicolumn{1}{c|}{1585}         & 1423820          & \multicolumn{1}{c|}{9975}         & 273557           \\ \hline
+$q_{12}$                & \multicolumn{1}{c|}{7}            & \multicolumn{1}{c|}{50}               & 532          & \multicolumn{1}{c|}{10}           & \multicolumn{1}{c|}{65}               & 1043         & \multicolumn{1}{c|}{320}          & \multicolumn{1}{c|}{461}              & 34503        & \multicolumn{1}{c|}{362}           & 2693             & \multicolumn{1}{c|}{5943}         & 127701           & \multicolumn{1}{c|}{16316}        & 415670           & \multicolumn{1}{c|}{10472}        & 239624           \\ \hline
+$q_{13}$                & \multicolumn{1}{c|}{6}            & \multicolumn{1}{c|}{60}               & 434          & \multicolumn{1}{c|}{9}            & \multicolumn{1}{c|}{48}               & 754          & \multicolumn{1}{c|}{42}           & \multicolumn{1}{c|}{173}              & 11659        & \multicolumn{1}{c|}{86}            & 2048             & \multicolumn{1}{c|}{1487}         & 121818           & \multicolumn{1}{c|}{3788}         & 503492           & \multicolumn{1}{c|}{8078}         & 109472           \\ \hline
+$q_{14}$                 & \multicolumn{1}{c|}{5}            & \multicolumn{1}{c|}{28}               & 183          & \multicolumn{1}{c|}{7}            & \multicolumn{1}{c|}{40}               & 450          & \multicolumn{1}{c|}{39}           & \multicolumn{1}{c|}{120}              & 9898         & \multicolumn{1}{c|}{436}           & 1550             & \multicolumn{1}{c|}{6927}         & 110435           & \multicolumn{1}{c|}{1288}         & 6013             & \multicolumn{1}{c|}{7726}         & 66602            \\ \hline
+$q_{15}$                 & \multicolumn{1}{c|}{4}            & \multicolumn{1}{c|}{35}               & 211          & \multicolumn{1}{c|}{7}            & \multicolumn{1}{c|}{40}               & 424          & \multicolumn{1}{c|}{23}           & \multicolumn{1}{c|}{128}              & 9640         & \multicolumn{1}{c|}{88}            & 2230             & \multicolumn{1}{c|}{1212}         & 156588           & \multicolumn{1}{c|}{814}          & 5933             & \multicolumn{1}{c|}{5816}         & 71651            \\ \hline
+$q_{16}$                & \multicolumn{1}{c|}{5}            & \multicolumn{1}{c|}{49}               & 219          & \multicolumn{1}{c|}{8}            & \multicolumn{1}{c|}{39}               & 409          & \multicolumn{1}{c|}{35}           & \multicolumn{1}{c|}{152}              & 9759         & \multicolumn{1}{c|}{456}           & 2592             & \multicolumn{1}{c|}{6695}         & 172881           & \multicolumn{1}{c|}{1115}         & 5438             & \multicolumn{1}{c|}{6800}         & 73175            \\ \hline
+$q_{17}$                & \multicolumn{1}{c|}{7}            & \multicolumn{1}{c|}{43}               & 209          & \multicolumn{1}{c|}{10}           & \multicolumn{1}{c|}{39}               & 468          & \multicolumn{1}{c|}{86}           & \multicolumn{1}{c|}{155}              & 10053        & \multicolumn{1}{c|}{7313}          & 44682            & \multicolumn{1}{c|}{241432}       & 4163993          & \multicolumn{1}{c|}{7064}         & 18595            & \multicolumn{1}{c|}{12417}        & 115459           \\ \hline
+$q_{18}$                & \multicolumn{1}{c|}{8}            & \multicolumn{1}{c|}{48}               & 236          & \multicolumn{1}{c|}{11}           & \multicolumn{1}{c|}{53}               & 469          & \multicolumn{1}{c|}{65}           & \multicolumn{1}{c|}{277}              & 9851         & \multicolumn{1}{c|}{7337}          & 59603            & \multicolumn{1}{c|}{247403}       & 7811903          & \multicolumn{1}{c|}{11116}        & 39459            & \multicolumn{1}{c|}{20339}        & 139946           \\ \hline
+$q_{19}$                & \multicolumn{1}{c|}{10}           & \multicolumn{1}{c|}{75}               & 251          & \multicolumn{1}{c|}{11}           & \multicolumn{1}{c|}{55}               & 513          & \multicolumn{1}{c|}{70}           & \multicolumn{1}{c|}{319}              & 9718         & \multicolumn{1}{c|}{7176}          & 55240            & \multicolumn{1}{c|}{228997}       & 7362388          & \multicolumn{1}{c|}{7777}         & 53865            & \multicolumn{1}{c|}{14304}        & 155747           \\ \hline
+$q_{20}$                 & \multicolumn{1}{c|}{6}            & \multicolumn{1}{c|}{55}               & 224          & \multicolumn{1}{c|}{13}           & \multicolumn{1}{c|}{53}               & 492          & \multicolumn{1}{c|}{179}          & \multicolumn{1}{c|}{253}              & 10582        & \multicolumn{1}{c|}{1129}          & 61624            & \multicolumn{1}{c|}{30353}        & 6278270          & \multicolumn{1}{c|}{6859}         & 27509            & \multicolumn{1}{c|}{11451}        & 136761           \\ \hline
+$q_{21}$                & \multicolumn{1}{c|}{6}            & \multicolumn{1}{c|}{61}               & 224          & \multicolumn{1}{c|}{10}           & \multicolumn{1}{c|}{63}               & 439          & \multicolumn{1}{c|}{54}           & \multicolumn{1}{c|}{219}              & 10429        & \multicolumn{1}{c|}{7273}          & 46943            & \multicolumn{1}{c|}{201273}       & 4233415          & \multicolumn{1}{c|}{4286}         & 20143            & \multicolumn{1}{c|}{12280}        & 134500           \\ \hline
+$q_{22}$                 & \multicolumn{1}{c|}{6}            & \multicolumn{1}{c|}{55}               & 202          & \multicolumn{1}{c|}{9}            & \multicolumn{1}{c|}{48}               & 465          & \multicolumn{1}{c|}{62}           & \multicolumn{1}{c|}{244}              & 10033        & \multicolumn{1}{c|}{1518}          & 56191            & \multicolumn{1}{c|}{35000}        & 7102923          & \multicolumn{1}{c|}{2685}         & 23024            & \multicolumn{1}{c|}{8449}         & 138652           \\ \hline
+$q_{23}$                 & \multicolumn{1}{c|}{6}            & \multicolumn{1}{c|}{48}               & 233          & \multicolumn{1}{c|}{9}            & \multicolumn{1}{c|}{44}               & 454          & \multicolumn{1}{c|}{64}           & \multicolumn{1}{c|}{324}              & 10149        & \multicolumn{1}{c|}{1522}          & 48920            & \multicolumn{1}{c|}{32808}        & 5669286          & \multicolumn{1}{c|}{1645}         & 20310            & \multicolumn{1}{c|}{7799}         & 140028           \\ \hline
+$q_{24}$                 & \multicolumn{1}{c|}{6}            & \multicolumn{1}{c|}{42}               & 203          & \multicolumn{1}{c|}{9}            & \multicolumn{1}{c|}{52}               & 442          & \multicolumn{1}{c|}{58}           & \multicolumn{1}{c|}{289}              & 10133        & \multicolumn{1}{c|}{7312}          & 65286            & \multicolumn{1}{c|}{196941}       & 7166516          & \multicolumn{1}{c|}{3395}         & 19515            & \multicolumn{1}{c|}{10332}        & 146617           \\ \hline
+\end{tabular}
+    \caption{Execution time (in milliseconds) of different systems for labeled edge-induced matching. GSI fails for all queries on MiCo, LiveJournal, Orkut and Friendster.}
+    \vspace{-.5em}
+\label{tab:label_edge_induced}
+\end{table*}
+
+
+
+GSI and cuTS are subgraph isomorphism systems: they obtain edge-induced subgraphs that are isomorphic to the query graph. 
+Thus, we configure our system and Dryadic to run edge-induced matching (by removing the set difference operations) and compare with the two systems. 
+\textcolor{red}{Table~\ref{tab:unlabel_result}(a)} lists the execution time of unlabeled edge-induced queries \textcolor{red}{on a single GPU}. 
+We do not list the execution time of GSI in this table because it either aborts or is dominated by cuTS. 
+We can see that Dryadic consistently outperforms cuTS, while our system outperforms both Dryadic and cuTS for all testcases. 
+Compared with cuTS, our system achieves up to 3385x speedups with an average of 694x. Compared with Dryadic, our system achieves up to 52x speedups with an average of 11x. 
+
+
+Table~\ref{tab:label_edge_induced} lists the execution time of  labeled edge-induced queries \textcolor{red}{on a single GPU}.  
+Our system shows consistently better performance than the other two systems. 
+It achieves 24x to 991x speedups against GSI, and 1.4x to to 898x speedups against Dryadic. 
+The speedups are more significant on larger data graphs. 
+The average speedup against GSI is 67x, 89x and 306x for WikiVote, Enron and YouTube, respectively. 
+The average speedup against Dryadic grows from 6x to 56x for different graphs. 
+The results indicate that our system scales better on large graphs compared to GSI and Dryadic. 
+
+
+We also compare with Dryadic for vertex-induced matching. 
+For $q_8$, $q_{16}$ and $q_{24}$ which are cliques, vertex-induced matching is the same as edge-induced. 
+The execution time of unlabeled queries is shown in \textcolor{red}{Table~\ref{tab:unlabel_result}(b)}. 
+Our system outperforms Dryadic for all testcases with  a maximum speedup of 30x and an average speedup of 6x. 
+
+
+
+\textcolor{red}{
+Our system can be easily run on multiple GPUs by duplicating the input graph and dividing the outermost loop iterations (i.e., $V$ in Fig.~\ref{fig:getcandidates}) across GPUs. 
+Fig.~\ref{fig:scalability} shows the speedups of running labeled and unlabeled $q_9\sim q_{16}$ on LiveJournal, Orkut and MiCo with two and four GPUs. 
+Our system can also be extended to run on distributed GPU clusters with slight changes in the work-stealing procedure to take the communication cost across machines into consideration. } 
+
+\subsection{Benefits of Proposed Techniques}
+
+\begin{figure*}[t]
+    \centering
+    \subfloat[Enron]{
+     \includegraphics[scale=0.53]{figure/benefit_enron.pdf}
+    }\hfil
+     \subfloat[MiCo]{
+     \includegraphics[scale=0.53]{figure/benefit_mico.pdf}
+    }\\
+     \subfloat[YouTube]{
+     \includegraphics[scale=0.53]{figure/benefit_youtube.pdf}
+    }\hfil
+     \subfloat[LiveJournal]{
+     \includegraphics[scale=0.53]{figure/benefit_livejournal.pdf}
+    }
+       \caption{\textcolor{red}{Speedups of labeled size-6 queries with and without work-stealing and loop unrolling. }}
+    \label{fig:effects}
+\end{figure*}
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=.53]{figure/utilization.pdf}
+    \caption{\textcolor{red}{Thread utilization with different unrolling sizes. }}
+    \label{fig:utilization}
+\end{figure}
+
+
+To show the effectiveness of our work-stealing and loop unrolling techniques, we perform an ablation study on our system. 
+We first run a {\tt naive} version without work-stealing and loop unrolling. 
+Then, we allow the warps to steal workloads from other warps within the threadblock ({\tt localsteal}) and across threadblocks ({\tt local+globalsteal}). 
+Last, we unroll the loops and make each warp perform multiple set operations simultaneously ({\tt unroll+local+globalsteal}). 
+
+Fig.~\ref{fig:effects} shows the execution time of different versions for labeled size-6 queries on different graphs. 
+We can see that local work-stealing brings the most benefit to our system, achieving more than 2x speedups for almost all testcases. 
+Global work-stealing further improves the performance on MiCo and LiveJournal where the workload is large enough to justify the overhead of copying stacks among threadblocks. 
+It achieves 1.3x to 2.0x speedups on top of local work-stealing on MiCo graph and 1.1x to 1.3x speedups on LiveJournal. 
+Global stealing is less effective on Enron and YouTube as the workload in each warp is already small after applying local work-stealing. 
+The execution time with global stealing is almost the same as without global stealing on these two graphs, indicating that the overhead of our global work-stealing technique is small. 
+\textcolor{red}{To show direct evidence of improvement brought by work-stealing, we profile our system with Nvidia Nsight and obtain warp occupancy with and without work-stealing. The occupancy numbers are labeled in the figures, and they are consistent with the speedups. }
+
+
+After applying loop unrolling, the performance is further improved.  
+\textcolor{red}{Fig.~\ref{fig:utilization} shows the thread utilization of various queries with different unrolling sizes. As expected, a larger unrolling size leads to higher utilization. }
+Due to increased thread utilization, loop unrolling achieves 1.1x to 2.6x speedups on top of {\tt local+globalsteal} on MiCo, and 1.1 to 1.9x speedups on LiveJournal. 
+Compared to naive version, work-stealing and loop unrolling together achieve up to 12x speedups. 
+All the versions above use code motion. 
+If we disable code motion, the naive baseline will be about 3x slower. 
+
+
+
+\iffalse
+\subsection{Overhead Analysis of Proposed Techniques}
+
+
+\textcolor{red}{To make an analysis of execution overhead of our proposed techniques, we first compare our load balance with the optimal load balance that could be achieved theoretically both on local and global work-stealing techniques. Then we observe the average thread utilization variation with the change of unrolling size. Last, we compare our system with cuTS on some profiling statistics like occupancy and memory workload.} 
+
+\textcolor{red}{All data in Fig.12 are profiled on the experiment result of Fig.11(b) that a labeled subgraph matching on MiCo. The columns in Fig.12(a) show the average clock cycles(acc) of all warps, and the data above each column is the amount of call stack data transferred within global memory. The idea columns are the acc of all warps without doing work-stealing, while the real columns are the acc of all warps with doing work-stealing. The idea columns are close to the acc of each warp when the optimal load balance is achieved. Fig.12(b) has the same meaning with Fig.12(a) but was profiled on global work-stealing and the average clock cycles was calculated among blocks. The height differences between idea and real columns are the overheads of doing work-stealing. From the figure, we can see that local work-stealing brings little overhead and the overheads of global work-stealing are very small. Fig 12(c) is thread utilization with the change of unroll size. We can see that loop unrolling truly improve the thread utilization and the results are in accord with the speedups. }
+\fi
+
+
+
+
+
+
+
+
+
+
+

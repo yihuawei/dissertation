@@ -1,0 +1,117 @@
+\section{Preliminaries}
+\label{sec:background}
+
+This section gives a formal definition of the graph pattern matching problem and describes the backtracking algorithm for solving the problem. 
+We also provide a brief background on GPU architecture to facilitate our discussion. 
+
+
+\subsection{Problem Definition}
+
+A {\em graph} $G$ is defined as $G = (V, E, L)$ consisting of a set of vertices $V$, a set of edges $E$ and a labeling function $L$ that assigns labels to the vertices and edges. 
+A graph $G' = (V', E', L')$ is a {\em subgraph} of graph $G = (V, E, L)$ if $V'\subseteq V$, $E'\subseteq E$ and $L'(v)=L(v), \forall v\in V'$. 
+A subgraph $G' = (V', E', L')$ is {\em vertex-induced} if all the edges in $E$ that connect the vertices in $V'$ are included $E'$. 
+A subgraph is {\em edge-induced} if it is connected and is not vertex-induced. 
+
+
+\begin{definition}[Isomorphism]
+  Two graphs $G_a=(V_a, E_a, L_a)$ and $G_b=(V_b, E_b, L_b)$ are isomorphic if there is a bijective function $f: V_a\Rightarrow V_b$ such that $(v_i, v_j)\in E_a$ if and only if $(f(v_i), f(v_j))\in E_b$.
+\end{definition}
+
+The graph pattern matching problem is defined as finding all the subgraphs in $G$ that are isomorphic to a given query graph $Q$. 
+The subgraphs to be found can be either vertex-induced or edge-induced. 
+If the subgraphs are edge-induced, the problem is equivalent to the subgraph isomorphism problem~\cite{ullmann1976algorithm}. 
+
+
+
+\subsection{Backtracking for Graph Pattern Matching}
+
+\begin{algorithm}[t]
+\footnotesize
+   \caption{Backtracking for graph pattern matching}
+   \label{alg:backtracking}
+   \KwIn{a data graph $G$ and a query graph $Q$}
+   \KwOut{all subgraphs in $G$ that are isomorphic to $Q$}
+  $\pi \gets$ generate a matching order\;
+    $\texttt{Enumerate}(G, Q, \pi, \{\}, 0)$\;
+   \SetKwFunction{Enumerate}{Enumerate}
+  \SetKwProg{Fn}{Procedure}{:}{}
+  \Fn{\Enumerate{$G, Q, \pi, m, l$}}{
+    \lIf{l = Q.size}
+    {Output $m$, \Return}
+    $u\gets \pi[l]$\;
+   $C_m(u)\gets$ getCandidates($G$, $Q$, $\pi$, $m$, $l$)\; 
+   \ForEach{$v \in C_m(u)$}{
+      Add $v$ to $m$\;
+      \texttt{Enumerate}($G$, $Q$, $\pi$, $m$, $l+1$)\;
+      Remove $v$ from $m$\;
+    }
+   }
+\end{algorithm}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.58]{figure/loop_example_orig.pdf}
+    \caption{Graph pattern matching implemented as a nested loop. $N(v)$ means the neighbors of node $v$ in the data graph. }
+    \label{fig:loop_example_orig}
+\end{figure}
+
+Algorithm~\ref{alg:backtracking} shows the backtracking algorithm that is commonly used for graph pattern matching. 
+The algorithm first generates a matching order $\pi$ for the nodes in the query graph (line 1). 
+The matching order ensures that the node to be matched in the next step (i.e., $\pi[l+1]$) is connected to at least one of the nodes matched in previous steps (i.e., $\pi[0], \ldots, \pi[l]$). 
+Prior work has shown that a carefully selected matching order can effectively prune the exploration space and reduce the computation~\cite{1323804, 10.14778/1453856.1453899, 10.14778/3342263.3342643, 10.14778/1920841.1920887}. 
+After obtaining the matching order, the algorithm invokes a recursive procedure to enumerate the subgraph isomorphisms (line 2). 
+Starting from an empty subgraph, the \texttt{Enumerate} procedure gradually grows the subgraph until it reaches the size of the query graph (line 4).  
+At each step $l$, it computes a set of nodes in $G$ that match the $l$th node of the query graph (line 6). 
+Then, for each node $v$ in the candidate set, it adds the node to the partially matched subgraph $m$ (line 8) and call the \texttt{Enumerate} procedure to match the next node in the pattern (line 9). 
+Once it returns from the recursive call, which means all the subgraphs extended from $m$ have been explored, the procedure remove $v$ from $m$ and backtracks (line 10).  
+
+
+
+
+
+Although the above backtracking algorithm can be directly translated into a recursive function, many graph pattern matching/mining systems implement it as a nested loop because it is more convenient for parallelization and optimization~\cite{10.1145/3341301.3359633, mawhirter2021dryadic, shi2020graphpi, besta2021sisa, gui2021sumpa, su2021exploring}. 
+As an example, Fig.~\ref{fig:loop_example_orig} shows the nested loop for  matching the query of Fig.~\ref{fig:example_query}. 
+\setlength{\columnsep}{1.8em}%
+\begin{wrapfigure}{r}{0.12\textwidth}
+     \centering
+      %   \vspace{-.5em}
+    \includegraphics[scale=0.56]{figure/example_query.pdf}
+    \vspace{-.5em}
+    \caption{A query graph.}
+    \vspace{-.5em}
+    \label{fig:example_query}
+\end{wrapfigure}
+The candidate nodes for the first loop are the nodes in the data graph that can be mapped to $u_0$. 
+The first loop iterates over all these nodes and tries to extend each node with its neighbors (line 4). 
+The second loop iterates over the candidate nodes for $u_1$ and tries to further extend the subgraph. 
+Because $u_2$ is a neighbor of $u_0$ but not a neighbor of $u_1$ in the query graph, the candidate nodes for $u_2$ must be in the neighbor list of $v_0$ but not in the neighbor list of $v_1$. 
+Thus, we compute the candidate nodes for $u_2$ as $N(v_0)-N(v_1)$. 
+Similarly, the third loop computes the candidate nodes for $u_3$ as $N(v_0)\cap N(v_1) \cap N(v_2)$ since $u_3$ is neighboring to $u_0$, $u_1$ and $u_2$. 
+
+
+\subsection{GPU Architecture}
+There are two types of parallelism on GPU: SIMT (Single Instruction Multiple Threads) and MIMD (Multiple Instruction Multiple Data). 
+The GPU threads are organized into {\em warps}, and the threads within a warp execute the same instruction simultaneously.  
+For branch statements, if different threads in a warp need to execute different branches, they have to execute one by one. 
+The situation is called {\em thread divergence}, and it hurts the performance because only a portion of the threads in a warp can be active at a time. 
+The warp is the smallest scheduling unit on GPU. 
+Different warps can execute different instructions on different data. 
+The warps are further organized into {\em threadblocks} (also called cooperative thread arrays) and are launched together onto the streaming multiprocessors.  
+
+A GPU typically has tens of streaming multiprocessors. 
+Each streaming multiprocessor has a number of registers and a programmable cache called {\em shared memory}. 
+Although it is possible to declare more register variables than the physical registers in a CUDA program, the variables will be spilled to constant memory, which may significantly slow down the program. 
+All the threads in a threadblock can access the shared memory. 
+The shared memory is much faster than the GPU global memory but also much smaller. The typical size of shared memory on a streaming multiprocessor is tens of KB. 
+When a threadblock uses more shared memory than what is available on a streaming multiprocessor, it cannot be launched. 
+A modern GPU can run more than 1K threads simultaneously on a streaming processing, but the shared memory usually puts a limit on the number of threads that can be active. 
+
+
+
+
+
+
+
+
+
+

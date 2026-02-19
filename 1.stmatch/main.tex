@@ -1,0 +1,78 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usepackage{wrapfig}
+\usepackage{tikz}
+\usepackage{subfig}
+\usepackage{url}
+\usepackage{multirow}
+\usepackage[10pt]{moresize}
+
+
+\renewcommand{\baselinestretch}{0.98}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+    
+\newcommand\mycommfont[1]{\footnotesize\ttfamily\textcolor{blue}{#1}}
+\SetCommentSty{mycommfont}
+
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{definition}{Definition}
+
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+            \node[shape=circle,draw,inner sep=.4pt] (char) {#1};}}
+\newcommand*\squared[1]{\tikz[baseline=(char.base)]{
+            \node[shape=rectangle,draw,inner sep=1pt] (char) {#1};}}
+    
+\begin{document}
+
+\title{STMatch: Accelerating Graph Pattern Matching on GPU with Stack-Based Loop Optimizations}
+
+\iffalse
+\author{\IEEEauthorblockN{1\textsuperscript{st} Given Name Surname}
+\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
+\textit{name of organization (of Aff.)}\\
+City, Country \\
+email address or ORCID}
+\and
+\IEEEauthorblockN{2\textsuperscript{nd} Given Name Surname}
+\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
+\textit{name of organization (of Aff.)}\\
+City, Country \\
+email address or ORCID}
+}
+\fi
+\maketitle
+
+\thispagestyle{plain}
+\pagestyle{plain}
+
+\input{text/abstract}
+\input{text/intro}
+\input{text/background}
+\input{text/challenge}
+\input{text/overview}
+\input{text/workstealing}
+\input{text/unrolling}
+\input{text/codemotion}
+\input{text/experiments}
+\input{text/related}
+\input{text/conclusion}
+
+
+\bibliographystyle{plain}
+\bibliography{jp.bib}
+
+
+
+\end{document}

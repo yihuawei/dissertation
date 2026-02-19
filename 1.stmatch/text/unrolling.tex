@@ -1,0 +1,67 @@
+\section{Improving Thread Utilization with Loop Unrolling} 
+
+
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.55]{figure/while_loop_unrolled.pdf}
+    \caption{\textcolor{red}{An unrolled version of the loop in Fig.~\ref{fig:while_loop_orig}.} }
+    \label{fig:while_loop_unrolled}
+\end{figure}
+
+
+
+With the original loop of Fig.~\ref{fig:while_loop_orig}, a warp performs one set operation at a time. 
+If the sets have only a few elements, most of the threads will be idle. 
+To improve thread utilization, we can unroll the loop iteration at each recursion level and perform the set operations of the unrolled iterations together.  
+%As an example, if we unroll the loop at line 5 of Fig.~\ref{fig:loop_example_orig},  we can combine $N(v_0)-N(v_1)$ for multiple $v_1$'s and process them simultaneously. 
+
+\textcolor{red}{Fig.~\ref{fig:while_loop_unrolled} shows the unrolled while-loop. 
+The idea is to add an unroll dimension to $C$ and $Csize$ so that the candidate nodes of multiple iterations can be stored at the same time. 
+In addition to $iter$ that stores the iterate number of the original loop, 
+we use an $uiter$ to store the index of unrolled iterations. 
+The program iterates over the unrolled iterations and the original loop iterations alternatively. 
+Every time the execution enters the next level, we compute the candidate nodes for all the unrolled iterations together (line 9). 
+Then, we iterate over the candidates in each of the unrolled iterations, match each candidate node to the query node, and go to the next level (line 15). 
+If all the unrolled iterations at level $l$ have been processed, we backtrack to the previous level and increment the iterate of the previous level by the unroll size (line 22). }
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.53]{figure/combined_set_operation.pdf}
+    \caption{Perform multiple set operations in one warp.}
+    \label{fig:combined_set_operation}
+\end{figure}
+
+With the unrolled loop, we can combine multiple set operations and process them using one warp. 
+Fig.~\ref{fig:combined_set_operation} shows the implementation of combined set operation. 
+We consider the general case where $M$ $set_1$'s need to intersect (or difference) with $M$ $set_2$'s. 
+Each thread in the warp gets one element from $set_1$'s at a time. 
+We first compute a prefix sum of the set sizes ($size\_scan$) and use it to get the set index ($set\_idx$) and the offset in the set ($set\_ofs$) for that element. 
+Then, we obtain the value of that element from $C[l][set\_idx][set\_ofs]$. 
+The value and the corresponding $set2[set\_idx]$ are given to a binary search procedure, which produces a result of 0 or 1. 
+For intersection operation, 1 means the value is found in $set2[set\_idx]$; for difference operation, 1 means the value is not found in $set2[set\_idx]$. 
+Next, with the $bsearch\_res$, we compute the output offset for each element that needs to be written to the output. 
+This corresponds to counting the number of 1's prior to that element in the same set, and it can be efficiently implemented with the {\tt \_\_ballot\_sync()} and {\tt \_\_popc()} primitive provided by CUDA.  
+Finally, these elements are written  to the result sets consecutively based on $set\_idx$ and $output\_ofs$. 
+It is obvious that this combined set operation has a higher thread utilization than computing them one-by-one. 
+
+The divide-and-copy procedure in Fig.~\ref{fig:stealiing_example} needs to be slightly modified to enable working stealing for the unrolled loop. 
+We use the same procedure for dividing and copying the tasks in the current unrolled iteration. 
+But for the remaining unrolled iterations, we need to set the $Csize$ to zero in the stealer stack since the tasks in these iterations are not stolen from the target.  
+We also need to copy $uiter$ from level zero to $target\_level$. 
+
+%Note that the unrolled loop is exactly the same as the original loop with only the set operations of  unrolled iterations combined together. 
+%In terms of effect, unrolling is similar to the hybrid DFS and BFS extension used in subgraph-centric systems~\cite{xiang2021cuts}. 
+%However, our stack-based implementation preserves the structure of the original loop and thus is compatible with optimizations for the backtracking algorithm. 
+%Some of these optimizations are hard to be applied to the subgraph-centric systems. 
+%We will show an example in the next section. 
+
+
+
+
+
+
+
+
+
+

@@ -1,13 +1,22 @@
-\contentsline {section}{List of Tables}{viii}{section*.1}%
-\contentsline {section}{List of Figures}{ix}{section*.2}%
-\contentsline {section}{\numberline {1}PREFACE}{x}{section.1}%
-\contentsline {section}{\numberline {2}heading 1: my chapter 1}{1}{section.2}%
-\contentsline {subsection}{\numberline {2.1}heading 2: Use for Your broadest Subheading Level, Centered, Bold, Title Case}{1}{subsection.2.1}%
-\contentsline {subsubsection}{\numberline {2.1.1}heading 3: Use for Your Next Heading Level, Left-aligned, Bold, Title Case}{1}{subsubsection.2.1.1}%
-\contentsline {paragraph}{Heading 4: This Heading is Left-aligned, Boldface Italics, Title Case}{1}{subsubsection.2.1.1}%
-\contentsline {section}{\numberline {3}my chapter 2}{2}{section.3}%
-\contentsline {section}{\numberline {4}my chapter 3}{3}{section.4}%
-\contentsline {subsection}{\numberline {4.1}heading 2: Use for Your broadest Subheading Level, Centered, Bold, Title Case}{4}{subsection.4.1}%
-\contentsline {section}{\numberline {5}references}{5}{section.5}%
-\contentsline {section}{\numberline {A}APPENDIX A: Numeric data}{6}{appendix.A}%
-\contentsline {section}{\numberline {B}APPENDIX B: Image data}{7}{appendix.B}%
+\contentsline {section}{List of Tables}{iii}{section*.1}%
+\contentsline {section}{List of Figures}{iv}{section*.2}%
+\contentsline {section}{\numberline {1}STMatch: Accelerating Graph Pattern Matching on GPU with Stack-Based Loop Optimizations}{1}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Introduction}{1}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Preliminaries}{3}{subsection.1.2}%
+\contentsline {subsubsection}{\numberline {1.2.1}Problem Definition}{3}{subsubsection.1.2.1}%
+\contentsline {subsubsection}{\numberline {1.2.2}Backtracking for Graph Pattern Matching}{4}{subsubsection.1.2.2}%
+\contentsline {subsubsection}{\numberline {1.2.3}GPU Architecture}{5}{subsubsection.1.2.3}%
+\contentsline {subsection}{\numberline {1.3}Challenges for Parallelizing Backtracking}{6}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}Overview of STMatch}{7}{subsection.1.4}%
+\contentsline {subsection}{\numberline {1.5}Load Balancing with Two-Level Work Stealing}{9}{subsection.1.5}%
+\contentsline {subsubsection}{\numberline {1.5.1}Stealing Within a Threadblock}{10}{subsubsection.1.5.1}%
+\contentsline {subsubsection}{\numberline {1.5.2}Stealing Across ThreadBlocks}{12}{subsubsection.1.5.2}%
+\contentsline {subsection}{\numberline {1.6}Improving Thread Utilization with Loop Unrolling}{13}{subsection.1.6}%
+\contentsline {subsection}{\numberline {1.7}Reducing Redundancy With Loop-Invariant Code Motion}{15}{subsection.1.7}%
+\contentsline {subsection}{\numberline {1.8}Experimental Results}{17}{subsection.1.8}%
+\contentsline {subsubsection}{\numberline {1.8.1}Experimental Setup}{18}{subsubsection.1.8.1}%
+\contentsline {subsubsection}{\numberline {1.8.2}Overall Performance}{19}{subsubsection.1.8.2}%
+\contentsline {subsubsection}{\numberline {1.8.3}Benefits of Proposed Techniques}{20}{subsubsection.1.8.3}%
+\contentsline {subsection}{\numberline {1.9}Related Work}{21}{subsection.1.9}%
+\contentsline {subsection}{\numberline {1.10}Conclusion}{23}{subsection.1.10}%
+\contentsline {section}{References}{24}{subsection.1.10}%

@@ -1,0 +1,124 @@
+\section{Load Balancing with Two-Level Work Stealing}
+
+
+
+
+To balance the workload among warps, we propose a two-level work stealing technique.  
+The idea is to let an idle warp steal work from other warps in the same threadblock first,  
+and only when there is no warp to steal within the threadblock, we let it steal from other threadblocks. 
+We use this two-level stealing mechanism for two reasons. 
+First, as there are thousands of warps on GPU, selecting the best target to steal from all  warps is expensive, whereas finding a good target within the threadblock is much easier. 
+Second, migrating work within a threadblock is cheaper than across threadblocks. 
+Since the stack of each warp is stored in the shared memory, work stealing within a threadblock can be done efficient in shared memory, whereas stealing across threadblocks has to go through global memory. 
+This section gives a detailed description of our two-level work stealing technique. 
+
+
+\subsection{Stealing Within a Threadblock}
+\label{sec:local_steal}
+
+\begin{algorithm}[t]
+\footnotesize
+   \caption{Selecting a target warp within a threadblock}
+   \label{alg:select_target}
+   \KwIn{stacks of all warps in the threadblock: $stks$; index of the calling warp: $cur\_idx$; number of warps in the threadblock: $NW$; query graph: $Q$}
+   \KwOut{index of the target warp: $target\_idx$; the first level in the target that can be split: $target\_level$}
+  $target\_idx\gets -1$\;
+  $target\_level\gets -1$\;
+  $target\_left\_task\gets 0$\;
+  \For{$l\gets0$ \KwTo $StopLevel$}{
+  \For{$idx\gets0$ \KwTo $NW-1$}{
+  \lIf{$idx=cur\_idx$}{\textbf{continue}}
+  $left\_task\gets stks[idx].Csize[l] - stks[idx].iter[l] - 1$\;
+  \If{$left\_task > target\_left\_task$}{
+  $target\_idx\gets idx$\;
+  $target\_level\gets l$\;
+  $target\_left\_task\gets left\_task$\;
+  }
+  }
+  \If{$target\_idx \neq -1$}{\Return $target\_idx$, $target\_level$}
+  }
+  \Return $-1$, $-1$\;
+\end{algorithm}
+
+
+The work stealing procedure is inserted at line 9 of Fig.~\ref{fig:while_loop_orig}. 
+Before a warp breaks out of the loop, it checks the stacks of other warps in the same threadblock and selects the one with the most remaining work. 
+The selection procedure is shown in Algorithm~\ref{alg:select_target}. 
+Starting from level zero, we check the stack level-by-level (line 4). 
+Since the actual remaining work on a warp is unknown, we estimate it as the number of unexplored nodes at each level on the stack (line 7), and we assume that a warp with more unexplored nodes at a smaller level has more remaining work. 
+Once we find a warp with at least one unexplored node at level $l$ (line 8), we store its index to $target\_idx$ and the number of unexplored nodes to $target\_left\_task$. 
+The procedure scans all the warps in the threadblock (line 5). If it later finds another warp that has more unexplored nodes at the same level, it updates the target warp (line 8-11). 
+The selection procedure returns as soon as it finds a target at a certain level (line 12-13).  
+If it cannot find a target after checking all levels, the procedure returns $-1$ (line 14) . 
+
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.53]{figure/stealing_example.pdf}
+    \caption{An example of dividing and copying tasks from a target warp.}
+    \label{fig:stealiing_example}
+\end{figure}
+
+After the idle warp finds a target warp, it divides the remaining tasks in the target warp and copies half of them to its own stack. 
+The procedure is illustrated in Fig.~\ref{fig:stealiing_example}. 
+Suppose we want to match the query graph of Fig.~\ref{fig:example_query} to the data graph in Fig.~\ref{fig:getcandidates}. 
+As shown in Fig.~\ref{fig:stealiing_example}, the target warp has node 0 and 1 at level zero and has matched node 1 to $u_0$; it has no work left at level zero. 
+The four neighbors of node 1 (i.e., node 0,2,3,4) are stored in the second level of the stack, and they are the candidates for $u_1$. 
+Suppose the warp has processed node 0 at level one and is processing node 2; it has two remaining nodes: 3 and 4. 
+We split the two nodes. Node 3 is kept in the target warp, and node 4 is migrated to the stealer warp. 
+$Csize[1]$ of the target warp is changed to $3$ since one node in $C[1]$ has been migrated to the stealer.  
+The stealer copies the matching nodes from the target to its own stack from level zero to $target\_level-1$. 
+The $Csize$ are all set 1 and the $iter$ are all set to zero for these levels. 
+In this example, $target\_level$ is one, so we copy the matching node at level zero of the target (which is node 1) and set $Csize[0]$ of the stealer to 1. 
+For $target\_level$, we copy the stolen nodes (node 4 in this case) from the target to the stealer and set $C[target\_level]$ to be the number of stolen nodes. 
+This completes the setup of both the target and the stealer stack. 
+
+%Note that during the stealing process we need to lock the target and the stealer stack to ensure consistency. 
+%This is achieved by allocating a mutex lock for every warp (on shared memory). 
+%We also need to add a lock function at line 6 and an unlock function at line 9 and 16 in the while-loop of Fig.~\ref{fig:while_loop_orig}. 
+%The lock and unlock function are implemented with the CUDA {\tt atomicCAS} and {\tt atomicExch} instruction. 
+%The lock instructions themselves incur little overhead to the program since the mutex can be allocated in shared memory. 
+The most expensive part of the stealing procedure is the copying of candidate nodes stored in global memory. 
+Because of the overhead, we want to avoid stealing when there is not enough work left in the target warp. 
+This can be achieved by adjusting the $StopLevel$ at line 4 of Algorithm~\ref{alg:select_target}. 
+
+\subsection{Stealing Across ThreadBlocks}
+\label{sec:global_steal}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.53]{figure/global_steal.pdf}
+    \caption{Work stealing across threadblocks.}
+    \label{fig:steal_across_block}
+\end{figure}
+
+If a warp cannot find a target to steal in the same threadblock, it goes to   other threadblocks. 
+However, this cannot be done in the same way as stealing within a threadblock. 
+Since the stack of each warp is allocated in shared memory, a warp does not have direct access to warps in a different threadblock. 
+We cannot let a warp check the stacks of warps in a different threadblock and pull tasks from a target.  
+Instead, we have to let the target warp detect an idle warp and push tasks to it. 
+The procedure is illustrated in Fig.~\ref{fig:steal_across_block}. 
+We maintain two arrays of $NB$ elements in global memory where $NB$ is the total number of threadblocks. 
+Each element in the $is\_idle$ array is a bitmap indicating idle status of warps in the threadblock. 
+Each slot of the $global\_stks$ array stores the tasks that the stealer receives from a target. 
+When a warp fails to steal from warps in the same threadblock, \circled{1} it marks itself as idle in the $is\_idle$ array and \circled{2} spins wait on the idle status. 
+During the matching process, a warp checks the status of other warps periodically. 
+This is achieved by adding a {\tt steal\_across\_block} function between line 6 and line 7 in Fig.~\ref{fig:while_loop_orig}. 
+Every time a warp enters a level, it checks if it has unexplored nodes in the previous levels. 
+To make sure the workload is large enough to justify the stealing overhead, we call this function only when the level is smaller than $DetectLevel$ (which is a configurable parameter in our system). 
+If the warp has unexplored nodes in the previous levels, \squared{1} it scans the $is\_idle$ array to see if there is a threadblock where all the warps are marked idle. 
+If it finds an idle threadblock, \squared{2} it divides and copies its tasks to the $global\_stk$ of that threadblock. 
+The divide-and-copy procedure is the same as shown in Fig.~\ref{fig:stealiing_example}. After it finishes copying the stack to global memory, \squared{3} the target warp clears the idle mask for all warps in the stealer threadblock. 
+ \circled{3} Then, \textcolor{red}{all warps in the stealer threadblock are activated}, and warp zero will get the tasks and copy them to its local stack. 
+The other warps will go back to the beginning of the while-loop. 
+Since these warps do not have any remaining tasks, they will enter the stealing procedure again quickly, and they will try to steal from warp zero. 
+With this, we prioritize stealing within a threadblock and avoid global stealing as much as possible. 
+The program will eventually stop when all the threadblocks are idle. 
+
+
+
+
+
+
+
+

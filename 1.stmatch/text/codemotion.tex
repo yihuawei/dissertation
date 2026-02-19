@@ -1,0 +1,87 @@
+\section{Reducing Redundancy With Loop-Invariant Code Motion}
+\label{sec:code_motion}
+
+To show that our system is compatible with the existing optimizations for backtracking-based graph pattern matching, we implement the code motion technique proposed in~\cite{mawhirter2021dryadic} in our system. 
+The idea is to lift the loop-invariant part of the set operations to upper levels so that they will not be computed repeatedly. 
+For example, the $N(v_0)\cap N(v_1)$ operation at line 10 of Fig.~\ref{fig:loop_example_orig} can be moved outside of the loop at line 8. 
+We can store the result of $N(v_0)\cap N(v_1)$ and use the cached result for every iteration of the inner loop. 
+
+
+While it is straightforward to apply code motion to the nested loop in Fig.~\ref{fig:loop_example_orig}, it is nontrivial to incorporate this optimization into the existing subgraph-centric systems on GPU. 
+In these systems, because the computation is driven by the subgraphs, the set operation is associated with each individual subgraph and the hierarchy of the set operations is lost. 
+It is not obvious how to identify the loop-invariant operations and lift them for a batch of subgraphs. 
+Although the hierarchy of set operations can be recovered from the subgraphs, maintaining a data structure to store the information is expensive. 
+
+\begin{figure}
+    \centering
+    \subfloat[Set dependence graph]{
+    \includegraphics[scale=0.53]{figure/dependence_graph.pdf}
+    \label{fig:dependence_graph}
+    } \hfil
+    \subfloat[A compact storage]{
+    \includegraphics[scale=0.53]{figure/dependence_graph_array.pdf}
+    \label{fig:dependence_graph_array}
+    } 
+    \caption{The set dependence graph for unlabeled query of Fig.~\ref{fig:example_query}.}
+    \label{fig:code_motion_unlabeled}
+\end{figure}
+
+\begin{figure}
+\centering
+     \subfloat[Separate label sets]{
+    \includegraphics[scale=0.53]{figure/colored_dependence_graph.pdf}
+    \label{fig:colored_dependence_graph}
+    }\hfil
+     \subfloat[Merged label sets]{
+    \includegraphics[scale=0.53]{figure/improved_colored_dependence_graph.pdf}
+    \label{fig:colored_dependence_graph_improved}
+    }
+    \caption{The set dependence graph for labeled query of Fig.~\ref{fig:example_query}. `' denotes the label(s) of nodes in a set.}
+    \label{fig:my_label}
+\end{figure}
+
+Since our stack-based implementation is a direct simulation of the original nested loop, our system can be easily extended to support code motion. 
+ To perform the lifted set operations, we need to maintain more than one sets for each level in the stack. 
+Therefore, we change the first dimension of $C$ and $Csize$ from $PAT\_SIZE$ to the total number of sets of all levels. 
+We also need to change the set operations in the {\tt getCandidates} function to compute and use the results of the lifted operations. 
+As an example, Fig.~\ref{fig:dependence_graph} shows the sets in the loop of Fig.~\ref{fig:loop_example_orig} after code motion. 
+In addition to the candidate sets ($C_0\sim C_4$), we store an {\em intermediate set} $C_{21}$ for  $N(v_0)\cap N(v_1)$. 
+The arrows indicate the dependence among the sets: $C_1$ is used for computing $C_2$ and $C_{21}$, and $C_{21}$ is used for computing $C_3$. 
+For any query graph, we can obtain such a dependence graph with a simple code motion analysis~\cite{mawhirter2021dryadic}. 
+
+To pass  set dependence information to  {\tt getCandidates} function efficiently, we propose a compact storage of the dependence graph as shown in Fig.~\ref{fig:dependence_graph_array}. 
+The $row\_ptr$ array indicates the starting position of the sets in each level, and the $set\_ops$ array stores the set operations for each set. 
+The set operation is represented with three numbers. 
+The first number indicates whether the set operation has $N(v_{l-1})$ as the first operand at level $l$. 
+In this example, since $C_1=N(v_0)$, the first number in the first element of $set\_ops$ is 1. 
+If the first number is 0, the set operation has $N(v_{l-1})$ as the second operand. 
+The second number in $set\_op$ indicates whether the set operation is intersection or difference. 
+For $C_2$, we need to compute $C_1-N(v_1)$, so we have 0 as the second number. For $C_{21}$, we need to compute $C_1\cap N(v_1)$, so we have 1 as the second number. 
+The third number is the index of the set that the current set depends on. 
+The two arrays take only tens of bytes and are stored in shared memory. 
+The {\tt getCandidates} function reads in the two arrays and performs set operations accordingly at each level. 
+
+One limitation of the original code motion technique in~\cite{mawhirter2021dryadic} is that it needs to store multiple intermediate sets for different labels. 
+To see this point, let us consider again the matching of query graph of Fig.~\ref{fig:example_query}. 
+Suppose we restrict $u_1$ to label `a', $u_2$ to label `b', and $u_3$ to label `c'. The dependence graph in Fig.~\ref{fig:dependence_graph} will not work -- if $C_1$ only stores nodes of label `a', we cannot have nodes of label `b' in $C_2$. 
+To fix this problem, \cite{mawhirter2021dryadic} separates the candidate sets from the intermediate sets and stores nodes of different labels in different sets, as shown in Fig.~\ref{fig:colored_dependence_graph}. 
+If a set of label `x' is dependent on a set in the previous level, they add an intermediate set of label `x'. 
+The labels are propagated from the bottom to the top level. 
+The total number of sets is at least $n(n-1)/2$ where $n$ is the number of nodes in the query graph. 
+While this is not a problem on CPU, it may cause shared memory overflow in our system as we store $Csize$ for all the sets of all unrolled iterations in shared memory. 
+To reduce the usage of shared memory, we merge the intermediate sets of different labels that are split from the same unlabeled set into one set with multiple labels. 
+For example, $C_{12}$ and $C_{13}$ in Fig.~\ref{fig:colored_dependence_graph} can be merged into one set with label `2,3', as shown in Fig.~\ref{fig:colored_dependence_graph_improved}. 
+The larger the query graph, the more sets we save with this method. 
+This enables us to support larger query graphs without affecting the efficiency. 
+
+
+
+
+For work stealing, the candidate sets are divided and copied in the same way as in Fig.~\ref{fig:stealiing_example}. 
+We also copy all the intermediate sets that are used by sets after $target\_level$ so that they need not be computed again by the stealer. 
+
+
+
+
+
+
