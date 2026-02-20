@@ -27,7 +27,7 @@ The kernel launch and the synchronization incur an overhead.
 Second, the partial subgraphs take a lot of memory space. 
 Although a hybrid DFS and BFS extension order can alleviate the issue~\cite{xiang2021cuts}, it requires much more kernel launches and synchronizations. 
 Third, the subgraph-centric implementation loses the implicit hierarchy of partial subgraphs and thus disables some optimizations that can be applied to the backtracking procedure (e.g., loop-invariant code motion and pattern merging~\cite{mawhirter2021dryadic}). 
-\textcolor{red}{As a result, the state-of-the-art GPU graph pattern matching system (cuTS~\cite{xiang2021cuts}) can be even slower than a highly optimized CPU implementation (Dryadic~\cite{mawhirter2021dryadic}) in many cases (See Table~\ref{tab:unlabel_result}). }
+As a result, the state-of-the-art GPU graph pattern matching system (cuTS~\cite{xiang2021cuts}) can be even slower than a highly optimized CPU implementation (Dryadic~\cite{mawhirter2021dryadic}) in many cases (See Table~\ref{tab:unlabel_result}).
 
 
 
@@ -111,7 +111,7 @@ If the subgraphs are edge-induced, the problem is equivalent to the subgraph iso
 
 \begin{figure}[t]
     \centering
-    \includegraphics[scale=0.58]{1.stmatch/figure/loop_example_orig.pdf}
+    \includegraphics[scale=0.8]{1.stmatch/figure/loop_example_orig.pdf}
     \caption{Graph pattern matching implemented as a nested loop. $N(v)$ means the neighbors of node $v$ in the data graph. }
     \label{fig:loop_example_orig}
 \end{figure}
@@ -132,16 +132,17 @@ Once it returns from the recursive call, which means all the subgraphs extended 
 
 Although the above backtracking algorithm can be directly translated into a recursive function, many graph pattern matching/mining systems implement it as a nested loop because it is more convenient for parallelization and optimization~\cite{10.1145/3341301.3359633, mawhirter2021dryadic, shi2020graphpi, besta2021sisa, gui2021sumpa, su2021exploring}. 
 As an example, Fig.~\ref{fig:loop_example_orig} shows the nested loop for  matching the query of Fig.~\ref{fig:example_query}. 
-\setlength{\columnsep}{1.8em}%
-\begin{wrapfigure}{r}{0.12\textwidth}
+
+
+\begin{figure}
+    \centering
      \centering
-      %   \vspace{-.5em}
-    \includegraphics[scale=0.56]{1.stmatch/figure/example_query.pdf}
-    \vspace{-.5em}
+    \includegraphics[scale=0.9]{1.stmatch/figure/example_query.pdf}
     \caption{A query graph.}
-    \vspace{-.5em}
     \label{fig:example_query}
-\end{wrapfigure}
+\end{figure}
+
+
 The candidate nodes for the first loop are the nodes in the data graph that can be mapped to $u_0$. 
 The first loop iterates over all these nodes and tries to extend each node with its neighbors (line 4). 
 The second loop iterates over the candidate nodes for $u_1$ and tries to further extend the subgraph. 
@@ -215,19 +216,18 @@ If naively applied to our system, it may cause shared memory overflow for large 
 
 \begin{figure}[t]
     \centering
-    \includegraphics[scale=0.55]{1.stmatch/figure/while_loop_orig.pdf}
+    \includegraphics[scale=0.8]{1.stmatch/figure/while_loop_orig.pdf}
     \caption{Graph pattern matching implemented as a stack-based while loop. }
     \label{fig:while_loop_orig}
 \end{figure}
 
 \begin{figure}[t]
     \centering
-    \includegraphics[scale=0.52]{1.stmatch/figure/getcandidates.pdf}
-    \caption{\textcolor{red}{An example of $getCandidates$  in two different warps. }}
+    \includegraphics[scale=0.7]{1.stmatch/figure/getcandidates.pdf}
+    \caption{An example of $getCandidates$  in two different warps.}
     \label{fig:getcandidates}
 \end{figure}
 
-\textcolor{red}{
 Our system is built around a stack-based implementation of Algorithm~\ref{alg:backtracking}. 
 The idea is to simulate the recursive procedure  by explicitly maintaining a function call stack. 
 As shown in Fig.~\ref{fig:while_loop_orig}, the call stack is composed of three arrays $C$, $Csize$ and $iter$, which store the candidate nodes, the number of candidate nodes, and the loop iterate for each recursion level. 
@@ -238,9 +238,7 @@ Then, we iterate over the candidates, match each candidate node to the query nod
 The matching subgraphs are output at the last level (line 16 in Fig.~\ref{fig:while_loop_orig} corresponds to line 4 in Algorithm~\ref{alg:backtracking}). 
 If all candidate nodes at level $l$ have been processed, we backtrack to the previous level (line 14 in Fig.~\ref{fig:while_loop_orig} corresponding to return from $Enumerate$ function at line 9 in Algorithm~\ref{alg:backtracking}). 
 The algorithm stops when all candidate nodes at level zero have been processed (line 9 in Fig.~\ref{fig:while_loop_orig}). 
-}
 
-\textcolor{red}{
 For GPU execution, we run the while-loop of Fig.~\ref{fig:while_loop_orig} independently on different warps. 
 A call stack is allocated for each warp. 
 Since $Csize$, $iter$ and $l$ are small, we allocate them in shared memory. 
@@ -255,14 +253,12 @@ On warp-$i$,
 when the execution enters the second level, the $getCandidates$ function obtains the neighbor list of node-1 and copies it $C[1]$. 
 This procedure is conducted in parallel with different threads in the warp copying different elements in the neighbor list. 
 When $l>1$, the $getCandidates$ function performs set operations according to the query pattern. 
-Different threads in the warp are assigned different nodes in the neighbor list and perform binary search simultaneously for set intersection/difference.} 
+Different threads in the warp are assigned different nodes in the neighbor list and perform binary search simultaneously for set intersection/difference.
 
 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------------%
 
 \subsection{Load Balancing with Two-Level Work Stealing}
-
-
 
 
 To balance the workload among warps, we propose a two-level work stealing technique.  
@@ -316,7 +312,7 @@ If it cannot find a target after checking all levels, the procedure returns $-1$
 
 \begin{figure}[t]
     \centering
-    \includegraphics[scale=0.53]{1.stmatch/figure/stealing_example.pdf}
+    \includegraphics[scale=0.7]{1.stmatch/figure/stealing_example.pdf}
     \caption{An example of dividing and copying tasks from a target warp.}
     \label{fig:stealiing_example}
 \end{figure}
@@ -349,7 +345,7 @@ This can be achieved by adjusting the $StopLevel$ at line 4 of Algorithm~\ref{al
 
 \begin{figure}[t]
     \centering
-    \includegraphics[scale=0.53]{1.stmatch/figure/global_steal.pdf}
+    \includegraphics[scale=0.7]{1.stmatch/figure/global_steal.pdf}
     \caption{Work stealing across threadblocks.}
     \label{fig:steal_across_block}
 \end{figure}
@@ -376,7 +372,7 @@ To make sure the workload is large enough to justify the stealing overhead, we c
 If the warp has unexplored nodes in the previous levels, \squared{1} it scans the $is\_idle$ array to see if there is a threadblock where all the warps are marked idle. 
 If it finds an idle threadblock, \squared{2} it divides and copies its tasks to the $global\_stk$ of that threadblock. 
 The divide-and-copy procedure is the same as shown in Fig.~\ref{fig:stealiing_example}. After it finishes copying the stack to global memory, \squared{3} the target warp clears the idle mask for all warps in the stealer threadblock. 
- \circled{3} Then, \textcolor{red}{all warps in the stealer threadblock are activated}, and warp zero will get the tasks and copy them to its local stack. 
+ \circled{3} Then, all warps in the stealer threadblock are activated, and warp zero will get the tasks and copy them to its local stack. 
 The other warps will go back to the beginning of the while-loop. 
 Since these warps do not have any remaining tasks, they will enter the stealing procedure again quickly, and they will try to steal from warp zero. 
 With this, we prioritize stealing within a threadblock and avoid global stealing as much as possible. 
@@ -391,10 +387,10 @@ The program will eventually stop when all the threadblocks are idle.
 
 
 
-\begin{figure}[t]
+\begin{figure}[htbp]
     \centering
-    \includegraphics[scale=0.55]{1.stmatch/figure/while_loop_unrolled.pdf}
-    \caption{\textcolor{red}{An unrolled version of the loop in Fig.~\ref{fig:while_loop_orig}.} }
+    \includegraphics[scale=0.8]{1.stmatch/figure/while_loop_unrolled.pdf}
+    \caption{An unrolled version of the loop in Fig.~\ref{fig:while_loop_orig}.} 
     \label{fig:while_loop_unrolled}
 \end{figure}
 
@@ -405,18 +401,18 @@ If the sets have only a few elements, most of the threads will be idle.
 To improve thread utilization, we can unroll the loop iteration at each recursion level and perform the set operations of the unrolled iterations together.  
 %As an example, if we unroll the loop at line 5 of Fig.~\ref{fig:loop_example_orig},  we can combine $N(v_0)-N(v_1)$ for multiple $v_1$'s and process them simultaneously. 
 
-\textcolor{red}{Fig.~\ref{fig:while_loop_unrolled} shows the unrolled while-loop. 
+Fig.~\ref{fig:while_loop_unrolled} shows the unrolled while-loop. 
 The idea is to add an unroll dimension to $C$ and $Csize$ so that the candidate nodes of multiple iterations can be stored at the same time. 
 In addition to $iter$ that stores the iterate number of the original loop, 
 we use an $uiter$ to store the index of unrolled iterations. 
 The program iterates over the unrolled iterations and the original loop iterations alternatively. 
 Every time the execution enters the next level, we compute the candidate nodes for all the unrolled iterations together (line 9). 
 Then, we iterate over the candidates in each of the unrolled iterations, match each candidate node to the query node, and go to the next level (line 15). 
-If all the unrolled iterations at level $l$ have been processed, we backtrack to the previous level and increment the iterate of the previous level by the unroll size (line 22). }
+If all the unrolled iterations at level $l$ have been processed, we backtrack to the previous level and increment the iterate of the previous level by the unroll size (line 22).
 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.53]{1.stmatch/figure/combined_set_operation.pdf}
+    \includegraphics[scale=0.7]{1.stmatch/figure/combined_set_operation.pdf}
     \caption{Perform multiple set operations in one warp.}
     \label{fig:combined_set_operation}
 \end{figure}
@@ -465,11 +461,11 @@ Although the hierarchy of set operations can be recovered from the subgraphs, ma
 \begin{figure}
     \centering
     \subfloat[Set dependence graph]{
-    \includegraphics[scale=0.53]{1.stmatch/figure/dependence_graph.pdf}
+    \includegraphics[scale=0.7]{1.stmatch/figure/dependence_graph.pdf}
     \label{fig:dependence_graph}
     } \hfil
     \subfloat[A compact storage]{
-    \includegraphics[scale=0.53]{1.stmatch/figure/dependence_graph_array.pdf}
+    \includegraphics[scale=0.7]{1.stmatch/figure/dependence_graph_array.pdf}
     \label{fig:dependence_graph_array}
     } 
     \caption{The set dependence graph for unlabeled query of Fig.~\ref{fig:example_query}.}
@@ -479,11 +475,11 @@ Although the hierarchy of set operations can be recovered from the subgraphs, ma
 \begin{figure}
 \centering
      \subfloat[Separate label sets]{
-    \includegraphics[scale=0.53]{1.stmatch/figure/colored_dependence_graph.pdf}
+    \includegraphics[scale=0.7]{1.stmatch/figure/colored_dependence_graph.pdf}
     \label{fig:colored_dependence_graph}
     }\hfil
      \subfloat[Merged label sets]{
-    \includegraphics[scale=0.53]{1.stmatch/figure/improved_colored_dependence_graph.pdf}
+    \includegraphics[scale=0.7]{1.stmatch/figure/improved_colored_dependence_graph.pdf}
     \label{fig:colored_dependence_graph_improved}
     }
     \caption{The set dependence graph for labeled query of Fig.~\ref{fig:example_query}. `' denotes the label(s) of nodes in a set.}
@@ -536,7 +532,7 @@ In this section, we compare our system with two state-of-the-art GPU graph patte
 GSI achieves consistently better (or equal) performance than many previous CPU and GPU implementations such as CFL-Match~\cite{10.1145/2882903.2915236}, CBWJ~\cite{10.14778/3342263.3342643},
 VF3~\cite{7907163}, GPSM~\cite{tran2015fast} and Gunrock~\cite{wang2016fast}. 
 CuTS has shown even better performance than GSI. 
-However, because cuTS\footnote{\url{ https://doi.org/10.5281/zenodo.5154114}} does not support labeled queries, we also compare with GSI\footnote{\url{https://github.com/pkumod/GSI}} for labeled matching tasks. 
+However, because cuTS does not support labeled queries, we also compare with GSI for labeled matching tasks. 
 
 
 
@@ -546,7 +542,6 @@ However, because cuTS\footnote{\url{ https://doi.org/10.5281/zenodo.5154114}} do
 
 \begin{table}[t]
 \centering
-\ssmall
 \begin{tabular}{c|c|c|c|c|c}
 {\bf Graph}       & {\bf \# nodes} & {\bf \# edges} & {\bf Max deg.} & {\bf Med deg.} & {\bf Deg. $>$ 4096 }        \\ \hline 
 WikiVote      & 7K       & 100K    &1065 & 3  & 0 \\ \hline
@@ -563,7 +558,7 @@ Friendster     & 65.6M       & 1.8B     &5214 &  9 &  9.1e-8\%    \\ \hline
 
 \noindent
 \textbf{Platform: } 
-\textcolor{red}{Our experiments are conducted on a dual socket machine with four Nvidia RTX3090 GPUs, two Intel Xeon Gold 6226R 2.9GHz CPUs (32 cores in total), and 512GB RAM.}
+Our experiments are conducted on a dual socket machine with four Nvidia RTX3090 GPUs, two Intel Xeon Gold 6226R 2.9GHz CPUs (32 cores in total), and 512GB RAM.
 We use GCC9.4.0 and NVCC11.2 with O2 level optimization to compile the code. 
 
 \noindent
@@ -575,7 +570,7 @@ CuTS uses directed query graphs. The 33 directed queries used in their experimen
 While our system supports both directed and undirected graphs, we use undirected graph in our evaluation because it is a more common setup in the graph pattern matching literature~\cite{zeng2020gsi, tran2015fast, 10.14778/1920841.1920887, 10.1145/2882903.2915236, mawhirter2021dryadic}. 
 The 33 queries in cuTS experiments are covered by $q_7$, $q_8$, $q_{15}$, $q_{16}$, $q_{23}$, $q_{24}$ in our experiments, among which $q_8$, $q_{16}$ and $q_{24}$ are cliques (i.e., fully connected graphs). 
 Then, we randomly select six query graphs from size-5, size-6, size-7 motifs, respectively. 
-In total, we test with 24 distinct query graphs\textcolor{red}{: $q_1\sim q_8$  of size-5, $q_9\sim q_{16}$ of size-6, and $q_{17}\sim q_{24}$ of size-7.}
+In total, we test with 24 distinct query graphs: $q_1\sim q_8$  of size-5, $q_9\sim q_{16}$ of size-6, and $q_{17}\sim q_{24}$ of size-7.
 Our system supports both labeled and unlabeled graphs. 
 To evaluate the performance of labeled matching, we follow the setup in Dryadic~\cite{mawhirter2021dryadic} and randomly assign ten labels to the data and query graphs. 
 For fairness, we use the same matching order of query nodes (adopted from Dryadic) for all  systems. 
@@ -591,14 +586,15 @@ The maximum number of active warps on our GPU is $82\times 32 = 2624$.
 Thus, besides the storage of data graph, our system consumes a fixed 4.8GB GPU memory for queries of up to seven nodes. 
 For graphs whose max degrees are larger than 4096, we store the extra nodes in the sets with more than 4096 nodes on CPU. 
 Because real-world graphs are skewed and few nodes have degrees greater than 4096 (last column in Table~\ref{tab:datasets}), it is very rare for the program to access CPU memory. 
-\textcolor{red}{We run cuTS and GSI with the same number of total warps on GPU, and run Dryadic with 64 threads on CPU.} 
+We run cuTS and GSI with the same number of total warps on GPU, and run Dryadic with 64 threads on CPU.
 
 
 \subsubsection{Overall Performance}
 
 \begin{figure*}[t]
+\setlength{\tabcolsep}{4pt}
 \centering
-  \ssmall
+\ssmall
 \subfloat[Edge-induced]{
 \begin{tabular}{|c|ccc|ccc|cc|}
 \hline
@@ -660,7 +656,7 @@ $q_{24}$                           & \multicolumn{1}{c|}{139}          & \multic
 \multicolumn{1}{|c|}{285}          & 1089             & \multicolumn{1}{c|}{356}          & 535              & \multicolumn{1}{c|}{17854918}                                        & $-$                 \\ \hline
 \multicolumn{1}{|c|}{139}          & 531              & \multicolumn{1}{c|}{129}          & 608              & \multicolumn{1}{c|}{1982441}                                         & 2530072                  \\ \hline
 \end{tabular}}
- \captionof{table}{Execution time (in milliseconds) of different systems for unlabeled matching. `$\times$' indicates program failure \textcolor{red}{due to out-of-memory}. `$-$' indicates timeout after 8 hours. CuTS only supports edge-induced matching. It fails for all queries on MiCo.}
+ \captionof{table}{Execution time (in milliseconds) of different systems for unlabeled matching. `$\times$' indicates program failure due to out-of-memory. `$-$' indicates timeout after 8 hours. CuTS only supports edge-induced matching. It fails for all queries on MiCo.}
 \label{tab:unlabel_result}
  \end{figure*}
 
@@ -668,11 +664,12 @@ $q_{24}$                           & \multicolumn{1}{c|}{139}          & \multic
 \begin{figure*}[t]
     \centering
         \includegraphics[scale=.53]{1.stmatch/figure/scalability.pdf}
-    \caption{\textcolor{red}{Speedups of labeled and unlabeled size-6 queries across multiple GPUs. }}
+    \caption{Speedups of labeled and unlabeled size-6 queries across multiple GPUs. }
     \label{fig:scalability}
 \end{figure*}
  
  \begin{table*}
+\setlength{\tabcolsep}{4pt}
  \centering
   \ssmall
 \begin{tabular}{|c|ccc|ccc|ccc|cc|cc|cc|cc|}
@@ -713,13 +710,13 @@ $q_{24}$                 & \multicolumn{1}{c|}{6}            & \multicolumn{1}{c
 
 GSI and cuTS are subgraph isomorphism systems: they obtain edge-induced subgraphs that are isomorphic to the query graph. 
 Thus, we configure our system and Dryadic to run edge-induced matching (by removing the set difference operations) and compare with the two systems. 
-\textcolor{red}{Table~\ref{tab:unlabel_result}(a)} lists the execution time of unlabeled edge-induced queries \textcolor{red}{on a single GPU}. 
+Table~\ref{tab:unlabel_result}(a) lists the execution time of unlabeled edge-induced queries on a single GPU. 
 We do not list the execution time of GSI in this table because it either aborts or is dominated by cuTS. 
 We can see that Dryadic consistently outperforms cuTS, while our system outperforms both Dryadic and cuTS for all testcases. 
 Compared with cuTS, our system achieves up to 3385x speedups with an average of 694x. Compared with Dryadic, our system achieves up to 52x speedups with an average of 11x. 
 
 
-Table~\ref{tab:label_edge_induced} lists the execution time of  labeled edge-induced queries \textcolor{red}{on a single GPU}.  
+Table~\ref{tab:label_edge_induced} lists the execution time of  labeled edge-induced queries on a single GPU.  
 Our system shows consistently better performance than the other two systems. 
 It achieves 24x to 991x speedups against GSI, and 1.4x to to 898x speedups against Dryadic. 
 The speedups are more significant on larger data graphs. 
@@ -730,40 +727,39 @@ The results indicate that our system scales better on large graphs compared to G
 
 We also compare with Dryadic for vertex-induced matching. 
 For $q_8$, $q_{16}$ and $q_{24}$ which are cliques, vertex-induced matching is the same as edge-induced. 
-The execution time of unlabeled queries is shown in \textcolor{red}{Table~\ref{tab:unlabel_result}(b)}. 
+The execution time of unlabeled queries is shown in Table~\ref{tab:unlabel_result}(b). 
 Our system outperforms Dryadic for all testcases with  a maximum speedup of 30x and an average speedup of 6x. 
 
 
 
-\textcolor{red}{
 Our system can be easily run on multiple GPUs by duplicating the input graph and dividing the outermost loop iterations (i.e., $V$ in Fig.~\ref{fig:getcandidates}) across GPUs. 
 Fig.~\ref{fig:scalability} shows the speedups of running labeled and unlabeled $q_9\sim q_{16}$ on LiveJournal, Orkut and MiCo with two and four GPUs. 
-Our system can also be extended to run on distributed GPU clusters with slight changes in the work-stealing procedure to take the communication cost across machines into consideration. } 
+Our system can also be extended to run on distributed GPU clusters with slight changes in the work-stealing procedure to take the communication cost across machines into consideration. 
 
 \subsubsection{Benefits of Proposed Techniques}
 
 \begin{figure*}[t]
     \centering
     \subfloat[Enron]{
-     \includegraphics[scale=0.53]{1.stmatch/figure/benefit_enron.pdf}
+     \includegraphics[scale=0.55]{1.stmatch/figure/benefit_enron.pdf}
     }\hfil
      \subfloat[MiCo]{
-     \includegraphics[scale=0.53]{1.stmatch/figure/benefit_mico.pdf}
+     \includegraphics[scale=0.55]{1.stmatch/figure/benefit_mico.pdf}
     }\\
      \subfloat[YouTube]{
-     \includegraphics[scale=0.53]{1.stmatch/figure/benefit_youtube.pdf}
+     \includegraphics[scale=0.55]{1.stmatch/figure/benefit_youtube.pdf}
     }\hfil
      \subfloat[LiveJournal]{
-     \includegraphics[scale=0.53]{1.stmatch/figure/benefit_livejournal.pdf}
+     \includegraphics[scale=0.55]{1.stmatch/figure/benefit_livejournal.pdf}
     }
-       \caption{\textcolor{red}{Speedups of labeled size-6 queries with and without work-stealing and loop unrolling. }}
+       \caption{Speedups of labeled size-6 queries with and without work-stealing and loop unrolling. }
     \label{fig:effects}
 \end{figure*}
 
 \begin{figure}
     \centering
-    \includegraphics[scale=.53]{1.stmatch/figure/utilization.pdf}
-    \caption{\textcolor{red}{Thread utilization with different unrolling sizes. }}
+    \includegraphics[scale=0.55]{1.stmatch/figure/utilization.pdf}
+    \caption{Thread utilization with different unrolling sizes. }
     \label{fig:utilization}
 \end{figure}
 
@@ -779,11 +775,11 @@ Global work-stealing further improves the performance on MiCo and LiveJournal wh
 It achieves 1.3x to 2.0x speedups on top of local work-stealing on MiCo graph and 1.1x to 1.3x speedups on LiveJournal. 
 Global stealing is less effective on Enron and YouTube as the workload in each warp is already small after applying local work-stealing. 
 The execution time with global stealing is almost the same as without global stealing on these two graphs, indicating that the overhead of our global work-stealing technique is small. 
-\textcolor{red}{To show direct evidence of improvement brought by work-stealing, we profile our system with Nvidia Nsight and obtain warp occupancy with and without work-stealing. The occupancy numbers are labeled in the figures, and they are consistent with the speedups. }
+To show direct evidence of improvement brought by work-stealing, we profile our system with Nvidia Nsight and obtain warp occupancy with and without work-stealing. The occupancy numbers are labeled in the figures, and they are consistent with the speedups.
 
 
 After applying loop unrolling, the performance is further improved.  
-\textcolor{red}{Fig.~\ref{fig:utilization} shows the thread utilization of various queries with different unrolling sizes. As expected, a larger unrolling size leads to higher utilization. }
+Fig.~\ref{fig:utilization} shows the thread utilization of various queries with different unrolling sizes. As expected, a larger unrolling size leads to higher utilization.
 Due to increased thread utilization, loop unrolling achieves 1.1x to 2.6x speedups on top of {\tt local+globalsteal} on MiCo, and 1.1 to 1.9x speedups on LiveJournal. 
 Compared to naive version, work-stealing and loop unrolling together achieve up to 12x speedups. 
 All the versions above use code motion. 

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022/Debian) (preloaded format=pdflatex 2022.7.30)  19 FEB 2026 04:34
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022/Debian) (preloaded format=pdflatex 2022.7.30)  20 FEB 2026 01:23
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1121,18 +1121,18 @@ Overfull \hbox (1.71043pt too wide) detected at line 1
 
 
 Overfull \hbox (1.71043pt too wide) detected at line 2
+\OT1/ptm/m/n/12 Table 2.  
+ []
+
+
+Overfull \hbox (1.71043pt too wide) detected at line 5
 \OT1/ptm/m/n/12 Table 3.  
  []
 
 
-Overfull \hbox (8.42163pt too wide) in paragraph at lines 2--2
+Overfull \hbox (8.42163pt too wide) in paragraph at lines 5--5
  [][] []\OT1/ptm/m/n/12 Execution time (in mil-lisec-onds) of dif-fer-ent sys-t
 ems for la-beled edge-induced match- 
- []
-
-
-Overfull \hbox (1.71043pt too wide) detected at line 3
-\OT1/ptm/m/n/12 Table 2.  
  []
 
 )
@@ -1158,100 +1158,92 @@ File: 1.stmatch/figure/loop_example_orig.pdf Graphic file (type pdf)
 <use 1.stmatch/figure/loop_example_orig.pdf>
 Package pdftex.def Info: 1.stmatch/figure/loop_example_orig.pdf  used on input 
 line 114.
-(pdftex.def)             Requested size: 218.89795pt x 183.9674pt.
- [4 <./1.stmatch/figure/loop_example_orig.pdf>]
-<1.stmatch/figure/example_query.pdf, id=309, 58.2175pt x 56.21pt>
+(pdftex.def)             Requested size: 301.9284pt x 253.74832pt.
+ [4]
+<1.stmatch/figure/example_query.pdf, id=280, 58.2175pt x 56.21pt>
 File: 1.stmatch/figure/example_query.pdf Graphic file (type pdf)
 <use 1.stmatch/figure/example_query.pdf>
 Package pdftex.def Info: 1.stmatch/figure/example_query.pdf  used on input line
- 139.
-(pdftex.def)             Requested size: 32.60156pt x 31.47737pt.
-
-Underfull \hbox (badness 10000) in paragraph at lines 133--144
-\OT1/ptm/m/n/12 nested loop for match-ing the query of Fig. []2[].
- []
-
-[5 <./1.stmatch/figure/example_query.pdf>] [6]
-<1.stmatch/figure/while_loop_orig.pdf, id=355, 384.43625pt x 455.7025pt>
+ 140.
+(pdftex.def)             Requested size: 52.39525pt x 50.58852pt.
+ [5 <./1.stmatch/figure/loop_example_orig.pdf> <./1.stmatch/figure/example_quer
+y.pdf>]
+[6]
+<1.stmatch/figure/while_loop_orig.pdf, id=354, 384.43625pt x 455.7025pt>
 File: 1.stmatch/figure/while_loop_orig.pdf Graphic file (type pdf)
 <use 1.stmatch/figure/while_loop_orig.pdf>
 Package pdftex.def Info: 1.stmatch/figure/while_loop_orig.pdf  used on input li
-ne 218.
-(pdftex.def)             Requested size: 211.44058pt x 250.63713pt.
-<1.stmatch/figure/getcandidates.pdf, id=356, 435.6275pt x 325.215pt>
+ne 219.
+(pdftex.def)             Requested size: 307.54941pt x 364.56248pt.
+ [7]
+<1.stmatch/figure/getcandidates.pdf, id=360, 435.6275pt x 325.215pt>
 File: 1.stmatch/figure/getcandidates.pdf Graphic file (type pdf)
 <use 1.stmatch/figure/getcandidates.pdf>
 Package pdftex.def Info: 1.stmatch/figure/getcandidates.pdf  used on input line
- 225.
-(pdftex.def)             Requested size: 226.5276pt x 169.11276pt.
- [7] [8 <./1.stmatch/figure/while_loop_orig.pdf>] [9 <./1.stmatch/figure/getcan
-didates.pdf>]
-<1.stmatch/figure/stealing_example.pdf, id=445, 434.62375pt x 353.32pt>
+ 226.
+(pdftex.def)             Requested size: 304.93716pt x 227.64894pt.
+ [8 <./1.stmatch/figure/while_loop_orig.pdf>] [9 <./1.stmatch/figure/getcandida
+tes.pdf>] [10]
+<1.stmatch/figure/stealing_example.pdf, id=465, 434.62375pt x 353.32pt>
 File: 1.stmatch/figure/stealing_example.pdf Graphic file (type pdf)
 <use 1.stmatch/figure/stealing_example.pdf>
 Package pdftex.def Info: 1.stmatch/figure/stealing_example.pdf  used on input l
-ine 319.
-(pdftex.def)             Requested size: 230.34949pt x 187.2587pt.
- [10]
-<1.stmatch/figure/global_steal.pdf, id=472, 370.38374pt x 176.66pt>
+ine 315.
+(pdftex.def)             Requested size: 304.23454pt x 247.32231pt.
+ [11 <./1.stmatch/figure/stealing_example.pdf>]
+<1.stmatch/figure/global_steal.pdf, id=522, 370.38374pt x 176.66pt>
 File: 1.stmatch/figure/global_steal.pdf Graphic file (type pdf)
 <use 1.stmatch/figure/global_steal.pdf>
 Package pdftex.def Info: 1.stmatch/figure/global_steal.pdf  used on input line 
-352.
-(pdftex.def)             Requested size: 196.30244pt x 93.62935pt.
- [11 <./1.stmatch/figure/stealing_example.pdf>] [12 <./1.stmatch/figure/global_
-steal.pdf>]
-<1.stmatch/figure/while_loop_unrolled.pdf, id=572, 408.52625pt x 727.71875pt>
+348.
+(pdftex.def)             Requested size: 259.26685pt x 123.66115pt.
+ [12 <./1.stmatch/figure/global_steal.pdf>]
+<1.stmatch/figure/while_loop_unrolled.pdf, id=571, 408.52625pt x 727.71875pt>
 File: 1.stmatch/figure/while_loop_unrolled.pdf Graphic file (type pdf)
 <use 1.stmatch/figure/while_loop_unrolled.pdf>
 Package pdftex.def Info: 1.stmatch/figure/while_loop_unrolled.pdf  used on inpu
-t line 396.
-(pdftex.def)             Requested size: 224.69012pt x 400.24654pt.
-
-[13 <./1.stmatch/figure/while_loop_unrolled.pdf>]
-<1.stmatch/figure/combined_set_operation.pdf, id=596, 422.57875pt x 158.5925pt>
+t line 392.
+(pdftex.def)             Requested size: 326.82144pt x 582.17578pt.
+ [13] [14 <./1.stmatch/figure/while_loop_unrolled.pdf>]
+<1.stmatch/figure/combined_set_operation.pdf, id=601, 422.57875pt x 158.5925pt>
 
 File: 1.stmatch/figure/combined_set_operation.pdf Graphic file (type pdf)
 <use 1.stmatch/figure/combined_set_operation.pdf>
 Package pdftex.def Info: 1.stmatch/figure/combined_set_operation.pdf  used on i
-nput line 419.
-(pdftex.def)             Requested size: 223.96567pt x 84.0536pt.
- [14 <./1.stmatch/figure/combined_set_operation.pdf>]
-<1.stmatch/figure/dependence_graph.pdf, id=630, 137.51375pt x 145.54375pt>
+nput line 415.
+(pdftex.def)             Requested size: 295.8031pt x 111.01396pt.
+ [15 <./1.stmatch/figure/combined_set_operation.pdf>]
+<1.stmatch/figure/dependence_graph.pdf, id=636, 137.51375pt x 145.54375pt>
 File: 1.stmatch/figure/dependence_graph.pdf Graphic file (type pdf)
 <use 1.stmatch/figure/dependence_graph.pdf>
 Package pdftex.def Info: 1.stmatch/figure/dependence_graph.pdf  used on input l
-ine 470.
-(pdftex.def)             Requested size: 72.88193pt x 77.1378pt.
-<1.stmatch/figure/dependence_graph_array.pdf, id=631, 244.915pt x 109.40875pt>
+ine 466.
+(pdftex.def)             Requested size: 96.25896pt x 101.87991pt.
+<1.stmatch/figure/dependence_graph_array.pdf, id=637, 244.915pt x 109.40875pt>
 File: 1.stmatch/figure/dependence_graph_array.pdf Graphic file (type pdf)
 <use 1.stmatch/figure/dependence_graph_array.pdf>
 Package pdftex.def Info: 1.stmatch/figure/dependence_graph_array.pdf  used on i
-nput line 474.
-(pdftex.def)             Requested size: 129.80432pt x 57.98634pt.
-<1.stmatch/figure/colored_dependence_graph.pdf, id=633, 188.705pt x 145.54375pt
+nput line 470.
+(pdftex.def)             Requested size: 171.43932pt x 76.58559pt.
+<1.stmatch/figure/colored_dependence_graph.pdf, id=640, 188.705pt x 145.54375pt
 >
 File: 1.stmatch/figure/colored_dependence_graph.pdf Graphic file (type pdf)
 <use 1.stmatch/figure/colored_dependence_graph.pdf>
 Package pdftex.def Info: 1.stmatch/figure/colored_dependence_graph.pdf  used on
- input line 484.
-(pdftex.def)             Requested size: 100.01317pt x 77.1378pt.
-<1.stmatch/figure/improved_colored_dependence_graph.pdf, id=634, 157.58875pt x 
+ input line 480.
+(pdftex.def)             Requested size: 132.09259pt x 101.87991pt.
+<1.stmatch/figure/improved_colored_dependence_graph.pdf, id=641, 157.58875pt x 
 145.54375pt>
 File: 1.stmatch/figure/improved_colored_dependence_graph.pdf Graphic file (type
  pdf)
 <use 1.stmatch/figure/improved_colored_dependence_graph.pdf>
 Package pdftex.def Info: 1.stmatch/figure/improved_colored_dependence_graph.pdf
-  used on input line 488.
-(pdftex.def)             Requested size: 83.52162pt x 77.1378pt.
- [15] [16 <./1.stmatch/figure/dependence_graph.pdf> <./1.stmatch/figure/depende
+  used on input line 484.
+(pdftex.def)             Requested size: 110.31136pt x 101.87991pt.
+ [16] [17 <./1.stmatch/figure/dependence_graph.pdf> <./1.stmatch/figure/depende
 nce_graph_array.pdf> <./1.stmatch/figure/colored_dependence_graph.pdf> <./1.stm
-atch/figure/improved_colored_dependence_graph.pdf>]
-[17]
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <5> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 550.
- [18]
-Overfull \hbox (0.18584pt too wide) in paragraph at lines 583--595
+atch/figure/improved_colored_dependence_graph.pdf>] [18] [19]
+Overfull \hbox (0.18584pt too wide) in paragraph at lines 578--590
 \OT1/ptm/m/n/12 of ar-ray $\OML/ztmcm/m/it/12 C$ \OT1/ptm/m/n/12 to 4096. The s
 ize of ar-ray $\OML/ztmcm/m/it/12 C$ \OT1/ptm/m/n/12 is \OT1/ptm/m/it/12 NUM[]S
 ETS$\OMS/ztmcm/m/n/12 ^^B$\OT1/ptm/m/it/12 UNROLL$\OMS/ztmcm/m/n/12 ^^B$\OT1/pt
@@ -1259,85 +1251,84 @@ m/m/it/12 MAX[]DEGREE$\OMS/ztmcm/m/n/12 ^^B$\OT1/ptm/m/it/12 NUM[]WARPS\OT1/ptm
 /m/n/12 .
  []
 
-<1.stmatch/figure/scalability.pdf, id=795, 869.2475pt x 178.6675pt>
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <5> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 628.
+<1.stmatch/figure/scalability.pdf, id=796, 869.2475pt x 178.6675pt>
 File: 1.stmatch/figure/scalability.pdf Graphic file (type pdf)
 <use 1.stmatch/figure/scalability.pdf>
 Package pdftex.def Info: 1.stmatch/figure/scalability.pdf  used on input line 6
-70.
+66.
 (pdftex.def)             Requested size: 460.69897pt x 94.69331pt.
 
-Overfull \hbox (77.62117pt too wide) in paragraph at lines 678--707
+Overfull \hbox (5.62117pt too wide) in paragraph at lines 675--704
  [][] 
  []
 
-[19]
-<1.stmatch/figure/benefit_enron.pdf, id=805, 408.52625pt x 141.52875pt>
+[20] [21 <./1.stmatch/figure/scalability.pdf>]
+<1.stmatch/figure/benefit_enron.pdf, id=847, 408.52625pt x 141.52875pt>
 File: 1.stmatch/figure/benefit_enron.pdf Graphic file (type pdf)
 <use 1.stmatch/figure/benefit_enron.pdf>
 Package pdftex.def Info: 1.stmatch/figure/benefit_enron.pdf  used on input line
- 749.
-(pdftex.def)             Requested size: 216.51788pt x 75.00987pt.
-<1.stmatch/figure/benefit_mico.pdf, id=806, 417.56pt x 141.52875pt>
+ 745.
+(pdftex.def)             Requested size: 224.69012pt x 77.84105pt.
+<1.stmatch/figure/benefit_mico.pdf, id=848, 417.56pt x 141.52875pt>
 File: 1.stmatch/figure/benefit_mico.pdf Graphic file (type pdf)
 <use 1.stmatch/figure/benefit_mico.pdf>
 Package pdftex.def Info: 1.stmatch/figure/benefit_mico.pdf  used on input line 
-752.
-(pdftex.def)             Requested size: 221.30573pt x 75.00987pt.
-<1.stmatch/figure/benefit_youtube.pdf, id=807, 408.52625pt x 141.52875pt>
+748.
+(pdftex.def)             Requested size: 229.65869pt x 77.84105pt.
+<1.stmatch/figure/benefit_youtube.pdf, id=849, 408.52625pt x 141.52875pt>
 File: 1.stmatch/figure/benefit_youtube.pdf Graphic file (type pdf)
 <use 1.stmatch/figure/benefit_youtube.pdf>
 Package pdftex.def Info: 1.stmatch/figure/benefit_youtube.pdf  used on input li
-ne 755.
-(pdftex.def)             Requested size: 216.51788pt x 75.00987pt.
-<1.stmatch/figure/benefit_livejournal.pdf, id=808, 418.56375pt x 141.52875pt>
+ne 751.
+(pdftex.def)             Requested size: 224.69012pt x 77.84105pt.
+<1.stmatch/figure/benefit_livejournal.pdf, id=850, 418.56375pt x 141.52875pt>
 File: 1.stmatch/figure/benefit_livejournal.pdf Graphic file (type pdf)
 <use 1.stmatch/figure/benefit_livejournal.pdf>
 Package pdftex.def Info: 1.stmatch/figure/benefit_livejournal.pdf  used on inpu
-t line 758.
-(pdftex.def)             Requested size: 221.83772pt x 75.00987pt.
-<1.stmatch/figure/utilization.pdf, id=809, 407.5225pt x 178.6675pt>
+t line 754.
+(pdftex.def)             Requested size: 230.21077pt x 77.84105pt.
+<1.stmatch/figure/utilization.pdf, id=851, 407.5225pt x 178.6675pt>
 File: 1.stmatch/figure/utilization.pdf Graphic file (type pdf)
 <use 1.stmatch/figure/utilization.pdf>
 Package pdftex.def Info: 1.stmatch/figure/utilization.pdf  used on input line 7
-65.
-(pdftex.def)             Requested size: 215.98589pt x 94.69331pt.
- [20] [21] [22]) [23] (./main.bbl [24] [25] [26] [27]) [28] [29] [30 <./1.stmat
-ch/figure/scalability.pdf> <./1.stmatch/figure/benefit_enron.pdf> <./1.stmatch/
-figure/benefit_mico.pdf> <./1.stmatch/figure/benefit_youtube.pdf> <./1.stmatch/
-figure/benefit_livejournal.pdf> <./1.stmatch/figure/utilization.pdf>]
+61.
+(pdftex.def)             Requested size: 224.13806pt x 98.26741pt.
+ [22] [23 <./1.stmatch/figure/benefit_enron.pdf> <./1.stmatch/figure/benefit_mi
+co.pdf> <./1.stmatch/figure/benefit_youtube.pdf> <./1.stmatch/figure/benefit_li
+vejournal.pdf> <./1.stmatch/figure/utilization.pdf>] [24] [25]) [26] (./main.bb
+l [27
+
+] [28] [29] [30]) [31]
 (./main.aux (./text/7_toc.aux))
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
 Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 8974E4252844476F94ED45D5FFEAB8AA;4421.
  ) 
 Here is how much of TeX's memory you used:
- 27030 strings out of 478293
- 509237 string characters out of 5847506
- 873424 words of memory out of 5000000
- 44544 multiletter control sequences out of 15000+600000
- 529823 words of font info for 161 fonts, out of 8000000 for 9000
+ 27027 strings out of 478293
+ 509194 string characters out of 5847506
+ 867405 words of memory out of 5000000
+ 44543 multiletter control sequences out of 15000+600000
+ 528745 words of font info for 160 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,20n,80p,592b,948s stack positions out of 10000i,1000n,20000p,200000b,200000s
-
-pdfTeX warning (dest): name{Hfootnote.2} has been referenced but does not exist
-, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{Hfootnote.1} has been referenced but does not exist
-, replaced by a fixed one
-
-{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texlive/
-texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-
-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fo
-nts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/ty
-pe1/public/amsfonts/cm/cmtt10.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
-blic/amsfonts/cm/cmtt12.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/symb
-ol/usyr.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></u
-sr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texliv
-e/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (34 pages, 696219 bytes).
+ 84i,20n,80p,592b,931s stack positions out of 10000i,1000n,20000p,200000b,200000s
+{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texliv
+e/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/
+fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/
+type1/public/amsfonts/cm/cmtt10.pfb></usr/share/texlive/texmf-dist/fonts/type1/
+public/amsfonts/cm/cmtt12.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/sy
+mbol/usyr.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb><
+/usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texl
+ive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on main.pdf (35 pages, 692339 bytes).
 PDF statistics:
  1284 PDF objects out of 1440 (max. 8388607)
- 979 compressed objects within 10 object streams
- 151 named destinations out of 1000 (max. 500000)
+ 975 compressed objects within 10 object streams
+ 150 named destinations out of 1000 (max. 500000)
  279 words of extra memory for PDF output out of 10000 (max. 10000000)
 

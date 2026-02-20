@@ -109,7 +109,7 @@
 %% captions
 \usepackage{boxhandler}
 \usepackage{caption}
-\captionsetup{labelsep=period, justification=raggedright, singlelinecheck=false}
+\captionsetup{labelsep=period, justification=raggedright, singlelinecheck=true}
 %% appendix
 \usepackage{appendix}
 % %% biblatex
@@ -219,7 +219,7 @@
 \seq_new:N \g_capitalize_exceptions_seq
 \ExplSyntaxOff
 
-\AppendToList{a,is,of,óf}
+\AppendToList{a,is,of,óf, for, GPU,CPU,API,CUDA}
 %%%%%% capitalize from stackexchange %%%%%% 
 
 \title{\MakeUppercase{\normalsize\mytitle}\vspace{-2em}}
@@ -329,6 +329,7 @@ Thesis Committee: \myadvisor, Thesis Supervisor
 
 %% ref %%
 \newpage
+\clearpage
 \bibliographystyle{plain}
 \bibliography{ref.bib}
 
