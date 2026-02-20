@@ -16,205 +16,330 @@
 \providecommand \oddpage@label [2]{}
 \@input{text/7_toc.aux}
 \citation{Milo824}
-\citation{10.1145/2488388.2488502}
 \citation{noel2018review}
-\citation{10.1145/3341301.3359633}
-\citation{ullmann1976algorithm,1323804,10.14778/1453856.1453899,10.14778/3342263.3342643,10.14778/1920841.1920887,lee2012depth,10.1145/2882903.2915236,10.1145/3299869.3319880,10.1145/2463676.2465300}
-\citation{hartmanis1982computers}
-\citation{zeng2020gsi,xiang2021cuts,tran2015fast,wang2016fast}
-\citation{tran2015fast,wang2016fast}
-\citation{xiang2021cuts,zeng2020gsi}
-\citation{zeng2020gsi}
-\citation{xiang2021cuts}
-\citation{xiang2021cuts}
-\citation{mawhirter2021dryadic}
-\citation{xiang2021cuts}
-\citation{mawhirter2021dryadic}
-\@writefile{toc}{\contentsline {section}{\numberline {1}STMatch: Accelerating Graph Pattern Matching on GPU with Stack-Based Loop Optimizations}{1}{section.1}\protected@file@percent }
+\citation{noel2018review}
+\citation{ullmann1976algorithm,cordella2001improved,10.14778/1453856.1453899,10.1145/3299869.3319880,bi2016efficient,xiang2021cuts,wei2022stmatch}
+\citation{wang2015detecting}
+\citation{qiu2018real}
+\@writefile{toc}{\contentsline {section}{\numberline {1}GCSM: GPU-Accelerated Continuous Subgraph Matching for Large Graphs}{1}{section.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.1}Introduction}{1}{subsection.1.1}\protected@file@percent }
-\citation{mawhirter2021dryadic}
-\citation{mawhirter2021dryadic}
-\citation{xiang2021cuts}
-\citation{zeng2020gsi}
-\citation{mawhirter2021dryadic}
-\citation{ullmann1976algorithm}
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Preliminaries}{3}{subsection.1.2}\protected@file@percent }
-\newlabel{sec:background}{{1.2}{3}{Preliminaries}{subsection.1.2}{}}
-\newlabel{sec:background@cref}{{[subsection][2][1]1.2}{[1][3][]3}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.2.1}Problem Definition}{3}{subsubsection.1.2.1}\protected@file@percent }
-\citation{1323804,10.14778/1453856.1453899,10.14778/3342263.3342643,10.14778/1920841.1920887}
-\citation{10.1145/3341301.3359633,mawhirter2021dryadic,shi2020graphpi,besta2021sisa,gui2021sumpa,su2021exploring}
-\@writefile{loa}{\contentsline {algocf}{\numberline {1}{\ignorespaces Backtracking for graph pattern matching\relax }}{4}{algocf.1}\protected@file@percent }
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
-\newlabel{alg:backtracking}{{1}{4}{Backtracking for Graph Pattern Matching}{algocf.1}{}}
-\newlabel{alg:backtracking@cref}{{[algorithm][1][]1}{[1][4][]4}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.2.2}Backtracking for Graph Pattern Matching}{4}{subsubsection.1.2.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Graph pattern matching implemented as a nested loop. $N(v)$ means the neighbors of node $v$ in the data graph. \relax }}{5}{figure.caption.4}\protected@file@percent }
-\newlabel{fig:loop_example_orig}{{1}{5}{Graph pattern matching implemented as a nested loop. $N(v)$ means the neighbors of node $v$ in the data graph. \relax }{figure.caption.4}{}}
-\newlabel{fig:loop_example_orig@cref}{{[figure][1][]1}{[1][4][]5}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces A query graph.\relax }}{5}{figure.caption.5}\protected@file@percent }
-\newlabel{fig:example_query}{{2}{5}{A query graph.\relax }{figure.caption.5}{}}
-\newlabel{fig:example_query@cref}{{[figure][2][]2}{[1][5][]5}}
-\citation{mawhirter2021dryadic,10.1145/3341301.3359633}
-\citation{bhattarai2019ceci,shi2020graphpi,mawhirter2021dryadic}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.2.3}GPU Architecture}{6}{subsubsection.1.2.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.3}Challenges for Parallelizing Backtracking}{6}{subsection.1.3}\protected@file@percent }
-\citation{xiang2021cuts}
-\citation{mawhirter2021dryadic}
-\citation{mawhirter2021dryadic}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Graph pattern matching implemented as a stack-based while loop. \relax }}{8}{figure.caption.6}\protected@file@percent }
-\newlabel{fig:while_loop_orig}{{3}{8}{Graph pattern matching implemented as a stack-based while loop. \relax }{figure.caption.6}{}}
-\newlabel{fig:while_loop_orig@cref}{{[figure][3][]3}{[1][7][]8}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.4}Overview of STMatch}{8}{subsection.1.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces An example of $getCandidates$ in two different warps.\relax }}{9}{figure.caption.7}\protected@file@percent }
-\newlabel{fig:getcandidates}{{4}{9}{An example of $getCandidates$ in two different warps.\relax }{figure.caption.7}{}}
-\newlabel{fig:getcandidates@cref}{{[figure][4][]4}{[1][8][]9}}
-\@writefile{loa}{\contentsline {algocf}{\numberline {2}{\ignorespaces Selecting a target warp within a threadblock\relax }}{10}{algocf.2}\protected@file@percent }
-\newlabel{alg:select_target}{{2}{10}{Stealing Within a Threadblock}{algocf.2}{}}
-\newlabel{alg:select_target@cref}{{[algorithm][2][]2}{[1][10][]10}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.5}Load Balancing with Two-Level Work Stealing}{10}{subsection.1.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces An example of dividing and copying tasks from a target warp.\relax }}{11}{figure.caption.9}\protected@file@percent }
-\newlabel{fig:stealiing_example}{{5}{11}{An example of dividing and copying tasks from a target warp.\relax }{figure.caption.9}{}}
-\newlabel{fig:stealiing_example@cref}{{[figure][5][]5}{[1][11][]11}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.5.1}Stealing Within a Threadblock}{11}{subsubsection.1.5.1}\protected@file@percent }
-\newlabel{sec:local_steal}{{1.5.1}{11}{Stealing Within a Threadblock}{subsubsection.1.5.1}{}}
-\newlabel{sec:local_steal@cref}{{[subsubsection][1][1,5]1.5.1}{[1][10][]11}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Work stealing across threadblocks.\relax }}{12}{figure.caption.10}\protected@file@percent }
-\newlabel{fig:steal_across_block}{{6}{12}{Work stealing across threadblocks.\relax }{figure.caption.10}{}}
-\newlabel{fig:steal_across_block@cref}{{[figure][6][]6}{[1][12][]12}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.5.2}Stealing Across ThreadBlocks}{12}{subsubsection.1.5.2}\protected@file@percent }
-\newlabel{sec:global_steal}{{1.5.2}{12}{Stealing Across ThreadBlocks}{subsubsection.1.5.2}{}}
-\newlabel{sec:global_steal@cref}{{[subsubsection][2][1,5]1.5.2}{[1][12][]12}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.6}Improving Thread Utilization with Loop Unrolling}{13}{subsection.1.6}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces An unrolled version of the loop in Fig.\nobreakspace  {}\ref {fig:while_loop_orig}.\relax }}{14}{figure.caption.11}\protected@file@percent }
-\newlabel{fig:while_loop_unrolled}{{7}{14}{An unrolled version of the loop in Fig.~\ref {fig:while_loop_orig}.\relax }{figure.caption.11}{}}
-\newlabel{fig:while_loop_unrolled@cref}{{[figure][7][]7}{[1][13][]14}}
-\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Perform multiple set operations in one warp.\relax }}{15}{figure.caption.12}\protected@file@percent }
-\newlabel{fig:combined_set_operation}{{8}{15}{Perform multiple set operations in one warp.\relax }{figure.caption.12}{}}
-\newlabel{fig:combined_set_operation@cref}{{[figure][8][]8}{[1][15][]15}}
-\citation{mawhirter2021dryadic}
-\citation{mawhirter2021dryadic}
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.7}Reducing Redundancy With Loop-Invariant Code Motion}{16}{subsection.1.7}\protected@file@percent }
-\newlabel{sec:code_motion}{{1.7}{16}{Reducing Redundancy With Loop-Invariant Code Motion}{subsection.1.7}{}}
-\newlabel{sec:code_motion@cref}{{[subsection][7][1]1.7}{[1][16][]16}}
-\newlabel{fig:dependence_graph}{{9a}{17}{Subfigure 9a}{subfigure.9.1}{}}
-\newlabel{fig:dependence_graph@cref}{{[subfigure][1][9]9a}{[1][16][]17}}
-\newlabel{sub@fig:dependence_graph}{{(a)}{a}{Subfigure 9a\relax }{subfigure.9.1}{}}
-\newlabel{fig:dependence_graph_array}{{9b}{17}{Subfigure 9b}{subfigure.9.2}{}}
-\newlabel{fig:dependence_graph_array@cref}{{[subfigure][2][9]9b}{[1][16][]17}}
-\newlabel{sub@fig:dependence_graph_array}{{(b)}{b}{Subfigure 9b\relax }{subfigure.9.2}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces The set dependence graph for unlabeled query of Fig.\nobreakspace  {}\ref {fig:example_query}.\relax }}{17}{figure.caption.13}\protected@file@percent }
-\newlabel{fig:code_motion_unlabeled}{{9}{17}{The set dependence graph for unlabeled query of Fig.~\ref {fig:example_query}.\relax }{figure.caption.13}{}}
-\newlabel{fig:code_motion_unlabeled@cref}{{[figure][9][]9}{[1][16][]17}}
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Set dependence graph}}}{17}{subfigure.9.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {A compact storage}}}{17}{subfigure.9.2}\protected@file@percent }
-\newlabel{fig:colored_dependence_graph}{{10a}{17}{Subfigure 10a}{subfigure.10.1}{}}
-\newlabel{fig:colored_dependence_graph@cref}{{[subfigure][1][10]10a}{[1][16][]17}}
-\newlabel{sub@fig:colored_dependence_graph}{{(a)}{a}{Subfigure 10a\relax }{subfigure.10.1}{}}
-\newlabel{fig:colored_dependence_graph_improved}{{10b}{17}{Subfigure 10b}{subfigure.10.2}{}}
-\newlabel{fig:colored_dependence_graph_improved@cref}{{[subfigure][2][10]10b}{[1][16][]17}}
-\newlabel{sub@fig:colored_dependence_graph_improved}{{(b)}{b}{Subfigure 10b\relax }{subfigure.10.2}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces The set dependence graph for labeled query of Fig.\nobreakspace  {}\ref {fig:example_query}. `' denotes the label(s) of nodes in a set.\relax }}{17}{figure.caption.14}\protected@file@percent }
-\newlabel{fig:my_label}{{10}{17}{The set dependence graph for labeled query of Fig.~\ref {fig:example_query}. `' denotes the label(s) of nodes in a set.\relax }{figure.caption.14}{}}
-\newlabel{fig:my_label@cref}{{[figure][10][]10}{[1][16][]17}}
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Separate label sets}}}{17}{subfigure.10.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Merged label sets}}}{17}{subfigure.10.2}\protected@file@percent }
-\citation{mawhirter2021dryadic}
-\citation{mawhirter2021dryadic}
-\citation{xiang2021cuts}
-\citation{zeng2020gsi}
-\citation{mawhirter2021dryadic}
-\citation{10.1145/2882903.2915236}
-\citation{10.14778/3342263.3342643}
-\citation{7907163}
-\citation{tran2015fast}
-\citation{wang2016fast}
+\newlabel{fig:query}{{1a}{1}{Subfigure 1a}{subfigure.1.1}{}}
+\newlabel{fig:query@cref}{{[subfigure][1][1]1a}{[1][1][]1}}
+\newlabel{sub@fig:query}{{(a)}{a}{Subfigure 1a\relax }{subfigure.1.1}{}}
+\newlabel{fig:g0}{{1b}{1}{Subfigure 1b}{subfigure.1.2}{}}
+\newlabel{fig:g0@cref}{{[subfigure][2][1]1b}{[1][1][]1}}
+\newlabel{sub@fig:g0}{{(b)}{b}{Subfigure 1b\relax }{subfigure.1.2}{}}
+\newlabel{fig:g1}{{1c}{1}{Subfigure 1c}{subfigure.1.3}{}}
+\newlabel{fig:g1@cref}{{[subfigure][3][1]1c}{[1][1][]1}}
+\newlabel{sub@fig:g1}{{(c)}{c}{Subfigure 1c\relax }{subfigure.1.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces An example of continuous subgraph matching.\relax }}{1}{figure.caption.3}\protected@file@percent }
+\newlabel{fig:csm}{{1}{1}{An example of continuous subgraph matching.\relax }{figure.caption.3}{}}
+\newlabel{fig:csm@cref}{{[figure][1][]1}{[1][1][]1}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Query Q}}}{1}{subfigure.1.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Data graph $G_0$}}}{1}{subfigure.1.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {Graph update: $G_0 + \Delta E_0$}}}{1}{subfigure.1.3}\protected@file@percent }
+\citation{fan2013incremental,kankanamge2017graphflow,choudhury2015selectivity,sun2022rapidflow}
+\citation{fan2013incremental}
+\citation{kankanamge2017graphflow,choudhury2015selectivity,kim2018turboflux,sun2022rapidflow}
+\citation{ramakrishnan2003database,griffin1995incremental}
+\citation{zeng2020gsi,xiang2021cuts,wei2022stmatch}
+\citation{10.5555/3571885.3571954}
+\citation{sun2022rapidflow}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Background}{4}{subsection.1.2}\protected@file@percent }
+\newlabel{sec:Background}{{1.2}{4}{Background}{subsection.1.2}{}}
+\newlabel{sec:Background@cref}{{[subsection][2][1]1.2}{[1][4][]4}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.2.1}Problem Definition}{4}{subsubsection.1.2.1}\protected@file@percent }
+\newlabel{sec:Preliminaries}{{1.2.1}{4}{Problem Definition}{subsubsection.1.2.1}{}}
+\newlabel{sec:Preliminaries@cref}{{[subsubsection][1][1,2]1.2.1}{[1][4][]4}}
+\citation{mhedhbi2019optimizing,ngo2018worst,tran2015fast}
+\@writefile{lol}{\contentsline {lstlisting}{2.gcsm/fig/l0.cpp}{5}{lstlisting.-1}\protected@file@percent }
+\newlabel{fig:l0}{{2a}{5}{Subfigure 2a}{lstnumber.-1.8}{}}
+\newlabel{fig:l0@cref}{{[subfigure][1][2]2a}{[1][5][]5}}
+\newlabel{sub@fig:l0}{{(a)}{a}{Subfigure 2a\relax }{lstnumber.-1.8}{}}
+\@writefile{lol}{\contentsline {lstlisting}{2.gcsm/fig/l1.cpp}{5}{lstlisting.-2}\protected@file@percent }
+\newlabel{fig:l0}{{2b}{5}{Subfigure 2b}{lstnumber.-2.8}{}}
+\newlabel{fig:l0@cref}{{[subfigure][2][2]2b}{[1][5][]5}}
+\newlabel{sub@fig:l0}{{(b)}{b}{Subfigure 2b\relax }{lstnumber.-2.8}{}}
+\@writefile{lol}{\contentsline {lstlisting}{2.gcsm/fig/l2.cpp}{5}{lstlisting.-3}\protected@file@percent }
+\newlabel{fig:l0}{{2c}{5}{Subfigure 2c}{lstnumber.-3.8}{}}
+\newlabel{fig:l0@cref}{{[subfigure][3][2]2c}{[1][5][]5}}
+\newlabel{sub@fig:l0}{{(c)}{c}{Subfigure 2c\relax }{lstnumber.-3.8}{}}
+\@writefile{lol}{\contentsline {lstlisting}{2.gcsm/fig/l3.cpp}{5}{lstlisting.-4}\protected@file@percent }
+\newlabel{fig:l0}{{2d}{5}{Subfigure 2d}{lstnumber.-4.8}{}}
+\newlabel{fig:l0@cref}{{[subfigure][4][2]2d}{[1][5][]5}}
+\newlabel{sub@fig:l0}{{(d)}{d}{Subfigure 2d\relax }{lstnumber.-4.8}{}}
+\@writefile{lol}{\contentsline {lstlisting}{2.gcsm/fig/l4.cpp}{5}{lstlisting.-5}\protected@file@percent }
+\newlabel{fig:l0}{{2e}{5}{Subfigure 2e}{lstnumber.-5.8}{}}
+\newlabel{fig:l0@cref}{{[subfigure][5][2]2e}{[1][5][]5}}
+\newlabel{sub@fig:l0}{{(e)}{e}{Subfigure 2e\relax }{lstnumber.-5.8}{}}
+\@writefile{lol}{\contentsline {lstlisting}{2.gcsm/fig/l5.cpp}{5}{lstlisting.-6}\protected@file@percent }
+\newlabel{fig:l0}{{2f}{5}{Subfigure 2f}{lstnumber.-6.8}{}}
+\newlabel{fig:l0@cref}{{[subfigure][6][2]2f}{[1][5][]5}}
+\newlabel{sub@fig:l0}{{(f)}{f}{Subfigure 2f\relax }{lstnumber.-6.8}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Continuous subgraph matching implemented as worst-case optimal join. $E$ represents the edges in the initial graph. $\Delta E$ represents a batch of edge updates. $N$ and $N'$ represent the original and the updated neighbor lists respectively. \relax }}{5}{figure.caption.4}\protected@file@percent }
+\newlabel{fig:for_loop}{{2}{5}{Continuous subgraph matching implemented as worst-case optimal join. $E$ represents the edges in the initial graph. $\Delta E$ represents a batch of edge updates. $N$ and $N'$ represent the original and the updated neighbor lists respectively. \relax }{figure.caption.4}{}}
+\newlabel{fig:for_loop@cref}{{[figure][2][]2}{[1][5][]5}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Matching $Q$ on $G_0$}}}{5}{subfigure.2.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {$\Delta M_1$}}}{5}{subfigure.2.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {$\Delta M_2$}}}{5}{subfigure.2.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {$\Delta M_3$}}}{5}{subfigure.2.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(e)}{\ignorespaces {$\Delta M_4$}}}{5}{subfigure.2.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(f)}{\ignorespaces {$\Delta M_5$}}}{5}{subfigure.2.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.2.2}Worst-Case Optimal Join for CSM}{5}{subsubsection.1.2.2}\protected@file@percent }
+\newlabel{sec:csm_algorithm}{{1.2.2}{5}{Worst-Case Optimal Join for CSM}{subsubsection.1.2.2}{}}
+\newlabel{sec:csm_algorithm@cref}{{[subsubsection][2][1,2]1.2.2}{[1][5][]5}}
+\citation{ramakrishnan2003database,griffin1995incremental}
+\citation{kankanamge2017graphflow}
+\citation{kankanamge2017graphflow,aberger2017emptyheaded}
+\citation{veldhuizen2014leapfrog}
+\newlabel{csm_formula}{{1}{6}{Worst-Case Optimal Join for CSM}{equation.1.1}{}}
+\newlabel{csm_formula@cref}{{[equation][1][]1}{[1][6][]6}}
+\citation{ngo2018worst}
+\citation{atserias2008size}
+\citation{6968748}
+\citation{cuda}
+\newlabel{eq:agm}{{2}{7}{Worst-Case Optimal Join for CSM}{equation.1.2}{}}
+\newlabel{eq:agm@cref}{{[equation][2][]2}{[1][7][]7}}
+\citation{wei2022stmatch,xiang2021cuts,zeng2020gsi,10.5555/3571885.3571954}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.2.3}CPU-GPU Communication}{8}{subsubsection.1.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.3}Overview of GCSM}{9}{subsection.1.3}\protected@file@percent }
+\newlabel{sec:Overview}{{1.3}{9}{Overview of GCSM}{subsection.1.3}{}}
+\newlabel{sec:Overview@cref}{{[subsection][3][1]1.3}{[1][8][]9}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Workflow of GCSM.\relax }}{10}{figure.caption.5}\protected@file@percent }
+\newlabel{fig:Overview}{{3}{10}{Workflow of GCSM.\relax }{figure.caption.5}{}}
+\newlabel{fig:Overview@cref}{{[figure][3][]3}{[1][9][]10}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.4}Obtaining Frequent Vertices}{10}{subsection.1.4}\protected@file@percent }
+\newlabel{sec:AppMatch}{{1.4}{10}{Obtaining Frequent Vertices}{subsection.1.4}{}}
+\newlabel{sec:AppMatch@cref}{{[subsection][4][1]1.4}{[1][10][]10}}
+\newlabel{fig:execution_tree}{{4a}{11}{Subfigure 4a}{subfigure.4.1}{}}
+\newlabel{fig:execution_tree@cref}{{[subfigure][1][4]4a}{[1][11][]11}}
+\newlabel{sub@fig:execution_tree}{{(a)}{a}{Subfigure 4a\relax }{subfigure.4.1}{}}
+\newlabel{fig:sampled_path}{{4b}{11}{Subfigure 4b}{subfigure.4.2}{}}
+\newlabel{fig:sampled_path@cref}{{[subfigure][2][4]4b}{[1][11][]11}}
+\newlabel{sub@fig:sampled_path}{{(b)}{b}{Subfigure 4b\relax }{subfigure.4.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Sampling multiple paths from an execution tree. \relax }}{11}{figure.caption.6}\protected@file@percent }
+\newlabel{fig:tree}{{4}{11}{Sampling multiple paths from an execution tree. \relax }{figure.caption.6}{}}
+\newlabel{fig:tree@cref}{{[figure][4][]4}{[1][11][]11}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {An example execution tree}}}{11}{subfigure.4.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Two sampled paths}}}{11}{subfigure.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.4.1}Estimating Access Frequency with Random Walk}{11}{subsubsection.1.4.1}\protected@file@percent }
+\citation{pavan2013counting,iyer2018asap}
+\newlabel{eq:avg}{{3}{12}{Estimating Access Frequency with Random Walk}{equation.1.3}{}}
+\newlabel{eq:avg@cref}{{[equation][3][]3}{[1][12][]12}}
+\newlabel{eq:pr_bound}{{4}{12}{}{equation.1.4}{}}
+\newlabel{eq:pr_bound@cref}{{[equation][4][]4}{[1][12][]12}}
+\newlabel{eq:time_complexity}{{5}{13}{Estimating Access Frequency with Random Walk}{equation.1.5}{}}
+\newlabel{eq:time_complexity@cref}{{[equation][5][]5}{[1][13][]13}}
+\newlabel{eq:summ}{{6}{13}{Estimating Access Frequency with Random Walk}{equation.1.6}{}}
+\newlabel{eq:summ@cref}{{[equation][6][]6}{[1][13][]13}}
+\citation{wasserman2010statistics}
+\newlabel{eq:var}{{7}{14}{Estimating Access Frequency with Random Walk}{equation.1.7}{}}
+\newlabel{eq:var@cref}{{[equation][7][]7}{[1][13][]14}}
+\newlabel{eq:chev}{{8}{14}{Estimating Access Frequency with Random Walk}{equation.1.8}{}}
+\newlabel{eq:chev@cref}{{[equation][8][]8}{[1][14][]14}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.4.2}Multiple Random Walks with One Single Execution}{14}{subsubsection.1.4.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Maintenance of graph data structure on the CPU for the graph update in Fig.\nobreakspace  {}\ref {fig:csm}. New edges (colored in green) are appended to the end of corresponding neighbor lists; Deleted edges (colored in orange) are marked as negative values.\relax }}{15}{figure.caption.7}\protected@file@percent }
+\newlabel{fig:adj_list}{{5}{15}{Maintenance of graph data structure on the CPU for the graph update in Fig.~\ref {fig:csm}. New edges (colored in green) are appended to the end of corresponding neighbor lists; Deleted edges (colored in orange) are marked as negative values.\relax }{figure.caption.7}{}}
+\newlabel{fig:adj_list@cref}{{[figure][5][]5}{[1][15][]15}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.5}Exact Incremental Matching with Cached Data on GPU}{15}{subsection.1.5}\protected@file@percent }
+\newlabel{sec:GPUMatch}{{1.5}{15}{Exact Incremental Matching with Cached Data on GPU}{subsection.1.5}{}}
+\newlabel{sec:GPUMatch@cref}{{[subsection][5][1]1.5}{[1][15][]15}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.5.1}Graph Data Structure on CPU}{16}{subsubsection.1.5.1}\protected@file@percent }
+\newlabel{sec:gpu_graph}{{1.5.1}{16}{Graph Data Structure on CPU}{subsubsection.1.5.1}{}}
+\newlabel{sec:gpu_graph@cref}{{[subsubsection][1][1,5]1.5.1}{[1][15][]16}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Graph data sent to GPU in DCSR format.\relax }}{17}{figure.caption.8}\protected@file@percent }
+\newlabel{fig:csr}{{6}{17}{Graph data sent to GPU in DCSR format.\relax }{figure.caption.8}{}}
+\newlabel{fig:csr@cref}{{[figure][6][]6}{[1][16][]17}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.5.2}Data Preparation for GPU}{17}{subsubsection.1.5.2}\protected@file@percent }
+\newlabel{sec:data_prep}{{1.5.2}{17}{Data Preparation for GPU}{subsubsection.1.5.2}{}}
+\newlabel{sec:data_prep@cref}{{[subsubsection][2][1,5]1.5.2}{[1][16][]17}}
+\citation{wei2022stmatch}
+\citation{wei2022stmatch}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.5.3}Parallel Incremental Matching on GPU}{18}{subsubsection.1.5.3}\protected@file@percent }
+\newlabel{sec:gpu_impl}{{1.5.3}{18}{Parallel Incremental Matching on GPU}{subsubsection.1.5.3}{}}
+\newlabel{sec:gpu_impl@cref}{{[subsubsection][3][1,5]1.5.3}{[1][18][]18}}
 \citation{snapnets}
-\citation{zeng2020gsi,tran2015fast,10.14778/1920841.1920887,10.1145/2882903.2915236,mawhirter2021dryadic}
-\citation{mawhirter2021dryadic}
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Graph datasets.\relax }}{19}{table.caption.15}\protected@file@percent }
-\newlabel{tab:datasets}{{1}{19}{Graph datasets.\relax }{table.caption.15}{}}
+\citation{iosup2016ldbc}
+\citation{sun2022rapidflow,sun2022depth,kim2018turboflux}
+\citation{sun2022rapidflow,sun2022depth}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Data graphs.\relax }}{19}{table.caption.9}\protected@file@percent }
+\newlabel{tab:datasets}{{1}{19}{Data graphs.\relax }{table.caption.9}{}}
 \newlabel{tab:datasets@cref}{{[table][1][]1}{[1][19][]19}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.8}Experimental Results}{19}{subsection.1.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.8.1}Experimental Setup}{19}{subsubsection.1.8.1}\protected@file@percent }
-\newlabel{sec:setup}{{1.8.1}{19}{Experimental Setup}{subsubsection.1.8.1}{}}
-\newlabel{sec:setup@cref}{{[subsubsection][1][1,8]1.8.1}{[1][19][]19}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.8.2}Overall Performance}{20}{subsubsection.1.8.2}\protected@file@percent }
-\newlabel{tab:unlabel_edge_induced}{{11a}{21}{Subfigure 11a}{subfigure.11.1}{}}
-\newlabel{tab:unlabel_edge_induced@cref}{{[subfigure][1][11]11a}{[1][20][]21}}
-\newlabel{sub@tab:unlabel_edge_induced}{{(a)}{a}{Subfigure 11a\relax }{subfigure.11.1}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Execution time (in milliseconds) of different systems for unlabeled matching. `$\times $' indicates program failure due to out-of-memory. `$-$' indicates timeout after 8 hours. CuTS only supports edge-induced matching. It fails for all queries on MiCo.\relax }}{21}{figure.caption.16}\protected@file@percent }
-\newlabel{tab:unlabel_result}{{2}{21}{Execution time (in milliseconds) of different systems for unlabeled matching. `$\times $' indicates program failure due to out-of-memory. `$-$' indicates timeout after 8 hours. CuTS only supports edge-induced matching. It fails for all queries on MiCo.\relax }{figure.caption.16}{}}
-\newlabel{tab:unlabel_result@cref}{{[table][2][]2}{[1][20][]21}}
-\@writefile{lot}{\contentsline {subtable}{\numberline{(a)}{\ignorespaces {Edge-induced}}}{21}{subfigure.11.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {subtable}{\numberline{(b)}{\ignorespaces {Vertex-induced}}}{21}{subfigure.11.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces Speedups of labeled and unlabeled size-6 queries across multiple GPUs. \relax }}{21}{figure.caption.17}\protected@file@percent }
-\newlabel{fig:scalability}{{11}{21}{Speedups of labeled and unlabeled size-6 queries across multiple GPUs. \relax }{figure.caption.17}{}}
-\newlabel{fig:scalability@cref}{{[figure][11][]11}{[1][20][]21}}
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Execution time (in milliseconds) of different systems for labeled edge-induced matching. GSI fails for all queries on MiCo, LiveJournal, Orkut and Friendster.\relax }}{22}{table.caption.18}\protected@file@percent }
-\newlabel{tab:label_edge_induced}{{3}{22}{Execution time (in milliseconds) of different systems for labeled edge-induced matching. GSI fails for all queries on MiCo, LiveJournal, Orkut and Friendster.\relax }{table.caption.18}{}}
-\newlabel{tab:label_edge_induced@cref}{{[table][3][]3}{[1][20][]22}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.8.3}Benefits of Proposed Techniques}{22}{subsubsection.1.8.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces Speedups of labeled size-6 queries with and without work-stealing and loop unrolling. \relax }}{23}{figure.caption.19}\protected@file@percent }
-\newlabel{fig:effects}{{12}{23}{Speedups of labeled size-6 queries with and without work-stealing and loop unrolling. \relax }{figure.caption.19}{}}
-\newlabel{fig:effects@cref}{{[figure][12][]12}{[1][22][]23}}
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Enron}}}{23}{subfigure.12.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {MiCo}}}{23}{subfigure.12.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {YouTube}}}{23}{subfigure.12.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {LiveJournal}}}{23}{subfigure.12.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {13}{\ignorespaces Thread utilization with different unrolling sizes. \relax }}{23}{figure.caption.20}\protected@file@percent }
-\newlabel{fig:utilization}{{13}{23}{Thread utilization with different unrolling sizes. \relax }{figure.caption.20}{}}
-\newlabel{fig:utilization@cref}{{[figure][13][]13}{[1][22][]23}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.6}Experimental Results}{19}{subsection.1.6}\protected@file@percent }
+\newlabel{sec:Experiment}{{1.6}{19}{Experimental Results}{subsection.1.6}{}}
+\newlabel{sec:Experiment@cref}{{[subsection][6][1]1.6}{[1][19][]19}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.6.1}Experimental Setup}{19}{subsubsection.1.6.1}\protected@file@percent }
+\citation{10.5555/3571885.3571954}
+\citation{wei2022stmatch}
+\citation{sun2022rapidflow}
+\citation{wei2022stmatch}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Query graphs.\relax }}{20}{figure.caption.10}\protected@file@percent }
+\newlabel{fig:queries}{{7}{20}{Query graphs.\relax }{figure.caption.10}{}}
+\newlabel{fig:queries@cref}{{[figure][7][]7}{[1][19][]20}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Q1}}}{20}{subfigure.7.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Q2}}}{20}{subfigure.7.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {Q3}}}{20}{subfigure.7.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {Q4}}}{20}{subfigure.7.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(e)}{\ignorespaces {Q5}}}{20}{subfigure.7.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(f)}{\ignorespaces {Q6}}}{20}{subfigure.7.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.6.2}Comparison with Naive GPU Implementations}{21}{subsubsection.1.6.2}\protected@file@percent }
+\newlabel{sec:overall_performance}{{1.6.2}{21}{Comparison with Naive GPU Implementations}{subsubsection.1.6.2}{}}
+\newlabel{sec:overall_performance@cref}{{[subsubsection][2][1,6]1.6.2}{[1][21][]21}}
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Execution time for matching different query patterns from a batch of 4096 edges on FR graph. Data access sizes from CPU are labeled on each bar.\relax }}{22}{figure.caption.11}\protected@file@percent }
+\newlabel{fig:performance_fr}{{8}{22}{Execution time for matching different query patterns from a batch of 4096 edges on FR graph. Data access sizes from CPU are labeled on each bar.\relax }{figure.caption.11}{}}
+\newlabel{fig:performance_fr@cref}{{[figure][8][]8}{[1][21][]22}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Q1}}}{22}{subfigure.8.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Q2}}}{22}{subfigure.8.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {Q3}}}{22}{subfigure.8.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {Q4}}}{22}{subfigure.8.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(e)}{\ignorespaces {Q5}}}{22}{subfigure.8.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(f)}{\ignorespaces {Q6}}}{22}{subfigure.8.6}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Overhead of frequency estimation (FE) and data copying (DC) in percentage of total execution time.\relax }}{22}{table.caption.16}\protected@file@percent }
+\newlabel{tab:breakdown}{{2}{22}{Overhead of frequency estimation (FE) and data copying (DC) in percentage of total execution time.\relax }{table.caption.16}{}}
+\newlabel{tab:breakdown@cref}{{[table][2][]2}{[1][21][]22}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Execution time for matching different query patterns from a batch of 4096 edges on SF3K graph.\relax }}{23}{figure.caption.12}\protected@file@percent }
+\newlabel{fig:performance_3k}{{9}{23}{Execution time for matching different query patterns from a batch of 4096 edges on SF3K graph.\relax }{figure.caption.12}{}}
+\newlabel{fig:performance_3k@cref}{{[figure][9][]9}{[1][21][]23}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Q1}}}{23}{subfigure.9.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Q2}}}{23}{subfigure.9.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {Q3}}}{23}{subfigure.9.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {Q4}}}{23}{subfigure.9.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(e)}{\ignorespaces {Q5}}}{23}{subfigure.9.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(f)}{\ignorespaces {Q6}}}{23}{subfigure.9.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Execution time for matching different query patterns from a batch of 8192 edges on SF10K graph.\relax }}{24}{figure.caption.13}\protected@file@percent }
+\newlabel{fig:performance_10k}{{10}{24}{Execution time for matching different query patterns from a batch of 8192 edges on SF10K graph.\relax }{figure.caption.13}{}}
+\newlabel{fig:performance_10k@cref}{{[figure][10][]10}{[1][21][]24}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Q1}}}{24}{subfigure.10.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Q2}}}{24}{subfigure.10.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {Q3}}}{24}{subfigure.10.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {Q4}}}{24}{subfigure.10.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(e)}{\ignorespaces {Q5}}}{24}{subfigure.10.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(f)}{\ignorespaces {Q6}}}{24}{subfigure.10.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.6.3}Comparison with CPU Implementations}{24}{subsubsection.1.6.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces Execution time for counting size-3, 4, and 5 motifs on RoadNetPA and RoadNetCA. The batch size is set to 4096.\relax }}{25}{figure.caption.14}\protected@file@percent }
+\newlabel{fig:performance_roadnet}{{11}{25}{Execution time for counting size-3, 4, and 5 motifs on RoadNetPA and RoadNetCA. The batch size is set to 4096.\relax }{figure.caption.14}{}}
+\newlabel{fig:performance_roadnet@cref}{{[figure][11][]11}{[1][21][]25}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {PA-MC3}}}{25}{subfigure.11.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {PA-MC4}}}{25}{subfigure.11.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {PA-MC5}}}{25}{subfigure.11.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {CA-MC3}}}{25}{subfigure.11.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(e)}{\ignorespaces {CA-MC4}}}{25}{subfigure.11.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(f)}{\ignorespaces {CA-MC5}}}{25}{subfigure.11.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces Execution time of different batch size for matching Q6 on SF3K graph and Q5 on SF10K graph. The speedups of GCSM against zero-copy are marked above the line.\relax }}{25}{figure.caption.15}\protected@file@percent }
+\newlabel{fig:performance_batchsize}{{12}{25}{Execution time of different batch size for matching Q6 on SF3K graph and Q5 on SF10K graph. The speedups of GCSM against zero-copy are marked above the line.\relax }{figure.caption.15}{}}
+\newlabel{fig:performance_batchsize@cref}{{[figure][12][]12}{[1][21][]25}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {SF3K-Q6}}}{25}{subfigure.12.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {SF10K-Q5}}}{25}{subfigure.12.2}\protected@file@percent }
+\newlabel{fig:vsgm_3kq1}{{13a}{26}{Subfigure 13a}{subfigure.13.1}{}}
+\newlabel{fig:vsgm_3kq1@cref}{{[subfigure][1][13]13a}{[1][24][]26}}
+\newlabel{sub@fig:vsgm_3kq1}{{(a)}{a}{Subfigure 13a\relax }{subfigure.13.1}{}}
+\newlabel{fig:vsgm_3kq2}{{13b}{26}{Subfigure 13b}{subfigure.13.2}{}}
+\newlabel{fig:vsgm_3kq2@cref}{{[subfigure][2][13]13b}{[1][24][]26}}
+\newlabel{sub@fig:vsgm_3kq2}{{(b)}{b}{Subfigure 13b\relax }{subfigure.13.2}{}}
+\newlabel{fig:vsgm_3kq3}{{13c}{26}{Subfigure 13c}{subfigure.13.3}{}}
+\newlabel{fig:vsgm_3kq3@cref}{{[subfigure][3][13]13c}{[1][24][]26}}
+\newlabel{sub@fig:vsgm_3kq3}{{(c)}{c}{Subfigure 13c\relax }{subfigure.13.3}{}}
+\newlabel{fig:vsgm_10kq1}{{13d}{26}{Subfigure 13d}{subfigure.13.4}{}}
+\newlabel{fig:vsgm_10kq1@cref}{{[subfigure][4][13]13d}{[1][24][]26}}
+\newlabel{sub@fig:vsgm_10kq1}{{(d)}{d}{Subfigure 13d\relax }{subfigure.13.4}{}}
+\newlabel{fig:10kq2}{{13e}{26}{Subfigure 13e}{subfigure.13.5}{}}
+\newlabel{fig:10kq2@cref}{{[subfigure][5][13]13e}{[1][24][]26}}
+\newlabel{sub@fig:10kq2}{{(e)}{e}{Subfigure 13e\relax }{subfigure.13.5}{}}
+\newlabel{fig:10kq3}{{13f}{26}{Subfigure 13f}{subfigure.13.6}{}}
+\newlabel{fig:10kq3@cref}{{[subfigure][6][13]13f}{[1][24][]26}}
+\newlabel{sub@fig:10kq3}{{(f)}{f}{Subfigure 13f\relax }{subfigure.13.6}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {13}{\ignorespaces Breakdown execution time of VSGM and GCSM. `DC' includes the time for identifying the caching vertices and copying their neighbor lists to GPU. `Match' is the matching kernel execution time on GPU. \relax }}{26}{figure.caption.17}\protected@file@percent }
+\newlabel{fig:vsgm}{{13}{26}{Breakdown execution time of VSGM and GCSM. `DC' includes the time for identifying the caching vertices and copying their neighbor lists to GPU. `Match' is the matching kernel execution time on GPU. \relax }{figure.caption.17}{}}
+\newlabel{fig:vsgm@cref}{{[figure][13][]13}{[1][24][]26}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {SF3K-Q1}}}{26}{subfigure.13.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {SF3K-Q2}}}{26}{subfigure.13.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {SF3K-Q3}}}{26}{subfigure.13.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {SF10K-Q1}}}{26}{subfigure.13.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(e)}{\ignorespaces {SF10K-Q2}}}{26}{subfigure.13.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(f)}{\ignorespaces {SF10K-Q3}}}{26}{subfigure.13.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {14}{\ignorespaces Performance comparison with RapidFlow. \relax }}{26}{figure.caption.18}\protected@file@percent }
+\newlabel{fig:rapidflow}{{14}{26}{Performance comparison with RapidFlow. \relax }{figure.caption.18}{}}
+\newlabel{fig:rapidflow@cref}{{[figure][14][]14}{[1][24][]26}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {LJ-Q1}}}{26}{subfigure.14.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {LJ-Q2}}}{26}{subfigure.14.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {LJ-Q3}}}{26}{subfigure.14.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {AZ-Q4}}}{26}{subfigure.14.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(e)}{\ignorespaces {AZ-Q5}}}{26}{subfigure.14.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(f)}{\ignorespaces {AZ-Q6}}}{26}{subfigure.14.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.6.4}Effectiveness of Frequency Estimation}{26}{subsubsection.1.6.4}\protected@file@percent }
+\newlabel{sec:coverage}{{1.6.4}{26}{Effectiveness of Frequency Estimation}{subsubsection.1.6.4}{}}
+\newlabel{sec:coverage@cref}{{[subsubsection][4][1,6]1.6.4}{[1][25][]26}}
+\newlabel{fig:dist}{{15a}{27}{Subfigure 15a}{subfigure.15.1}{}}
+\newlabel{fig:dist@cref}{{[subfigure][1][15]15a}{[1][25][]27}}
+\newlabel{sub@fig:dist}{{(a)}{a}{Subfigure 15a\relax }{subfigure.15.1}{}}
+\newlabel{fig:coverage}{{15b}{27}{Subfigure 15b}{subfigure.15.2}{}}
+\newlabel{fig:coverage@cref}{{[subfigure][2][15]15b}{[1][25][]27}}
+\newlabel{sub@fig:coverage}{{(b)}{b}{Subfigure 15b\relax }{subfigure.15.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {15}{\ignorespaces Memory access distribution and cache coverage of incremental matching.\relax }}{27}{figure.caption.19}\protected@file@percent }
+\newlabel{fig:dist_cover}{{15}{27}{Memory access distribution and cache coverage of incremental matching.\relax }{figure.caption.19}{}}
+\newlabel{fig:dist_cover@cref}{{[figure][15][]15}{[1][25][]27}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Memory Access Distribution}}}{27}{subfigure.15.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Cache Coverage}}}{27}{subfigure.15.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Graph reorganization time (in milliseconds).\relax }}{27}{table.caption.20}\protected@file@percent }
+\newlabel{tab:update}{{3}{27}{Graph reorganization time (in milliseconds).\relax }{table.caption.20}{}}
+\newlabel{tab:update@cref}{{[table][3][]3}{[1][27][]27}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.6.5}Graph Reorganization Overhead}{27}{subsubsection.1.6.5}\protected@file@percent }
 \citation{ullmann1976algorithm}
-\citation{1323804,10.14778/1453856.1453899,10.14778/3342263.3342643,10.14778/1920841.1920887}
-\citation{10.1145/2463676.2465300,10.1145/2882903.2915236,lee2012depth,10.1145/3299869.3319880}
-\citation{mawhirter2021dryadic}
-\citation{tran2015fast,wang2016fast,zeng2020gsi}
-\citation{lin2016network,xiang2021cuts}
+\citation{cordella2001improved,10.14778/1453856.1453899,he2010query}
+\citation{mawhirter2019automine}
+\citation{aberger2017emptyheaded,mhedhbi2019optimizing,kankanamge2017graphflow}
+\citation{wang2020fast,tran2015fast,zeng2020gsi,xiang2021cuts,wei2022stmatch}
 \citation{xiang2021cuts}
-\citation{guo2020gpu,xiang2021cuts}
+\citation{wei2022stmatch}
 \citation{guo2020gpu}
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.9}Related Work}{24}{subsection.1.9}\protected@file@percent }
-\citation{yang2021huge,bhattarai2019ceci,ren2019fast,wang2019benu,lai2016scalable,lai2017scalable,shi2020graphpi}
-\citation{bhattarai2019ceci}
-\citation{ren2019fast}
-\citation{wang2019benu}
-\citation{shi2020graphpi}
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.10}Conclusion}{25}{subsection.1.10}\protected@file@percent }
+\citation{10.5555/3571885.3571954}
+\citation{fan2013incremental}
+\citation{kankanamge2017graphflow}
+\citation{choudhury2015selectivity}
+\citation{kim2018turboflux}
+\citation{kim2018turboflux}
+\citation{min2021symmetric}
+\citation{sun2022rapidflow}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.7}Related Works}{28}{subsection.1.7}\protected@file@percent }
+\newlabel{sec:RelatedWorks}{{1.7}{28}{Related Works}{subsection.1.7}{}}
+\newlabel{sec:RelatedWorks@cref}{{[subsection][7][1]1.7}{[1][28][]28}}
+\citation{Bressan2019MotivoFM}
+\citation{abdelhamid2016scalemine}
+\citation{jiang2022samplemine}
+\citation{pandey2020c}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.8}Conclusion}{29}{subsection.1.8}\protected@file@percent }
+\newlabel{sec:Conclusion}{{1.8}{29}{Conclusion}{subsection.1.8}{}}
+\newlabel{sec:Conclusion@cref}{{[subsection][8][1]1.8}{[1][29][]29}}
 \bibstyle{plain}
 \bibdata{ref.bib}
-\bibcite{besta2021sisa}{1}
-\bibcite{bhattarai2019ceci}{2}
-\bibcite{10.1145/2882903.2915236}{3}
-\bibcite{7907163}{4}
-\bibcite{1323804}{5}
-\bibcite{gui2021sumpa}{6}
-\bibcite{guo2020gpu}{7}
-\@writefile{toc}{\contentsline {section}{References}{27}{subsection.1.10}\protected@file@percent }
+\bibcite{aberger2017emptyheaded}{1}
+\bibcite{atserias2008size}{2}
+\bibcite{bi2016efficient}{3}
+\bibcite{choudhury2015selectivity}{4}
+\bibcite{cordella2001improved}{5}
+\bibcite{fan2013incremental}{6}
+\bibcite{griffin1995incremental}{7}
 \bibcite{10.1145/3299869.3319880}{8}
-\bibcite{10.1145/2463676.2465300}{9}
-\bibcite{hartmanis1982computers}{10}
-\bibcite{lai2017scalable}{11}
-\bibcite{lai2016scalable}{12}
-\bibcite{lee2012depth}{13}
-\bibcite{snapnets}{14}
-\bibcite{lin2016network}{15}
-\bibcite{mawhirter2021dryadic}{16}
-\bibcite{10.1145/3341301.3359633}{17}
-\bibcite{10.14778/3342263.3342643}{18}
-\bibcite{Milo824}{19}
-\bibcite{noel2018review}{20}
-\bibcite{ren2019fast}{21}
-\bibcite{10.14778/1453856.1453899}{22}
-\bibcite{shi2020graphpi}{23}
-\bibcite{su2021exploring}{24}
-\bibcite{tran2015fast}{25}
-\bibcite{10.1145/2488388.2488502}{26}
-\bibcite{ullmann1976algorithm}{27}
-\bibcite{wang2016fast}{28}
-\bibcite{wang2019benu}{29}
-\bibcite{xiang2021cuts}{30}
-\bibcite{yang2021huge}{31}
-\bibcite{zeng2020gsi}{32}
-\bibcite{10.14778/1920841.1920887}{33}
-\gdef \@abspage@last{35}
+\@writefile{toc}{\contentsline {section}{References}{30}{subsection.1.8}\protected@file@percent }
+\bibcite{10.5555/3571885.3571954}{9}
+\bibcite{kankanamge2017graphflow}{10}
+\bibcite{kim2018turboflux}{11}
+\bibcite{mhedhbi2019optimizing}{12}
+\bibcite{Milo824}{13}
+\bibcite{ngo2018worst}{14}
+\bibcite{noel2018review}{15}
+\bibcite{cuda}{16}
+\bibcite{qiu2018real}{17}
+\bibcite{ramakrishnan2003database}{18}
+\bibcite{10.14778/1453856.1453899}{19}
+\bibcite{6968748}{20}
+\bibcite{sun2022rapidflow}{21}
+\bibcite{tran2015fast}{22}
+\bibcite{ullmann1976algorithm}{23}
+\bibcite{veldhuizen2014leapfrog}{24}
+\bibcite{wang2015detecting}{25}
+\bibcite{wei2022stmatch}{26}
+\bibcite{xiang2021cuts}{27}
+\bibcite{zeng2020gsi}{28}
+\gdef \@abspage@last{38}

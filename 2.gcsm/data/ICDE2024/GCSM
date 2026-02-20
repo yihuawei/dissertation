@@ -1,0 +1,53 @@
+FR-GCSM 8192
+Profiled Time:  1037.642238     Data Size:      690.118654MB    Copy Data Time: 1126.094157     GPU Time: 34346.384277
+../data/icde2023-2//5_14.txt	
+Profiled Time:	2835.730001		Data Size:	5353.076996MB	real Data Size:	5353.076996MB	Copy Data Time:	2196.667186	GPU Time:	20509.550415
+Profiled Time:  219.804041      Data Size:      98.439239MB     Copy Data Time: 159.506165      GPU Time: 1554.292259
+../data/icde2023-2//6_47.txt	
+Profiled Time:	288.544447	Data Size:	402.623920MB	real Data Size:	402.623920MB	Copy Data Time:	165.875142	GPU Time:	71997.637207
+Profiled Time:  2120.554166     Data Size:      980.454221MB    Copy Data Time: 1613.577153     GPU Time: 251203.050781
+Profiled Time:  440.518970      Data Size:      154.903809MB    Copy Data Time: 250.236689      GPU Time: 106685.254395
+Profiled Time:  635.442382      Data Size:      86.925651MB     Copy Data Time: 140.787888      GPU Time: 2267651.78125
+Profiled Time:  400.754398      Data Size:      35.159215MB     Copy Data Time: 58.058835		GPU Time: 699927.669922
+../data/icde2023-2//7_852.txt	
+Profiled Time:	264.099218	Data Size:	140.636860MB	real Data Size:	140.636860MB	Copy Data Time:	57.314801	GPU Time:	1289020.527344
+
+datagen-sf3k-fb-GCSM 8192
+Profiled Time:  1203.611005     Data Size:      1604.326511MB   Copy Data Time: 3305.880042	GPU Time: 44677.799805
+../data/icde2023-2//5_14.txt	
+Profiled Time:	2742.533383	Data Size:	9554.241816MB	real Data Size:	9554.241816MB	Copy Data Time:	5345.435577	GPU Time:	21042.57214
+Profiled Time:  214.547283      Data Size:      265.011134MB    Copy Data Time: 427.768470	GPU Time: 2166.515175
+../data/icde2023-2//6_47.txt	
+Profiled Time:	278.719806	Data Size:	1012.694860MB	real Data Size:	1012.694860MB	Copy Data Time:	587.689748	GPU Time:	2733.206978
+Profiled Time:  1813.694091     Data Size:      1397.792809MB   Copy Data Time: 2257.365847	GPU Time: 193000.421021
+Profiled Time:  425.194270      Data Size:      400.231122MB    Copy Data Time: 636.201162	GPU Time: 64027.016602
+Profiled Time:  527.849389      Data Size:      215.144020MB    Copy Data Time: 343.542422	GPU Time: 49012.533569
+Profiled Time:  321.722791      Data Size:      89.455755MB     Copy Data Time: 144.208717	GPU Time: 7064.361145
+../data/icde2023-2//7_852.txt	
+Profiled Time:	245.065669	Data Size:	357.823020MB	real Data Size:	357.823020MB	Copy Data Time:	144.401302	GPU Time:	7844.470032
+
+datagen-sf10k-fb-GCSM 8192
+Profiled Time:  1404.644758     Data Size:      2208.296508MB   Copy Data Time: 7131.109551	GPU Time: 62184.668457
+../data/icde2023-2//5_14.txt	
+Profiled Time:	2917.632200	Data Size:	13699.699940MB	real Data Size:	13699.699940MB	Copy Data Time:	3999.104023	GPU Time:	29275.011169
+Profiled Time:  244.365707      Data Size:      321.277786MB    Copy Data Time: 262.177464	GPU Time: 2646.675322
+../data/icde2023-2//6_47.txt	
+Profiled Time:	325.676301	Data Size:	1229.569988MB	real Data Size:	1229.569988MB	Copy Data Time:	505.948909	GPU Time:	3155.170845
+Profiled Time:  2003.584697     Data Size:      1805.207166MB   Copy Data Time: 3204.086796	GPU Time: 250354.782471
+Profiled Time:  455.289052      Data Size:      501.651167MB    Copy Data Time: 1045.121528	GPU Time: 85824.321289
+Profiled Time:  590.558153      Data Size:      258.856598MB    Copy Data Time: 427.237694	GPU Time: 62401.384521
+Profiled Time:  469.379225      Data Size:      101.395164MB    Copy Data Time: 169.673038	GPU Time: 
+../data/icde2023-2//7_852.txt	
+Profiled Time:	244.913183	Data Size:	405.580656MB	real Data Size:	405.580656MB	Copy Data Time:	166.171348	GPU Time:	8423.552490
+
+
+G28
+../data/icde2023//5_12.txt	Profiled Time:	56944.712048	Data Size:	16865.442848MB	real Data Size:	14001.000280MB	Copy Data Time:	5216.330133	GPU Time:	2208662.812500
+../data/icde2023//5_15.txt	Profiled Time:	3673.555424	Data Size:	2259.512544MB	real Data Size:	2259.512544MB	Copy Data Time:	1301.409464	GPU Time:	68094.140350
+../data/icde2023//6_50.txt	Profiled Time:	86840.903031	Data Size:	17239.266372MB	real Data Size:	14001.003308MB	Copy Data Time:	3351.369653	GPU Time:	67308065.625000
+../data/icde2023//6_62.txt	Profiled Time:	12421.390128	Data Size:	3446.945328MB	real Data Size:	3446.945328MB	Copy Data Time:	1909.743123	GPU Time:	12096844.285156
+
+
+Twitter
+../data/icde2023//5_12.txt	Profiled Time:	120725.840861	Data Size:	5442.240812MB	real Data Size:	5442.240812MB	Copy Data Time:	2266.226034	GPU Time:	8766446.375000
+../data/icde2023//5_15.txt	Profiled Time:	45951.609444	Data Size:	2893.391084MB	real Data Size:	2893.391084MB	Copy Data Time:	1224.336388	GPU Time:	3091200.101562

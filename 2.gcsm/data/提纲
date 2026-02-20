@@ -1,0 +1,67 @@
+% 加一节说一下目前在CPU上的Dynamic Graph Data structure
+
+% 说一下为啥用hash table 和tree不行。
+
+% 在overview说一下为啥选择zp而不是um， 以及如何把freq最高的点如何copy到GPU点
+
+%正文
+% 1. 为啥sample的点是work的. 
+% 2. 在GPU上做match的时候是如何判断的， 给一个pseudo code。 
+% 3. zero copy的细节。 先把neighbor list copy到global memory, coalesced 访问。每个warp存一块global memory， 存不在global mem上的nb list。
+
+
+%为什么Yihua wei适合做这个project。 几句话就行，一两段。
+
+Mar17
+1. 给sampling ratio为1/32何1/64的数据
+2. 再给出Labeled的数据。在超大图上
+3. 
+
+
+
+0. Abstract
+1. Introduction
+    GPM是一个很重要的问题，之前的工作都是SSM，有很多工作已经研究过SSM， 实际应用的图都是dynamic的，系统需要支持Dynamic Graph 说一下近几年逐渐有人开始做CSM
+	说一下当前CSM工作都是在CPU上做的，没有GPU上的工作， 没有有效利用GPU，说一下为啥近几年的工作没有Support GPU， 一个Naive的实现是将图放到UM上，需要频繁从CPU取数据， 从CPU上取数据比GPU上做Matching还慢。现在dynamic的work没办法benefit GPU。(GPU根本无法访问CPU的数据结构， 说一下CPU上Dynamic Graph如何维护对GPU内存空间的映射， 写代码验证一下)
+
+
+	Mar10, 多找Pattern多找一些图多测一些。这周末主要测VSGM的大图。先写一下Background， 验证“ 说一下CPU上Dynamic Graph如何维护对GPU内存空间的映射， 写代码验证一下”
+
+2 .Background
+	2.1 Subgraph Matching Definition & Static Subgraph Matching & Continus Subgraph Matching
+	2.2 Join-Based algorithm for continus subgraph matching, 说一下具体的算法， 说一下P(g+delta g) = P(g) + ... 说一下Join操作可以通过WCOJ来做
+3. Challenge
+
+	3.1 当前大图GPU存不下，给出数据，动辄几十G
+	3.2 2Hops Neighbor和3-Hops占用空间太大， 一个1024 Batch的2-Hops Neighbor占用90%以上
+	3.3 遍历k-Hops Neighbor的耗时太多。
+	3.4 Matching一个Pattern实际需要的Subgraph比K-Hops Neighbor小得多，很多边没必要取出来。并且相邻俩Batch有很多重复边
+	3.5 在GPU上如何并行化做Batched Incremental Graph Pattern Matching
+4. Overview: 
+	给出整体流程图(CPU上Sampling， CPU-GPU之间传输， GPU上的Batched Enumeration & Parallel方案)
+
+5. CPU上做的工作
+	5.1 Sampling based graph pattern matching on CPU, 讲对一个Pattern如何取点，哪些点往GPU上传。 
+	5.2 给一些实验结果，不同Sampling Ratio和 100% Sampling Ratio Matching的点和边的重合比。
+	5.3 如何取Old Subgraph和新的Edges组成的New Subgraph， 给出组成CSR所需要的时间， 以及给出CPU和GPU上的Time Overlap。 
+
+6. Dynamic Graph Pattern Matching算法以及算法优化
+	6.1 Batched Enumeration-Based Dynamic Graph Pattern Matching on GPU, 多Pattern的新旧边的算法。
+	6.2 对于Dynamic Graph Pattern Matching怎么使用Partial Ordering, Code Motion以及Shared Execution的优化。
+
+7. GPU上做的工作
+	7.1 Parallelization Strategy
+	7.2 Runtime data request from CPU以及时间开销。(UMA和Zero Copy)
+	7.3 Unrolling和Stack-Based Work Stealing增加GPU利用率
+
+8. Overall Experiments
+	8.1 Experiment Setting
+	8.2 Overall Performance(Edge Induced, Vertex Induced, Labeled, Unlabeled)
+	8.3 Sampling Matching的加速比和准确性。
+	8.4 Runtime data request from CPU对性能的影响。
+
+9. Related Works
+
+10. Conclusion
+	
+

@@ -1,0 +1,16 @@
+
+
+\begin{abstract}
+Continuous subgraph matching (CSM) is a key building block in many graph mining applications. 
+Previous research has primarily focused on CSM algorithms on CPU. 
+However, due to the dynamic nature of input graphs and the data movement bottlenecks, it has been challenging to efficiently run CSM on heterogeneous systems with GPUs. 
+This work proposes the first system that exploits GPU to accelerate CSM. 
+The main idea of our system is to cache the frequently accessed graph data in GPU memory so that most of the data communication between CPU and GPU  can be avoided during the matching process. 
+To identify the frequent data, we propose an efficient frequency estimation technique based on random walks on the input graph. 
+We also provide an end-to-end design that achieves efficient dynamic graph updates on the CPU and efficient incremental matching on the GPU. 
+The experiments show that our system significantly improves the performance of CSM compared to existing CPU solutions and supports CSM on extremely large graphs. 
+\end{abstract}
+
+\begin{IEEEkeywords}
+Continuous Subgraph Matching, GPU
+\end{IEEEkeywords}

@@ -1,5 +1,3 @@
-\contentsline {table}{\numberline {1}{\ignorespaces Graph datasets.\relax }}{19}{table.caption.15}%
-\contentsline {table}{\numberline {2}{\ignorespaces Execution time (in milliseconds) of different systems for unlabeled matching. `$\times $' indicates program failure due to out-of-memory. `$-$' indicates timeout after 8 hours. CuTS only supports edge-induced matching. It fails for all queries on MiCo.\relax }}{21}{figure.caption.16}%
-\contentsline {subtable}{\numberline {(a)}{\ignorespaces {Edge-induced}}}{21}{subfigure.11.1}%
-\contentsline {subtable}{\numberline {(b)}{\ignorespaces {Vertex-induced}}}{21}{subfigure.11.2}%
-\contentsline {table}{\numberline {3}{\ignorespaces Execution time (in milliseconds) of different systems for labeled edge-induced matching. GSI fails for all queries on MiCo, LiveJournal, Orkut and Friendster.\relax }}{22}{table.caption.18}%
+\contentsline {table}{\numberline {1}{\ignorespaces Data graphs.\relax }}{19}{table.caption.9}%
+\contentsline {table}{\numberline {2}{\ignorespaces Overhead of frequency estimation (FE) and data copying (DC) in percentage of total execution time.\relax }}{22}{table.caption.16}%
+\contentsline {table}{\numberline {3}{\ignorespaces Graph reorganization time (in milliseconds).\relax }}{27}{table.caption.20}%

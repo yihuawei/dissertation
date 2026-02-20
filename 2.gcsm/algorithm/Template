@@ -1,0 +1,14 @@
+for v0 in PI0(R01) ∩ PI0(R02)
+	for v1 in PI1(Theta[u0=v0](R01)) ∩ PI1(R12) ∩ PI1(R13)
+		for v2 in PI2(Theta[u0=v0](R02) ∩ PI2(Theta[u1=v1](R12)) ∩ PI2(R23)
+			for v3 in PI3(Theta[u1=v1](R13) ∩ PI3(Theta[u2=v2](R23))
+
+
+
+
+KHopsNeighbor:39801510
+total_num_vertex:65608366
+total_num_edge:2889750956
+visited_vertex_freq:2450542, a:2450542
+visited_edge_freq:1992894199
+top5_visited_edge_freq:377124158

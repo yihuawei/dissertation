@@ -1,0 +1,33 @@
+
+\begin{figure}
+    \centering
+    
+    \subfloat[SF3K-Q1]{
+        \includegraphics[scale=0.33, page=1]{expfig/vsgm-3k-q1-crop.pdf}
+        \label{fig:vsgm_3kq1}
+    }\hfil
+    \subfloat[SF3K-Q2]{
+        \includegraphics[scale=0.33, page=1]{expfig/vsgm-3k-q2-crop.pdf}
+        \label{fig:vsgm_3kq2}
+    }\hfil
+    \subfloat[SF3K-Q3]{
+        \includegraphics[scale=0.33, page=1]{expfig/vsgm-3k-q3-crop.pdf}
+        \label{fig:vsgm_3kq3}
+    } \\
+     \vspace{-0.5em}
+    \subfloat[SF10K-Q1]{
+        \includegraphics[scale=0.33, page=1]{expfig/vsgm-10k-q1-crop.pdf}
+        \label{fig:vsgm_10kq1}
+    }\hfil
+    \subfloat[SF10K-Q2]{
+        \includegraphics[scale=0.33, page=1]{expfig/vsgm-10k-q2-crop.pdf}
+        \label{fig:10kq2}
+    }\hfil
+    \subfloat[SF10K-Q3]{
+        \includegraphics[scale=0.33, page=1]{expfig/vsgm-10k-q3-crop.pdf}
+        \label{fig:10kq3}
+    }
+    \caption{Breakdown execution time  of VSGM and GCSM. `DC' includes the time for identifying the caching vertices and copying their neighbor lists to GPU. `Match' is the matching kernel execution time on GPU. }
+    % \vspace{-1cm}
+    \label{fig:vsgm}
+\end{figure}

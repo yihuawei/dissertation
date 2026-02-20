@@ -1,0 +1,52 @@
+\newpage
+\pagenumbering{gobble}
+
+\vspace{5em}
+Dear Reviewers, \\
+
+Thank you again for your valuable feedback. We have made the following revisions (highlighted in blue in the PDF) to address the suggestions. \\
+
+
+\textit{\textbf{Comment1:} The complexity theoretical background is not provided.}
+
+We added background on the time complexity of continuous subgraph matching at the end of Section II-B. We also elaborated on the time complexity of our estimation algorithm in Section IV-A, and its space complexity at the end of Section IV-B. \\
+
+
+\textit{\textbf{Comment2:} Experiments should involve more representative graph instances.}
+
+We added two road nets, which have a less skewed degree distribution, in our experiments. The results in Fig.~\ref{fig:performance_roadnet} validate the effectiveness of our techniques on less skewed graphs. \\
+
+\textit{\textbf{Comment3:} The authors should include a baseline caching approach.}
+
+We added the performance of a naive degree-based caching approach in Fig. 8 to Fig. 11. The results show that the naive approach is ineffective in identifying the frequent vertices compared to our method. \\
+
+
+\textit{\textbf{Comment4:} The authors should expand the experiments to employ a few different batch sizes.}
+
+We tested the performance of our system with a wide range of batch sizes from 64 to 8192. The results (presented in Fig. 12) show that our system achieves consistent speedups against zero-copy and naive caching on different batch sizes. \\
+
+\textit{\textbf{Comment5:}  It is not clear how the ``cutoff'' point is drawn to decide how many vertices will be cached in the GPU memory.}
+
+We added an explanation of the cutoff point at the end of Section VI-A.  \\
+
+\textit{\textbf{Comment6:} One can directly use accounting to figure out the edges that were updated. It is unclear why we need to get the unbiased frequency access of each vertex. Don't we want to get exactly the biased one?}
+
+While it is easy to identify which nodes are accessed, the main difficulty is to identify the most frequent ones. To obtain the accurate access frequency, we need to run the whole matching procedure on CPU, which is expensive. An unbiased estimation procedure makes sure that the more frequent ones are more likely to be sampled. Please see Formula (5) and its explanation in Section IV-A. We are not aware of any ``accounting'' method that can achieve this. \\
+ 
+\textit{\textbf{Additional revisions promised in our rebuttal:}} \\
+
+\textit{Review2-Q4: Why does B1 follow a binomial distribution?}
+
+We added the explanation in section IV-B. \\
+
+\textit{Review2-Q6: OS, programming language}
+
+We added the information in section VI-A. \\ 
+
+\textit{Review5-Q3: Previous graph sampling papers.}
+
+We added a discussion on previous graph sampling papers in the related work section.
+
+\vspace{5em}
+Sincerely,\\
+Authors

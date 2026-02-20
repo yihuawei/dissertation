@@ -1,0 +1,86 @@
+
+
+\section{Overview of GCSM}
+\label{sec:Overview}
+
+
+
+
+The goal of our system is to use GPU to accelerate the computation in Fig.~\ref{fig:for_loop}. 
+Since previous work has mapped the static matching procedure in Fig.~\ref{fig:for_loop}a onto GPU~\cite{wei2022stmatch,xiang2021cuts,zeng2020gsi,10.5555/3571885.3571954}, 
+the focus of this work is to efficiently run the incremental matching procedures (Fig.~\ref{fig:for_loop}b-f) on GPU. 
+The main challenge is how to support real-world graphs that do not fit on GPU. 
+
+\iffalse
+\subsection{Problems with Existing Solutions}
+\label{sec:existing_sol}
+Previous work has dealt with subgraph matching on large static graphs by dividing the graph vertices into small bins and processing one bin at a time with the data cached on GPU~\cite{10.5555/3571885.3571954}. 
+When applied to the nested loop in Fig.~\ref{fig:for_loop}(a), it corresponds to dividing the outermost loop and running a chunk of iterations on GPU at a time. 
+For a query pattern of size $k$, since the accessed vertices must be within $k$ hops from the starting vertices, they load all the $k$-hop neighbors onto GPU before matching. 
+The assumption is that the $k$-hop neighbors of a small bin have a limited number of vertices, and they can be entirely stored on GPU. 
+
+The above ``binning-and-caching'' method, however, does not work for continuous subgraph matching. 
+First, the incremental matching procedures (Fig.~\ref{fig:for_loop}(b)-(f)) are conducted on an arbitrary batch of edges. 
+Obtaining the $k$-hop neighbors of a batch is expensive as the number of neighbors grows exponentially as $k$ increases. 
+This overhead can be justified for static subgraph matching because the $k$-hop neighbors are fixed for a bin of determined vertices and can be reused for all query patterns of size $k$. 
+It will significantly slow down the incremental matching procedures as the $k$-hop neighbors need to be re-calculated for every batch of edge updates. 
+The second reason that the previous ``binning-and-caching'' method does not work is that the $k$-hop neighbors of a small batch of edges can be large. 
+To avoid out-of-memory, one must use a very small batch size, which leads to frequent CPU-GPU interactions and low GPU utilization. 
+
+Another naive solution is storing the entire graph on CPU and accessing data from CPU using GPU unified memory or zero-copy mechanisms. 
+While this naive approach is easy to implement, it has poor performance as the data are repeatedly accessed from CPU many times. 
+With zero-copy, the data need to pass through the PCIe bus for every access on GPU; the computing unit on the GPU will be waiting for the data most of the time.
+Unified memory mitigates the drawbacks of zero-copy by automatically caching pages in GPU global memory. However, due to the page granularity, many cached neighbor lists are rarely accessed  or even not accessed, leading to wasted data swapping between the CPU and GPU. 
+As shown in our experiments (\S\ref{sec:overall_performance}), accessing data from the CPU is a performance bottleneck of this naive approach, and the program can be even slower than a CPU-only implementation. 
+
+\fi
+
+Our system is designed based on an important observation: Although a batch of edges may have many vertices in its $k$-hop neighborhood, only a small fraction of them are frequently accessed during the matching procedure.
+Our experiments with different input graphs and query patterns show that the top 5\% of most frequently accessed vertices account for over 80\% of the memory access (see Fig.~\ref{fig:dist}). 
+This strong data locality indicates that the program could greatly benefit from data caching on the GPU if we can identify the most frequently accessed vertices.
+
+
+To obtain the most frequently accessed vertices, we propose to run multiple random walks from the updated edges on the CPU. Our random walk strategy ensures that frequent vertices are more likely to be accessed during sampling, and thus, the sampled vertices have a large overlap with the most frequently accessed vertices in the actual matching. In fact, we can obtain an unbiased estimation of the access frequency of vertices based on the sampling results. Details of our random walk technique are described in Sec.~\ref{sec:AppMatch}. 
+
+Once the frequent vertices are obtained, their neighbor lists are packed and sent to the GPU as cached data for  exact matching on GPU. 
+During the matching procedure, GPU accesses the neighbor lists from the cache whenever possible. 
+If a neighbor list is not cached on GPU, the GPU reads data directly from CPU memory. 
+The main challenge is how to support efficient access to both the original and new neighbor lists ($N$ and $N'$ in Fig.~\ref{fig:for_loop}) and how to achieve efficient data transfer for the dynamically updated neighbor lists from CPU to GPU. 
+We explain our data structure design and GPU implementation in Sec.~\ref{sec:GPUMatch}. 
+
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.35]{fig/workflow.pdf}
+    \caption{Workflow of GCSM.}
+    \label{fig:Overview}
+    %\vspace{-1em}
+\end{figure}
+
+
+
+
+
+
+Fig.~\ref{fig:Overview} shows the workflow of our system. 
+For every batch of edge updates $\Delta E_k$, our system maintains the dynamic graph and performs incremental matching in five steps: 
+\begin{enumerate}[leftmargin=*, label=\myCircled{\arabic*}]
+\item The edge updates $\Delta E_k$ are appended to the neighbor lists of $G_k$ on the CPU. 
+    \item Multiple random walks from the updated edges are generated on the CPU to obtain a set of frequent vertices;
+    \item The neighbor lists of the frequent vertices are packed and copied to the GPU; 
+    \item An exact incremental matching procedure is executed on the GPU;
+    \item The graph data are reorganized  on the CPU to ensure the neighbor lists of $G_{k+1}$ are sorted. 
+\end{enumerate}
+
+
+
+
+
+
+
+
+% After getting a batch of sampled vertices, a sampled subgraph will be built into compressed sparse row(CSR) format using the neighbor lists in the input data graph of these sampled vertices. If the newly built CSR exceeds the GPU memory capacity, only the vertices with the largest sampling frequencies will be selected. The edge graph is built on the edges of the current batch. The only distinction between the sampled subgraph and the edge graph is the utilization of the neighbor lists from the input data graph. In the sampled subgraph, the neighbor list of each vertex corresponds to its neighbor list in the input data graph, while in the edge graph, the neighbor list of each vertex only involves the vertices in the edge batch. The sampled subgraph together with the edge graph is sent to GPU global memory to be used as manageable cache data for exact incremental matching. As stated in section~\ref{sec:Background}, exact incremental matching is a recursive procedure that involves accessing the neighbor lists of a vertex at each step. A neighbor list may be accessed repeatedly several times. The cached sampled subgraph contains the most frequently accessed neighbor lists. If the visited neighbor list at a step is not cached in GPU global memory, the GPU will access it from the CPU main memory by zero-copy features provided by GPU. 
+
+% Unified memory and zero-copy can be easily used to access the data from the CPU instead of making such a complex procedure, but our design has two benefits against the GPU's inherent features. Firstly, if all neighbor lists are accessed by zero-copy, the GPU utilization will be very low as all the CPU data accessed by zero-copy pass through the PCIe bus, the PCIe bandwidth can not keep up with the GPU computing speed, and the computing unit in GPU will be waiting for the data most of the time. Secondly, unified memory mitigates the drawbacks of zero-copy by allowing data to be cached into the GPU's global memory. However, unified memory caches data by page size, and accessing neighbor lists with low frequency will incur significant overhead since most of the neighbor lists will only be accessed once or twice and are much smaller than the page size. Our system breaks the limitations of both zero-copy and unified memory by selectively caching frequently accessed data in global memory and loading less frequently accessed data using zero-copy.
+
+% \input{fig/3.AdjList.tex}

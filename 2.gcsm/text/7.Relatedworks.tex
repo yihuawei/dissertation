@@ -1,0 +1,54 @@
+\section{Related Works}
+\label{sec:RelatedWorks}
+
+\noindent
+\textbf{Static subgraph matching:}
+The study of static subgraph matching dates back to Ullmann~\cite{ullmann1976algorithm}, which proposes the first backtracking algorithm for the task. 
+Following Ullmann's work, many studies~\cite{cordella2001improved,10.14778/1453856.1453899,he2010query} propose optimizations for the matching order to improve performance. 
+They show that a carefully selected matching order can greatly reduce the search space of the algorithm. 
+% Some recent works~\cite{10.1145/3299869.3319880,bi2016efficient} employ adaptive matching orders based on the observation that the optimal matching order can be affected by the connectivity in the input graph. 
+Automine~\cite{mawhirter2019automine} is a compiler system that converts the backtracking  algorithm into nested loops and applies various loop optimization techniques to accelerate the matching process.
+Another line of research treats subgraph matching as multi-way join operations and improves the performance by optimizing the join plans~\cite{aberger2017emptyheaded,mhedhbi2019optimizing,kankanamge2017graphflow}. With the development of GPUs, many efforts have been made to utilize the massive parallelism of GPU to accelerate static subgraph matching~\cite{wang2020fast, tran2015fast, zeng2020gsi, xiang2021cuts, wei2022stmatch}. 
+% Early systems (GPSM~\cite{tran2015fast}, Gunrock~\cite{wang2020fast} and GSI~\cite{zeng2020gsi}) adopt a breadth-first execution order which generates all size-$k$ subgraphs before extending to size-$k+1$ subgraphs.
+% These systems achieve high utilization of GPU parallelism. However, they consume a lot of memory for storing the intermediate subgraphs and thus only work for small data graphs. 
+CuTS~\cite{xiang2021cuts} aims to solve the large memory consumption issue by introducing a hybrid BFS-DFS execution strategy. However, it faces a trade-off between memory consumption and load balance. To address these problems, STMatch~\cite{wei2022stmatch} proposes a stack-based data structure to store intermediate subgraphs and employ work-stealing to balance the workloads among computing units on GPU. 
+PBE~\cite{guo2020gpu} and VSGM~\cite{10.5555/3571885.3571954} are two works that focus on subgraph matching in distributed GPU systems, allowing for matching on extremely large graphs. 
+
+\noindent
+\textbf{Continuous subgraph matching:}
+IncIsoMatch~\cite{fan2013incremental} is the first work that supports continuous subgraph matching on a dynamic graph. 
+Give an edge update, IncIsoMatch finds the region in the data graph affected by the update for a query and performs the matching again in the region. 
+Graphflow~\cite{kankanamge2017graphflow} avoids the repeated matching for each graph update and computes the incremental matching results by performing multi-way join operations. 
+SJ-Tree~\cite{choudhury2015selectivity} uses binary joins with indexes to evaluate incremental matching results. It stores partial results to reduce computation costs, but this approach can lead to a memory explosion when processing large graphs (sj-tree). TurboFlux~\cite{kim2018turboflux} proposes a data-centric graph structure that optimizes the storage of partial results to achieve a better balance between memory consumption and re-computation overhead. 
+Based on TurboFlux~\cite{kim2018turboflux}, SymBi~\cite{min2021symmetric} proposes candidate vertices set pruning using query edges. Rapidflow~\cite{sun2022rapidflow} is a state-of-the-art continuous subgraph matching system on CPU, which features an optimal matching order selection and a dual matching technique to eliminate redundant computation caused by automorphisms. 
+% All these systems are CPU-based. To the best of our knowledge, our work is the first to exploit GPU to accelerate continuous subgraph matching. 
+
+\noindent
+\textbf{Graph sampling:} 
+Sampling techniques have been used for graph pattern matching in previous works. Motivo uses graph coloring and adaptive sampling to accelerate motif counting~\cite{Bressan2019MotivoFM}. ScaleMine~\cite{abdelhamid2016scalemine} employs sampling to estimate the workload of different branches of the exploration process and uses the information to improve load balance. SampleMine~\cite{jiang2022samplemine} proposes a framework for applying random sampling to different graph mining tasks based on loop perforation. C-SAW~\cite{pandey2020c} is a library for defining various random walk algorithms on GPU. All these works focus on static graphs. To the best of our knowledge, our work is the first to apply random sampling to continuous subgraph matching, aiming to improve data access efficiency for GPU processing.
+
+\iffalse
+\noindent
+\textbf{Dynamic graph data structure:}
+There have been various graph data structures proposed for accommodating dynamic real-time updates, both on CPU and GPU. 
+Most of them are designed to achieve optimal edge insertion/deletion performance.  
+STINGER\cite{ediger2012stinger} is an early work on maintaining dynamic graph data structures. It stores the neighbors of a vertex in blocks. While this approach improves edge compaction performance, it may suffer from a heavy probing workload. 
+GraphTinker~\cite{jaiyeoba2019graphtinker} uses a hashing schema to reduce probe distance and improve the edge update performance on the CPU. Hornet~\cite{busato2018hornet} proposes a BTree-based memory pool for efficient memory management of each adjacent list on the CPU. 
+PMA and GPMA~\cite{bender2007adaptive} are two data structures designed for dynamic graphs on CPU and GPU. They maintain a sparse adjacency list for each vertex with an auxiliary balanced binary search tree recording the start position of each valid array region. SlabHash~\cite{ashkiani2018dynamic} is a dynamic hash table data structure on the GPU supporting asynchronous and concurrent updates.
+It achieves a linear time complexity for both edge insertion and deletion on average. 
+Due to the non-contiguous data storage, these data structures are inefficient for retrieving a consecutive adjacency list from the sparse list and thus are not suitable for our matching task. 
+To achieve fast access to the neighbor lists for subgraph matching tasks, 
+our system uses a simple adjacency list design for storing neighbors of vertices contiguously in memory. 
+\fi
+
+\section{Conclusion}
+\label{sec:Conclusion}
+
+In this work, we propose a system that exploits GPU to accelerate continuous subgraph matching. 
+The main challenge is how to reduce data access from the CPU. 
+We address the problem by identifying the most frequent vertices with a random-walk technique and caching the frequently accessed neighbor lists on GPU. 
+Our experimental results show that our system achieves significant speedups against existing CPU solutions and supports CSM on extremely large graphs. 
+%For future work, we plan to explore the integration of optimization techniques proposed in previous CPU systems into our GPU system. This task is nontrivial since many of the optimizations require the storage of additional data structures, which further increases the overhead of data access and storage on the GPU. 
+
+
+%\section*{Acknowledgement}

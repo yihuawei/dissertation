@@ -9,13 +9,64 @@
 \usepackage{xcolor}
 \usepackage[linesnumbered,ruled,vlined]{algorithm2e}
 \usepackage{wrapfig}
-\usepackage{tikz}
 % \usepackage{subfig}
 \usepackage{url}
 \usepackage{multirow}
 \usepackage[10pt]{moresize}
+\usepackage{listings}
+
+
+%------------------- GCSM -------------------%
+\usepackage{tikz}
+\usepackage{circledsteps}
+\usepackage{enumitem}
+\usepackage{bigstrut}
+
+\definecolor{pakistangreen}{rgb}{0.0, 0.4, 0.0}
+
+\lstset{
+  commentstyle=\color{pakistangreen},
+  basicstyle=\ttfamily\scriptsize,
+  breaklines=true,
+  showstringspaces=false,
+  escapeinside=@@,
+  morecomment=[l]{//},
+  mathescape=true,
+  frame = single
+}
+
+
+\newcommand\myCircled[2][]{\ifmmode
+\Circled[fill color=white,inner color=black,#1]{\mathsf{#2}}
+\else
+\Circled[fill color=white,inner color=black,#1]{\sffamily#2}
+\fi
+}
+
+
+    
+\newcommand\mycommfont[1]{\footnotesize\ttfamily\textcolor{blue}{#1}}
+\SetCommentSty{mycommfont}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}[theorem]
+
+
+
+\theoremstyle{definition}
+\newtheorem{example}{Example}
 
 \newtheorem{definition}{Definition}
+
+
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+            \node[shape=circle,draw,inner sep=.4pt] (char) {#1};}}
+\newcommand*\squared[1]{\tikz[baseline=(char.base)]{
+            \node[shape=rectangle,draw,inner sep=1pt] (char) {#1};}}
+
+%------------------- GCSM -------------------%
+
 
 %%%%%% This thesis template was originally created by Zhiya Zuo and Erin Kaufman in May 2019, and revised by Marina Zhang and Erin Kaufman in July 2022. %%%%%%
 
@@ -219,7 +270,7 @@
 \seq_new:N \g_capitalize_exceptions_seq
 \ExplSyntaxOff
 
-\AppendToList{a,is,of,óf, for, GPU,CPU,API,CUDA}
+\AppendToList{a,is,of,óf, for, GPU, CPU,API,CUDA}
 %%%%%% capitalize from stackexchange %%%%%% 
 
 \title{\MakeUppercase{\normalsize\mytitle}\vspace{-2em}}
@@ -316,7 +367,8 @@ Thesis Committee: \myadvisor, Thesis Supervisor
 
 
 % \input{1.stmatch/text/abstract}
-\input{1.stmatch/stmatch}
+% \input{1.stmatch/stmatch}
+\input{2.gcsm/gcsm}
 % \input{1.stmatch/text/background}
 % \input{1.stmatch/text/challenge}
 % \input{1.stmatch/text/overview}

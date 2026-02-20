@@ -1,0 +1,28 @@
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics[scale=0.6, page=3]{fig/3.Overview-crop.pdf}
+%     \caption{Memory Management System}
+%     \label{fig:Mem}
+% \end{figure}
+
+
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics[scale=0.4, page=2]{fig/5.GPU-crop.pdf }
+%     \caption{The adjacency array}
+%     \label{fig:adj_list}
+% \end{figure}
+
+\begin{figure}
+    \centering
+    \subfloat[The adjacency array.]{
+        \includegraphics[scale=0.35, page=2]{fig/5.GPU-crop.pdf }
+        \label{fig:before_update}
+    } \hfil
+    \subfloat[Update procedure]{
+        \includegraphics[scale=0.35, page=3]{fig/5.GPU-crop.pdf }
+        \label{fig:after_update}
+    } \hfil
+    \caption{(a) is the data graph G in Fig.~\ref{fig:csm} represented by an adjacency array before the update. (b) shows the update procedure, which first appends the edges to be inserted into corresponding arrays, then sorts all updated arrays. If the memory space reserved for an array is exhausted, a new memory space with double capacity will be allocated and initialized with the existing data. \textcolor{red}{fig.b is not clear..} }
+    \label{fig:adj_list}
+\end{figure}

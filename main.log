@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022/Debian) (preloaded format=pdflatex 2022.7.30)  20 FEB 2026 01:23
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022/Debian) (preloaded format=pdflatex 2022.7.30)  20 FEB 2026 04:11
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -225,17 +225,56 @@ Package: relsize 2013/03/29 ver 4.1
 \WF@everypar=\toks28
 Package: wrapfig 2003/01/31  v 3.6
 )
+(/usr/share/texlive/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip17
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/multirow/multirow.sty
+Package: multirow 2021/03/15 v2.8 Span multiple rows of a table
+\multirow@colwidth=\skip76
+\multirow@cntb=\count281
+\multirow@dima=\skip77
+\bigstrutjot=\dimen158
+)
+(/usr/share/texlive/texmf-dist/tex/latex/moresize/moresize.sty
+Package: moresize 1999/07/26 v1.9 (more font sizes)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/listings/listings.sty
+\lst@mode=\count282
+\lst@gtempboxa=\box61
+\lst@token=\toks29
+\lst@length=\count283
+\lst@currlwidth=\dimen159
+\lst@column=\count284
+\lst@pos=\count285
+\lst@lostspace=\dimen160
+\lst@width=\dimen161
+\lst@newlines=\count286
+\lst@lineno=\count287
+\lst@maxwidth=\dimen162
+
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2020/03/24 1.8d (Carsten Heinz)
+\c@lstnumber=\count288
+\lst@skipnumbers=\count289
+\lst@framebox=\box62
+)
+(/usr/share/texlive/texmf-dist/tex/latex/listings/listings.cfg
+File: listings.cfg 2020/03/24 1.8d listings configuration
+))
+Package: listings 2020/03/24 1.8d (Carsten Heinz)
+
 (/usr/share/texlive/texmf-dist/tex/latex/pgf/frontendlayer/tikz.sty
 (/usr/share/texlive/texmf-dist/tex/latex/pgf/basiclayer/pgf.sty
 (/usr/share/texlive/texmf-dist/tex/latex/pgf/utilities/pgfrcs.sty
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfutil-common.tex
-\pgfutil@everybye=\toks29
-\pgfutil@tempdima=\dimen158
-\pgfutil@tempdimb=\dimen159
+\pgfutil@everybye=\toks30
+\pgfutil@tempdima=\dimen163
+\pgfutil@tempdimb=\dimen164
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfutil-common-lists.t
 ex)) (/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfutil-latex.def
-\pgfutil@abb=\box61
+\pgfutil@abb=\box63
 ) (/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfrcs.code.tex
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/pgf.revision.tex)
 Package: pgfrcs 2021/05/15 v3.1.9a (3.1.9a)
@@ -248,33 +287,33 @@ Package: pgf 2021/05/15 v3.1.9a (3.1.9a)
 Package: pgfsys 2021/05/15 v3.1.9a (3.1.9a)
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex
-\pgfkeys@pathtoks=\toks30
-\pgfkeys@temptoks=\toks31
+\pgfkeys@pathtoks=\toks31
+\pgfkeys@temptoks=\toks32
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfkeysfiltered.code.t
 ex
-\pgfkeys@tmptoks=\toks32
+\pgfkeys@tmptoks=\toks33
 ))
-\pgf@x=\dimen160
-\pgf@y=\dimen161
-\pgf@xa=\dimen162
-\pgf@ya=\dimen163
-\pgf@xb=\dimen164
-\pgf@yb=\dimen165
-\pgf@xc=\dimen166
-\pgf@yc=\dimen167
-\pgf@xd=\dimen168
-\pgf@yd=\dimen169
+\pgf@x=\dimen165
+\pgf@y=\dimen166
+\pgf@xa=\dimen167
+\pgf@ya=\dimen168
+\pgf@xb=\dimen169
+\pgf@yb=\dimen170
+\pgf@xc=\dimen171
+\pgf@yc=\dimen172
+\pgf@xd=\dimen173
+\pgf@yd=\dimen174
 \w@pgf@writea=\write3
 \r@pgf@reada=\read2
-\c@pgf@counta=\count281
-\c@pgf@countb=\count282
-\c@pgf@countc=\count283
-\c@pgf@countd=\count284
-\t@pgf@toka=\toks33
-\t@pgf@tokb=\toks34
-\t@pgf@tokc=\toks35
-\pgf@sys@id@count=\count285
+\c@pgf@counta=\count290
+\c@pgf@countb=\count291
+\c@pgf@countc=\count292
+\c@pgf@countd=\count293
+\t@pgf@toka=\toks34
+\t@pgf@tokb=\toks35
+\t@pgf@tokc=\toks36
+\pgf@sys@id@count=\count294
  (/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgf.cfg
 File: pgf.cfg 2021/05/15 v3.1.9a (3.1.9a)
 )
@@ -290,8 +329,8 @@ File: pgfsys-common-pdf.def 2021/05/15 v3.1.9a (3.1.9a)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsyssoftpath.code.
 tex
 File: pgfsyssoftpath.code.tex 2021/05/15 v3.1.9a (3.1.9a)
-\pgfsyssoftpath@smallbuffer@items=\count286
-\pgfsyssoftpath@bigbuffer@items=\count287
+\pgfsyssoftpath@smallbuffer@items=\count295
+\pgfsyssoftpath@bigbuffer@items=\count296
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsysprotocol.code.
 tex
@@ -304,12 +343,12 @@ Package: pgfcore 2021/05/15 v3.1.9a (3.1.9a)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathcalc.code.tex
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathutil.code.tex)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathparser.code.tex
-\pgfmath@dimen=\dimen170
-\pgfmath@count=\count288
-\pgfmath@box=\box62
-\pgfmath@toks=\toks36
-\pgfmath@stack@operand=\toks37
-\pgfmath@stack@operation=\toks38
+\pgfmath@dimen=\dimen175
+\pgfmath@count=\count297
+\pgfmath@box=\box64
+\pgfmath@toks=\toks37
+\pgfmath@stack@operand=\toks38
+\pgfmath@stack@operation=\toks39
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.code.tex
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.basic.code
@@ -329,58 +368,58 @@ tex)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.integerari
 thmetics.code.tex)))
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfloat.code.tex
-\c@pgfmathroundto@lastzeros=\count289
+\c@pgfmathroundto@lastzeros=\count298
 ))
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfint.code.tex)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepoints.code.te
 x
 File: pgfcorepoints.code.tex 2021/05/15 v3.1.9a (3.1.9a)
-\pgf@picminx=\dimen171
-\pgf@picmaxx=\dimen172
-\pgf@picminy=\dimen173
-\pgf@picmaxy=\dimen174
-\pgf@pathminx=\dimen175
-\pgf@pathmaxx=\dimen176
-\pgf@pathminy=\dimen177
-\pgf@pathmaxy=\dimen178
-\pgf@xx=\dimen179
-\pgf@xy=\dimen180
-\pgf@yx=\dimen181
-\pgf@yy=\dimen182
-\pgf@zx=\dimen183
-\pgf@zy=\dimen184
+\pgf@picminx=\dimen176
+\pgf@picmaxx=\dimen177
+\pgf@picminy=\dimen178
+\pgf@picmaxy=\dimen179
+\pgf@pathminx=\dimen180
+\pgf@pathmaxx=\dimen181
+\pgf@pathminy=\dimen182
+\pgf@pathmaxy=\dimen183
+\pgf@xx=\dimen184
+\pgf@xy=\dimen185
+\pgf@yx=\dimen186
+\pgf@yy=\dimen187
+\pgf@zx=\dimen188
+\pgf@zy=\dimen189
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathconstruct.
 code.tex
 File: pgfcorepathconstruct.code.tex 2021/05/15 v3.1.9a (3.1.9a)
-\pgf@path@lastx=\dimen185
-\pgf@path@lasty=\dimen186
+\pgf@path@lastx=\dimen190
+\pgf@path@lasty=\dimen191
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathusage.code
 .tex
 File: pgfcorepathusage.code.tex 2021/05/15 v3.1.9a (3.1.9a)
-\pgf@shorten@end@additional=\dimen187
-\pgf@shorten@start@additional=\dimen188
+\pgf@shorten@end@additional=\dimen192
+\pgf@shorten@start@additional=\dimen193
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorescopes.code.te
 x
 File: pgfcorescopes.code.tex 2021/05/15 v3.1.9a (3.1.9a)
-\pgfpic=\box63
-\pgf@hbox=\box64
-\pgf@layerbox@main=\box65
-\pgf@picture@serial@count=\count290
+\pgfpic=\box65
+\pgf@hbox=\box66
+\pgf@layerbox@main=\box67
+\pgf@picture@serial@count=\count299
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoregraphicstate.c
 ode.tex
 File: pgfcoregraphicstate.code.tex 2021/05/15 v3.1.9a (3.1.9a)
-\pgflinewidth=\dimen189
+\pgflinewidth=\dimen194
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoretransformation
 s.code.tex
 File: pgfcoretransformations.code.tex 2021/05/15 v3.1.9a (3.1.9a)
-\pgf@pt@x=\dimen190
-\pgf@pt@y=\dimen191
-\pgf@pt@temp=\dimen192
+\pgf@pt@x=\dimen195
+\pgf@pt@y=\dimen196
+\pgf@pt@temp=\dimen197
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorequick.code.tex
 File: pgfcorequick.code.tex 2021/05/15 v3.1.9a (3.1.9a)
@@ -396,13 +435,13 @@ File: pgfcorepathprocessing.code.tex 2021/05/15 v3.1.9a (3.1.9a)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorearrows.code.te
 x
 File: pgfcorearrows.code.tex 2021/05/15 v3.1.9a (3.1.9a)
-\pgfarrowsep=\dimen193
+\pgfarrowsep=\dimen198
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreshade.code.tex
 File: pgfcoreshade.code.tex 2021/05/15 v3.1.9a (3.1.9a)
-\pgf@max=\dimen194
-\pgf@sys@shading@range@num=\count291
-\pgf@shadingcount=\count292
+\pgf@max=\dimen199
+\pgf@sys@shading@range@num=\count300
+\pgf@shadingcount=\count301
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreimage.code.tex
 File: pgfcoreimage.code.tex 2021/05/15 v3.1.9a (3.1.9a)
@@ -410,7 +449,7 @@ File: pgfcoreimage.code.tex 2021/05/15 v3.1.9a (3.1.9a)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreexternal.code.
 tex
 File: pgfcoreexternal.code.tex 2021/05/15 v3.1.9a (3.1.9a)
-\pgfexternal@startupbox=\box66
+\pgfexternal@startupbox=\box68
 ))
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorelayers.code.te
 x
@@ -429,15 +468,15 @@ File: pgfcorerdf.code.tex 2021/05/15 v3.1.9a (3.1.9a)
 )))
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/modules/pgfmoduleshapes.code.tex
 File: pgfmoduleshapes.code.tex 2021/05/15 v3.1.9a (3.1.9a)
-\pgfnodeparttextbox=\box67
+\pgfnodeparttextbox=\box69
 ) (/usr/share/texlive/texmf-dist/tex/generic/pgf/modules/pgfmoduleplot.code.tex
 File: pgfmoduleplot.code.tex 2021/05/15 v3.1.9a (3.1.9a)
 )
 (/usr/share/texlive/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-version-0-65
 .sty
 Package: pgfcomp-version-0-65 2021/05/15 v3.1.9a (3.1.9a)
-\pgf@nodesepstart=\dimen195
-\pgf@nodesepend=\dimen196
+\pgf@nodesepstart=\dimen256
+\pgf@nodesepend=\dimen257
 )
 (/usr/share/texlive/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-version-1-18
 .sty
@@ -451,10 +490,10 @@ Package: pgfcomp-version-1-18 2021/05/15 v3.1.9a (3.1.9a)
 Package: pgffor 2021/05/15 v3.1.9a (3.1.9a)
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex)
-\pgffor@iter=\dimen197
-\pgffor@skip=\dimen198
-\pgffor@stack=\toks39
-\pgffor@toks=\toks40
+\pgffor@iter=\dimen258
+\pgffor@skip=\dimen259
+\pgffor@stack=\toks40
+\pgffor@toks=\toks41
 ))
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/tikz.code.tex
 Package: tikz 2021/05/15 v3.1.9a (3.1.9a)
@@ -462,53 +501,94 @@ Package: tikz 2021/05/15 v3.1.9a (3.1.9a)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/pgflibraryplothandlers
 .code.tex
 File: pgflibraryplothandlers.code.tex 2021/05/15 v3.1.9a (3.1.9a)
-\pgf@plot@mark@count=\count293
-\pgfplotmarksize=\dimen199
+\pgf@plot@mark@count=\count302
+\pgfplotmarksize=\dimen260
 )
-\tikz@lastx=\dimen256
-\tikz@lasty=\dimen257
-\tikz@lastxsaved=\dimen258
-\tikz@lastysaved=\dimen259
-\tikz@lastmovetox=\dimen260
-\tikz@lastmovetoy=\dimen261
-\tikzleveldistance=\dimen262
-\tikzsiblingdistance=\dimen263
-\tikz@figbox=\box68
-\tikz@figbox@bg=\box69
-\tikz@tempbox=\box70
-\tikz@tempbox@bg=\box71
-\tikztreelevel=\count294
-\tikznumberofchildren=\count295
-\tikznumberofcurrentchild=\count296
-\tikz@fig@count=\count297
+\tikz@lastx=\dimen261
+\tikz@lasty=\dimen262
+\tikz@lastxsaved=\dimen263
+\tikz@lastysaved=\dimen264
+\tikz@lastmovetox=\dimen265
+\tikz@lastmovetoy=\dimen266
+\tikzleveldistance=\dimen267
+\tikzsiblingdistance=\dimen268
+\tikz@figbox=\box70
+\tikz@figbox@bg=\box71
+\tikz@tempbox=\box72
+\tikz@tempbox@bg=\box73
+\tikztreelevel=\count303
+\tikznumberofchildren=\count304
+\tikznumberofcurrentchild=\count305
+\tikz@fig@count=\count306
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/modules/pgfmodulematrix.code.tex
 File: pgfmodulematrix.code.tex 2021/05/15 v3.1.9a (3.1.9a)
-\pgfmatrixcurrentrow=\count298
-\pgfmatrixcurrentcolumn=\count299
-\pgf@matrix@numberofcolumns=\count300
+\pgfmatrixcurrentrow=\count307
+\pgfmatrixcurrentcolumn=\count308
+\pgf@matrix@numberofcolumns=\count309
 )
-\tikz@expandcount=\count301
+\tikz@expandcount=\count310
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
 zlibrarytopaths.code.tex
 File: tikzlibrarytopaths.code.tex 2021/05/15 v3.1.9a (3.1.9a)
 )))
-(/usr/share/texlive/texmf-dist/tex/latex/url/url.sty
-\Urlmuskip=\muskip17
-Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+(/usr/share/texlive/texmf-dist/tex/latex/circledsteps/circledsteps.sty
+Package: circledsteps 2020/01/12 v1.3.1 Circled steps that you can reference
+
+(/usr/share/texlive/texmf-dist/tex/latex/pict2e/pict2e.sty
+Package: pict2e 2020/09/30 v0.4b Improved picture commands (HjG,RN,JT)
+
+(/usr/share/texlive/texmf-dist/tex/latex/pict2e/pict2e.cfg
+File: pict2e.cfg 2016/02/05 v0.1u pict2e configuration for teTeX/TeXLive
 )
-(/usr/share/texlive/texmf-dist/tex/latex/multirow/multirow.sty
-Package: multirow 2021/03/15 v2.8 Span multiple rows of a table
-\multirow@colwidth=\skip76
-\multirow@cntb=\count302
-\multirow@dima=\skip77
-\bigstrutjot=\dimen264
+Package pict2e Info: Driver file: pdftex.def on input line 112.
+Package pict2e Info: Driver file for pict2e: p2e-pdftex.def on input line 114.
+
+(/usr/share/texlive/texmf-dist/tex/latex/pict2e/p2e-pdftex.def
+File: p2e-pdftex.def 2016/02/05 v0.1u Driver-dependant file (RN,HjG,JT)
 )
-(/usr/share/texlive/texmf-dist/tex/latex/moresize/moresize.sty
-Package: moresize 1999/07/26 v1.9 (more font sizes)
+\pIIe@GRAPH=\toks42
+\@arclen=\dimen269
+\@arcrad=\dimen270
+\pIIe@tempdima=\dimen271
+\pIIe@tempdimb=\dimen272
+\pIIe@tempdimc=\dimen273
+\pIIe@tempdimd=\dimen274
+\pIIe@tempdime=\dimen275
+\pIIe@tempdimf=\dimen276
 )
-\c@definition=\count303
+(/usr/share/texlive/texmf-dist/tex/latex/picture/picture.sty
+Package: picture 2020-04-22 v1.6 Dimens for picture macros (HO)
+Package picture Info: Calculation method: etex.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+Package: etoolbox 2020/10/05 v2.5k e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count311
+)
+\csteps@CBox=\box74
+\csteps@XLength=\skip78
+\csteps@YLength=\skip79
+\csteps@YDepth=\skip80
+\csteps@tmplen=\skip81
+\c@cstepcnt=\count312
+)
+(/usr/share/texlive/texmf-dist/tex/latex/enumitem/enumitem.sty
+Package: enumitem 2019/06/20 v3.9 Customized lists
+\labelindent=\skip82
+\enit@outerparindent=\dimen277
+\enit@toks=\toks43
+\enit@inbox=\box75
+\enit@count@id=\count313
+\enitdp@description=\count314
+)
+(/usr/share/texlive/texmf-dist/tex/latex/multirow/bigstrut.sty
+Package: bigstrut 2021/03/15 v2.8 Provide larger struts in tabulars
+)
+\c@theorem=\count315
+\c@corollary=\count316
+\c@example=\count317
+\c@definition=\count318
 
 (/usr/share/texlive/texmf-dist/tex/latex/geometry/geometry.sty
 Package: geometry 2020/01/02 v5.9 Page Geometry
@@ -519,27 +599,27 @@ Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
 (/usr/share/texlive/texmf-dist/tex/generic/iftex/iftex.sty
 Package: iftex 2022/02/03 v1.0f TeX engine tests
 ))
-\Gm@cnth=\count304
-\Gm@cntv=\count305
-\c@Gm@tempcnt=\count306
-\Gm@bindingoffset=\dimen265
-\Gm@wd@mp=\dimen266
-\Gm@odd@mp=\dimen267
-\Gm@even@mp=\dimen268
-\Gm@layoutwidth=\dimen269
-\Gm@layoutheight=\dimen270
-\Gm@layouthoffset=\dimen271
-\Gm@layoutvoffset=\dimen272
-\Gm@dimlist=\toks41
+\Gm@cnth=\count319
+\Gm@cntv=\count320
+\c@Gm@tempcnt=\count321
+\Gm@bindingoffset=\dimen278
+\Gm@wd@mp=\dimen279
+\Gm@odd@mp=\dimen280
+\Gm@even@mp=\dimen281
+\Gm@layoutwidth=\dimen282
+\Gm@layoutheight=\dimen283
+\Gm@layouthoffset=\dimen284
+\Gm@layoutvoffset=\dimen285
+\Gm@dimlist=\toks44
 )
 (/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty
 Package: inputenc 2021/02/14 v1.3d Input encoding file
-\inpenc@prehook=\toks42
-\inpenc@posthook=\toks43
+\inpenc@prehook=\toks45
+\inpenc@posthook=\toks46
 )
 (/usr/share/texlive/texmf-dist/tex/latex/tools/varioref.sty
 Package: varioref 2021/07/07 v1.6f package for extended references (FMi)
-\c@vrcnt=\count307
+\c@vrcnt=\count322
 )
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
 Package: hyperref 2022-05-17 v7.00q Hypertext links for LaTeX
@@ -588,11 +668,11 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 (/usr/share/texlive/texmf-dist/tex/latex/kvoptions/kvoptions.sty
 Package: kvoptions 2020-10-07 v3.14 Key value format for package options (HO)
 ))
-\c@section@level=\count308
+\c@section@level=\count323
 )
-\@linkdim=\dimen273
-\Hy@linkcounter=\count309
-\Hy@pagecounter=\count310
+\@linkdim=\dimen286
+\Hy@linkcounter=\count324
+\Hy@pagecounter=\count325
 
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/pd1enc.def
 File: pd1enc.def 2022-05-17 v7.00q Hyperref: PDFDocEncoding definition (HO)
@@ -605,7 +685,7 @@ Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
 (/usr/share/texlive/texmf-dist/tex/generic/etexcmds/etexcmds.sty
 Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
 )
-\Hy@SavedSpaceFactor=\count311
+\Hy@SavedSpaceFactor=\count326
 
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/puenc.def
 File: puenc.def 2022-05-17 v7.00q Hyperref: PDF Unicode definition (HO)
@@ -620,9 +700,9 @@ Package hyperref Info: Plain pages OFF on input line 4154.
 Package hyperref Info: Backreferencing OFF on input line 4159.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks ON on input line 4385.
-\c@Hy@tempcnt=\count312
+\c@Hy@tempcnt=\count327
 LaTeX Info: Redefining \url on input line 4723.
-\XeTeXLinkMargin=\dimen274
+\XeTeXLinkMargin=\dimen287
 
 (/usr/share/texlive/texmf-dist/tex/generic/bitset/bitset.sty
 Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
@@ -631,9 +711,9 @@ Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
 Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
 )
 ))
-\Fld@menulength=\count313
-\Field@Width=\dimen275
-\Fld@charsize=\dimen276
+\Fld@menulength=\count328
+\Field@Width=\dimen288
+\Fld@charsize=\dimen289
 Package hyperref Info: Hyper figures OFF on input line 6001.
 Package hyperref Info: Link nesting OFF on input line 6006.
 Package hyperref Info: Hyper index ON on input line 6009.
@@ -648,9 +728,9 @@ LaTeX Info: Redefining \pageref on input line 6078.
 Package: atbegshi-ltx 2021/01/10 v1.0c Emulation of the original atbegshi
 package with kernel methods
 )
-\Hy@abspage=\count314
-\c@Item=\count315
-\c@Hfootnote=\count316
+\Hy@abspage=\count329
+\c@Item=\count330
+\c@Hfootnote=\count331
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
 
@@ -662,8 +742,8 @@ Package: atveryend-ltx 2020/08/19 v1.0a Emulation of the original atveryend pac
 kage
 with kernel methods
 )
-\Fld@listcount=\count317
-\c@bookmark@seq@number=\count318
+\Fld@listcount=\count332
+\c@bookmark@seq@number=\count333
 
 (/usr/share/texlive/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
 Package: rerunfilecheck 2019/12/05 v1.9 Rerun checks for auxiliary files (HO)
@@ -674,7 +754,7 @@ Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
 Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 86.
 )
-\Hy@SectionHShift=\skip78
+\Hy@SectionHShift=\skip83
 )
 (/usr/share/texlive/texmf-dist/tex/latex/cleveref/cleveref.sty
 Package: cleveref 2018/03/27 v0.21.4 Intelligent cross-referencing
@@ -697,6 +777,7 @@ LaTeX Info: Redefining \Vref on input line 2605.
 LaTeX Info: Redefining \vrefrange on input line 2605.
 LaTeX Info: Redefining \fullref on input line 2605.
 Package cleveref Info: `amsthm' support loaded on input line 3026.
+Package cleveref Info: `listings' support loaded on input line 3131.
 Package cleveref Info: `algorithm2e' support loaded on input line 3147.
 Package cleveref Info: always capitalise cross-reference names on input line 78
 25.
@@ -707,39 +788,39 @@ Package cleveref Info: no abbreviation of names on input line 7852.
 (/usr/share/texlive/texmf-dist/tex/latex/tocloft/tocloft.sty
 Package: tocloft 2017/08/31 v2.3i parameterised ToC, etc., typesetting
 Package tocloft Info: The document has section divisions on input line 51.
-\cftparskip=\skip79
-\cftbeforetoctitleskip=\skip80
-\cftaftertoctitleskip=\skip81
-\cftbeforepartskip=\skip82
-\cftpartnumwidth=\skip83
-\cftpartindent=\skip84
-\cftbeforesecskip=\skip85
-\cftsecindent=\skip86
-\cftsecnumwidth=\skip87
-\cftbeforesubsecskip=\skip88
-\cftsubsecindent=\skip89
-\cftsubsecnumwidth=\skip90
-\cftbeforesubsubsecskip=\skip91
-\cftsubsubsecindent=\skip92
-\cftsubsubsecnumwidth=\skip93
-\cftbeforeparaskip=\skip94
-\cftparaindent=\skip95
-\cftparanumwidth=\skip96
-\cftbeforesubparaskip=\skip97
-\cftsubparaindent=\skip98
-\cftsubparanumwidth=\skip99
-\cftbeforeloftitleskip=\skip100
-\cftafterloftitleskip=\skip101
-\cftbeforefigskip=\skip102
-\cftfigindent=\skip103
-\cftfignumwidth=\skip104
-\c@lofdepth=\count319
-\c@lotdepth=\count320
-\cftbeforelottitleskip=\skip105
-\cftafterlottitleskip=\skip106
-\cftbeforetabskip=\skip107
-\cfttabindent=\skip108
-\cfttabnumwidth=\skip109
+\cftparskip=\skip84
+\cftbeforetoctitleskip=\skip85
+\cftaftertoctitleskip=\skip86
+\cftbeforepartskip=\skip87
+\cftpartnumwidth=\skip88
+\cftpartindent=\skip89
+\cftbeforesecskip=\skip90
+\cftsecindent=\skip91
+\cftsecnumwidth=\skip92
+\cftbeforesubsecskip=\skip93
+\cftsubsecindent=\skip94
+\cftsubsecnumwidth=\skip95
+\cftbeforesubsubsecskip=\skip96
+\cftsubsubsecindent=\skip97
+\cftsubsubsecnumwidth=\skip98
+\cftbeforeparaskip=\skip99
+\cftparaindent=\skip100
+\cftparanumwidth=\skip101
+\cftbeforesubparaskip=\skip102
+\cftsubparaindent=\skip103
+\cftsubparanumwidth=\skip104
+\cftbeforeloftitleskip=\skip105
+\cftafterloftitleskip=\skip106
+\cftbeforefigskip=\skip107
+\cftfigindent=\skip108
+\cftfignumwidth=\skip109
+\c@lofdepth=\count334
+\c@lotdepth=\count335
+\cftbeforelottitleskip=\skip110
+\cftafterlottitleskip=\skip111
+\cftbeforetabskip=\skip112
+\cfttabindent=\skip113
+\cfttabnumwidth=\skip114
 )
 (/usr/share/texlive/texmf-dist/tex/latex/subfig/subfig.sty
 Package: subfig 2005/06/28 ver: 1.3 subfig package
@@ -749,32 +830,33 @@ Package: caption 2022/03/01 v3.6b Customizing captions (AR)
 
 (/usr/share/texlive/texmf-dist/tex/latex/caption/caption3.sty
 Package: caption3 2022/03/17 v2.3b caption3 kernel (AR)
-\caption@tempdima=\dimen277
-\captionmargin=\dimen278
-\caption@leftmargin=\dimen279
-\caption@rightmargin=\dimen280
-\caption@width=\dimen281
-\caption@indent=\dimen282
-\caption@parindent=\dimen283
-\caption@hangindent=\dimen284
+\caption@tempdima=\dimen290
+\captionmargin=\dimen291
+\caption@leftmargin=\dimen292
+\caption@rightmargin=\dimen293
+\caption@width=\dimen294
+\caption@indent=\dimen295
+\caption@parindent=\dimen296
+\caption@hangindent=\dimen297
 Package caption Info: Standard document class detected.
 )
-\c@caption@flags=\count321
-\c@continuedfloat=\count322
+\c@caption@flags=\count336
+\c@continuedfloat=\count337
 Package caption Info: hyperref package is loaded.
+Package caption Info: listings package is loaded.
 Package caption Info: wrapfig package is loaded.
 )
-\c@KVtest=\count323
-\sf@farskip=\skip110
-\sf@captopadj=\dimen285
-\sf@capskip=\skip111
-\sf@nearskip=\skip112
-\c@subfigure=\count324
-\c@subfigure@save=\count325
-\c@subtable=\count326
-\c@subtable@save=\count327
-\sf@top=\skip113
-\sf@bottom=\skip114
+\c@KVtest=\count338
+\sf@farskip=\skip115
+\sf@captopadj=\dimen298
+\sf@capskip=\skip116
+\sf@nearskip=\skip117
+\c@subfigure=\count339
+\c@subfigure@save=\count340
+\c@subtable=\count341
+\c@subtable@save=\count342
+\sf@top=\skip118
+\sf@bottom=\skip119
 )
 (/usr/share/texlive/texmf-dist/tex/latex/tocbibind/tocbibind.sty
 Package: tocbibind 2010/10/13 v1.5k extra ToC listings
@@ -792,55 +874,55 @@ Package: pbox 2011/12/07 v1.2 Dynamic parboxes
 
 (/usr/share/texlive/texmf-dist/tex/latex/tools/calc.sty
 Package: calc 2017/05/25 v4.3 Infix arithmetic (KKT,FJ)
-\calc@Acount=\count328
-\calc@Bcount=\count329
-\calc@Adimen=\dimen286
-\calc@Bdimen=\dimen287
-\calc@Askip=\skip115
-\calc@Bskip=\skip116
+\calc@Acount=\count343
+\calc@Bcount=\count344
+\calc@Adimen=\dimen299
+\calc@Bdimen=\dimen300
+\calc@Askip=\skip120
+\calc@Bskip=\skip121
 LaTeX Info: Redefining \setlength on input line 80.
 LaTeX Info: Redefining \addtolength on input line 81.
-\calc@Ccount=\count330
-\calc@Cskip=\skip117
+\calc@Ccount=\count345
+\calc@Cskip=\skip122
 )
-\pb@xlen=\skip118
+\pb@xlen=\skip123
 )
-\c@TableIndex=\count331
-\c@FigureIndex=\count332
-\c@TableClearedIndex=\count333
-\c@FigureClearedIndex=\count334
-\oldabovecaptionskip=\skip119
-\oldbelowcaptionskip=\skip120
-\captionGap=\skip121
-\TableDeadMargin=\skip122
-\FigureDeadMargin=\skip123
-\c@abovecaptionskipterm=\count335
-\c@belowcaptionskipterm=\count336
-\@minCaptionBoxWidth=\skip124
-\@minCaptionBoxWidthDefault=\skip125
-\@maxCaptionBoxWidth=\skip126
-\@maxCaptionBoxWidthDefault=\skip127
-\c@promptTablesFlag=\count337
-\c@promptFiguresFlag=\count338
-\DeadMargin=\skip128
-\@DataBoxWidth=\skip129
-\CaptionBoxWidth=\skip130
-\@DataBoxOffset=\skip131
-\@CaptionBoxOffset=\skip132
-\@captionIDwidth=\skip133
-\@captionWidth=\skip134
-\@DataBoxSurplus=\skip135
-\c@lofInvocations=\count339
-\c@lofPrints=\count340
-\c@lotInvocations=\count341
-\c@lotPrints=\count342
-\hyper@shift=\skip136
+\c@TableIndex=\count346
+\c@FigureIndex=\count347
+\c@TableClearedIndex=\count348
+\c@FigureClearedIndex=\count349
+\oldabovecaptionskip=\skip124
+\oldbelowcaptionskip=\skip125
+\captionGap=\skip126
+\TableDeadMargin=\skip127
+\FigureDeadMargin=\skip128
+\c@abovecaptionskipterm=\count350
+\c@belowcaptionskipterm=\count351
+\@minCaptionBoxWidth=\skip129
+\@minCaptionBoxWidthDefault=\skip130
+\@maxCaptionBoxWidth=\skip131
+\@maxCaptionBoxWidthDefault=\skip132
+\c@promptTablesFlag=\count352
+\c@promptFiguresFlag=\count353
+\DeadMargin=\skip133
+\@DataBoxWidth=\skip134
+\CaptionBoxWidth=\skip135
+\@DataBoxOffset=\skip136
+\@CaptionBoxOffset=\skip137
+\@captionIDwidth=\skip138
+\@captionWidth=\skip139
+\@DataBoxSurplus=\skip140
+\c@lofInvocations=\count354
+\c@lofPrints=\count355
+\c@lotInvocations=\count356
+\c@lotPrints=\count357
+\hyper@shift=\skip141
 )
 (/usr/share/texlive/texmf-dist/tex/latex/appendix/appendix.sty
 Package: appendix 2020/02/08 v1.2c extra appendix facilities
-\c@@pps=\count343
-\c@@ppsavesec=\count344
-\c@@ppsaveapp=\count345
+\c@@pps=\count358
+\c@@ppsavesec=\count359
+\c@@ppsaveapp=\count360
 )
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/mathptmx.sty
 Package: mathptmx 2020/03/25 PSNFSS-v9.3 Times w/ Math, improved (SPQR, WaS) 
@@ -883,15 +965,15 @@ Package: setspace 2011/12/19 v6.7a set line spacing
 )
 (/usr/share/texlive/texmf-dist/tex/latex/titlesec/titlesec.sty
 Package: titlesec 2021/07/05 v2.14 Sectioning titles
-\ttl@box=\box72
-\beforetitleunit=\skip137
-\aftertitleunit=\skip138
-\ttl@plus=\dimen288
-\ttl@minus=\dimen289
-\ttl@toksa=\toks44
-\titlewidth=\dimen290
-\titlewidthlast=\dimen291
-\titlewidthfirst=\dimen292
+\ttl@box=\box76
+\beforetitleunit=\skip142
+\aftertitleunit=\skip143
+\ttl@plus=\dimen301
+\ttl@minus=\dimen302
+\ttl@toksa=\toks47
+\titlewidth=\dimen303
+\titlewidthlast=\dimen304
+\titlewidthfirst=\dimen305
 )
 (/usr/share/texlive/texmf-dist/tex/generic/iftex/ifxetex.sty
 Package: ifxetex 2019/10/25 v0.7 ifxetex legacy package. Use iftex instead.
@@ -902,52 +984,97 @@ Package: expl3 2022-06-02 L3 programming layer (loader)
 
 (/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2022-04-20 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count346
-\l__pdf_internal_box=\box73
+\l__color_backend_stack_int=\count361
+\l__pdf_internal_box=\box77
 ))
 Package: xparse 2022-05-30 L3 Experimental document command parser
 )
 LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 2
-29.
+80.
 
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 ) (./main.aux
-(./text/7_toc.aux))
+(./text/7_toc.aux)
+
+LaTeX Warning: Label `fig:l0' multiply defined.
+
+
+LaTeX Warning: Label `fig:l0@cref' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:l0' multiply defined.
+
+
+LaTeX Warning: Label `fig:l0' multiply defined.
+
+
+LaTeX Warning: Label `fig:l0@cref' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:l0' multiply defined.
+
+
+LaTeX Warning: Label `fig:l0' multiply defined.
+
+
+LaTeX Warning: Label `fig:l0@cref' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:l0' multiply defined.
+
+
+LaTeX Warning: Label `fig:l0' multiply defined.
+
+
+LaTeX Warning: Label `fig:l0@cref' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:l0' multiply defined.
+
+
+LaTeX Warning: Label `fig:l0' multiply defined.
+
+
+LaTeX Warning: Label `fig:l0@cref' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:l0' multiply defined.
+
+)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 229.
-LaTeX Font Info:    ... okay on input line 229.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 229.
-LaTeX Font Info:    ... okay on input line 229.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 229.
-LaTeX Font Info:    ... okay on input line 229.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 229.
-LaTeX Font Info:    ... okay on input line 229.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 229.
-LaTeX Font Info:    ... okay on input line 229.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 229.
-LaTeX Font Info:    ... okay on input line 229.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 229.
-LaTeX Font Info:    ... okay on input line 229.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 229.
-LaTeX Font Info:    ... okay on input line 229.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 229.
-LaTeX Font Info:    ... okay on input line 229.
-
-(/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 280.
+LaTeX Font Info:    ... okay on input line 280.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 280.
+LaTeX Font Info:    ... okay on input line 280.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 280.
+LaTeX Font Info:    ... okay on input line 280.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 280.
+LaTeX Font Info:    ... okay on input line 280.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 280.
+LaTeX Font Info:    ... okay on input line 280.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 280.
+LaTeX Font Info:    ... okay on input line 280.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 280.
+LaTeX Font Info:    ... okay on input line 280.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 280.
+LaTeX Font Info:    ... okay on input line 280.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 280.
+LaTeX Font Info:    ... okay on input line 280.
+ (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count347
-\scratchdimen=\dimen293
-\scratchbox=\box74
-\nofMPsegments=\count348
-\nofMParguments=\count349
-\everyMPshowfont=\toks45
-\MPscratchCnt=\count350
-\MPscratchDim=\dimen294
-\MPnumerator=\count351
-\makeMPintoPDFobject=\count352
-\everyMPtoPDFconversion=\toks46
+\scratchcounter=\count362
+\scratchdimen=\dimen306
+\scratchbox=\box78
+\nofMPsegments=\count363
+\nofMParguments=\count364
+\everyMPshowfont=\toks48
+\MPscratchCnt=\count365
+\MPscratchDim=\dimen307
+\MPnumerator=\count366
+\makeMPintoPDFobject=\count367
+\everyMPtoPDFconversion=\toks49
 ) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
@@ -957,6 +1084,8 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
+\c@lstlisting=\count368
+
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
 *geometry* verbose mode - [ preamble ] result:
@@ -991,7 +1120,7 @@ e
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-Package hyperref Info: Link coloring OFF on input line 229.
+Package hyperref Info: Link coloring OFF on input line 280.
 (./main.out) (./main.out)
 \@outlinefile=\write4
 \openout4 = `main.out'.
@@ -1000,92 +1129,92 @@ Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: subfig package v1.3 is loaded.
 Package caption Info: End \AtBeginDocument code.
 LaTeX Font Info:    Trying to load font information for OT1+ztmcm on input line
- 232.
+ 283.
 
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1ztmcm.fd
 File: ot1ztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OT1/ztmcm.
 )
 LaTeX Font Info:    Trying to load font information for OML+ztmcm on input line
- 232.
+ 283.
 
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/omlztmcm.fd
 File: omlztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OML/ztmcm.
 )
 LaTeX Font Info:    Trying to load font information for OMS+ztmcm on input line
- 232.
+ 283.
 
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/omsztmcm.fd
 File: omsztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMS/ztmcm.
 )
 LaTeX Font Info:    Trying to load font information for OMX+ztmcm on input line
- 232.
+ 283.
 
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/omxztmcm.fd
 File: omxztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMX/ztmcm.
 )
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <14.4> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 232.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 283.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10.95> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 232.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 283.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <8> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 232.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 283.
 
-Underfull \hbox (badness 10000) in paragraph at lines 236--237
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 236--237
+Underfull \hbox (badness 10000) in paragraph at lines 287--288
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 236--237
+Underfull \hbox (badness 10000) in paragraph at lines 287--288
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 236--237
+Underfull \hbox (badness 10000) in paragraph at lines 287--288
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 236--237
+Underfull \hbox (badness 10000) in paragraph at lines 287--288
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 236--237
+Underfull \hbox (badness 10000) in paragraph at lines 287--288
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 244--245
+Underfull \hbox (badness 10000) in paragraph at lines 287--288
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 244--245
+Underfull \hbox (badness 10000) in paragraph at lines 295--296
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 244--245
+Underfull \hbox (badness 10000) in paragraph at lines 295--296
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 244--245
+Underfull \hbox (badness 10000) in paragraph at lines 295--296
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 244--245
+Underfull \hbox (badness 10000) in paragraph at lines 295--296
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 244--245
+Underfull \hbox (badness 10000) in paragraph at lines 295--296
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 295--296
 
  []
 
@@ -1103,18 +1232,18 @@ LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1.
 
-Overfull \hbox (16.16216pt too wide) in paragraph at lines 3--3
- [][] []\OT1/ptm/m/n/12 STMATCH: AC-CEL-ER-AT-ING GRAPH PAT-TERN MATCH-ING ON G
-PU WITH STACK- 
+Overfull \hbox (10.9911pt too wide) in paragraph at lines 3--3
+ [][] []\OT1/ptm/m/n/12 GCSM: GPU-ACCELERATED CON-TIN-U-OUS SUB-GRAPH MATCH-ING
+ FOR LARGE 
  []
 
-)
+[2
+
+])
 \tf@toc=\write5
 \openout5 = `main.toc'.
 
- [2
-
-] (./main.lot
+ [3] (./main.lot
 Overfull \hbox (1.71043pt too wide) detected at line 1
 \OT1/ptm/m/n/12 Table 1.  
  []
@@ -1125,210 +1254,513 @@ Overfull \hbox (1.71043pt too wide) detected at line 2
  []
 
 
-Overfull \hbox (1.71043pt too wide) detected at line 5
+Overfull \hbox (1.71043pt too wide) detected at line 3
 \OT1/ptm/m/n/12 Table 3.  
- []
-
-
-Overfull \hbox (8.42163pt too wide) in paragraph at lines 5--5
- [][] []\OT1/ptm/m/n/12 Execution time (in mil-lisec-onds) of dif-fer-ent sys-t
-ems for la-beled edge-induced match- 
  []
 
 )
 \tf@lot=\write6
 \openout6 = `main.lot'.
 
- [3] (./main.lof)
+ [4] (./main.lof)
 \tf@lof=\write7
 \openout7 = `main.lof'.
 
-) [4] (./1.stmatch/stmatch.tex [1
-
-
-] [2] [3]
+) [5] (./2.gcsm/gcsm.tex
+<2.gcsm/fig/DataGraph.pdf, id=205, page=3, 79.29625pt x 73.27374pt>
+File: 2.gcsm/fig/DataGraph.pdf Graphic file (type pdf)
+<use 2.gcsm/fig/DataGraph.pdf, page 3>
+Package pdftex.def Info: 2.gcsm/fig/DataGraph.pdf , page3 used on input line 25
+.
+(pdftex.def)             Requested size: 47.5781pt x 43.96457pt.
+<2.gcsm/fig/DataGraph.pdf, id=206, page=1, 169.63374pt x 96.36pt>
+File: 2.gcsm/fig/DataGraph.pdf Graphic file (type pdf)
+<use 2.gcsm/fig/DataGraph.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/fig/DataGraph.pdf , page1 used on input line 29
+.
+(pdftex.def)             Requested size: 101.78102pt x 57.81642pt.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 93.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 29.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7.4> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 93.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 29.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <6> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 93.
-<1.stmatch/figure/loop_example_orig.pdf, id=246, 377.41pt x 317.185pt>
-File: 1.stmatch/figure/loop_example_orig.pdf Graphic file (type pdf)
-<use 1.stmatch/figure/loop_example_orig.pdf>
-Package pdftex.def Info: 1.stmatch/figure/loop_example_orig.pdf  used on input 
-line 114.
-(pdftex.def)             Requested size: 301.9284pt x 253.74832pt.
- [4]
-<1.stmatch/figure/example_query.pdf, id=280, 58.2175pt x 56.21pt>
-File: 1.stmatch/figure/example_query.pdf Graphic file (type pdf)
-<use 1.stmatch/figure/example_query.pdf>
-Package pdftex.def Info: 1.stmatch/figure/example_query.pdf  used on input line
- 140.
-(pdftex.def)             Requested size: 52.39525pt x 50.58852pt.
- [5 <./1.stmatch/figure/loop_example_orig.pdf> <./1.stmatch/figure/example_quer
-y.pdf>]
-[6]
-<1.stmatch/figure/while_loop_orig.pdf, id=354, 384.43625pt x 455.7025pt>
-File: 1.stmatch/figure/while_loop_orig.pdf Graphic file (type pdf)
-<use 1.stmatch/figure/while_loop_orig.pdf>
-Package pdftex.def Info: 1.stmatch/figure/while_loop_orig.pdf  used on input li
-ne 219.
-(pdftex.def)             Requested size: 307.54941pt x 364.56248pt.
- [7]
-<1.stmatch/figure/getcandidates.pdf, id=360, 435.6275pt x 325.215pt>
-File: 1.stmatch/figure/getcandidates.pdf Graphic file (type pdf)
-<use 1.stmatch/figure/getcandidates.pdf>
-Package pdftex.def Info: 1.stmatch/figure/getcandidates.pdf  used on input line
- 226.
-(pdftex.def)             Requested size: 304.93716pt x 227.64894pt.
- [8 <./1.stmatch/figure/while_loop_orig.pdf>] [9 <./1.stmatch/figure/getcandida
-tes.pdf>] [10]
-<1.stmatch/figure/stealing_example.pdf, id=465, 434.62375pt x 353.32pt>
-File: 1.stmatch/figure/stealing_example.pdf Graphic file (type pdf)
-<use 1.stmatch/figure/stealing_example.pdf>
-Package pdftex.def Info: 1.stmatch/figure/stealing_example.pdf  used on input l
-ine 315.
-(pdftex.def)             Requested size: 304.23454pt x 247.32231pt.
- [11 <./1.stmatch/figure/stealing_example.pdf>]
-<1.stmatch/figure/global_steal.pdf, id=522, 370.38374pt x 176.66pt>
-File: 1.stmatch/figure/global_steal.pdf Graphic file (type pdf)
-<use 1.stmatch/figure/global_steal.pdf>
-Package pdftex.def Info: 1.stmatch/figure/global_steal.pdf  used on input line 
-348.
-(pdftex.def)             Requested size: 259.26685pt x 123.66115pt.
- [12 <./1.stmatch/figure/global_steal.pdf>]
-<1.stmatch/figure/while_loop_unrolled.pdf, id=571, 408.52625pt x 727.71875pt>
-File: 1.stmatch/figure/while_loop_unrolled.pdf Graphic file (type pdf)
-<use 1.stmatch/figure/while_loop_unrolled.pdf>
-Package pdftex.def Info: 1.stmatch/figure/while_loop_unrolled.pdf  used on inpu
-t line 392.
-(pdftex.def)             Requested size: 326.82144pt x 582.17578pt.
- [13] [14 <./1.stmatch/figure/while_loop_unrolled.pdf>]
-<1.stmatch/figure/combined_set_operation.pdf, id=601, 422.57875pt x 158.5925pt>
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 29.
+<2.gcsm/fig/DataGraph.pdf, id=207, page=2, 418.56375pt x 132.495pt>
+File: 2.gcsm/fig/DataGraph.pdf Graphic file (type pdf)
+<use 2.gcsm/fig/DataGraph.pdf, page 2>
+Package pdftex.def Info: 2.gcsm/fig/DataGraph.pdf , page2 used on input line 33
+.
+(pdftex.def)             Requested size: 251.14018pt x 79.49759pt.
+ [1
 
-File: 1.stmatch/figure/combined_set_operation.pdf Graphic file (type pdf)
-<use 1.stmatch/figure/combined_set_operation.pdf>
-Package pdftex.def Info: 1.stmatch/figure/combined_set_operation.pdf  used on i
-nput line 415.
-(pdftex.def)             Requested size: 295.8031pt x 111.01396pt.
- [15 <./1.stmatch/figure/combined_set_operation.pdf>]
-<1.stmatch/figure/dependence_graph.pdf, id=636, 137.51375pt x 145.54375pt>
-File: 1.stmatch/figure/dependence_graph.pdf Graphic file (type pdf)
-<use 1.stmatch/figure/dependence_graph.pdf>
-Package pdftex.def Info: 1.stmatch/figure/dependence_graph.pdf  used on input l
-ine 466.
-(pdftex.def)             Requested size: 96.25896pt x 101.87991pt.
-<1.stmatch/figure/dependence_graph_array.pdf, id=637, 244.915pt x 109.40875pt>
-File: 1.stmatch/figure/dependence_graph_array.pdf Graphic file (type pdf)
-<use 1.stmatch/figure/dependence_graph_array.pdf>
-Package pdftex.def Info: 1.stmatch/figure/dependence_graph_array.pdf  used on i
-nput line 470.
-(pdftex.def)             Requested size: 171.43932pt x 76.58559pt.
-<1.stmatch/figure/colored_dependence_graph.pdf, id=640, 188.705pt x 145.54375pt
->
-File: 1.stmatch/figure/colored_dependence_graph.pdf Graphic file (type pdf)
-<use 1.stmatch/figure/colored_dependence_graph.pdf>
-Package pdftex.def Info: 1.stmatch/figure/colored_dependence_graph.pdf  used on
- input line 480.
-(pdftex.def)             Requested size: 132.09259pt x 101.87991pt.
-<1.stmatch/figure/improved_colored_dependence_graph.pdf, id=641, 157.58875pt x 
-145.54375pt>
-File: 1.stmatch/figure/improved_colored_dependence_graph.pdf Graphic file (type
- pdf)
-<use 1.stmatch/figure/improved_colored_dependence_graph.pdf>
-Package pdftex.def Info: 1.stmatch/figure/improved_colored_dependence_graph.pdf
-  used on input line 484.
-(pdftex.def)             Requested size: 110.31136pt x 101.87991pt.
- [16] [17 <./1.stmatch/figure/dependence_graph.pdf> <./1.stmatch/figure/depende
-nce_graph_array.pdf> <./1.stmatch/figure/colored_dependence_graph.pdf> <./1.stm
-atch/figure/improved_colored_dependence_graph.pdf>] [18] [19]
-Overfull \hbox (0.18584pt too wide) in paragraph at lines 578--590
-\OT1/ptm/m/n/12 of ar-ray $\OML/ztmcm/m/it/12 C$ \OT1/ptm/m/n/12 to 4096. The s
-ize of ar-ray $\OML/ztmcm/m/it/12 C$ \OT1/ptm/m/n/12 is \OT1/ptm/m/it/12 NUM[]S
-ETS$\OMS/ztmcm/m/n/12 ^^B$\OT1/ptm/m/it/12 UNROLL$\OMS/ztmcm/m/n/12 ^^B$\OT1/pt
-m/m/it/12 MAX[]DEGREE$\OMS/ztmcm/m/n/12 ^^B$\OT1/ptm/m/it/12 NUM[]WARPS\OT1/ptm
-/m/n/12 .
+
+ <./2.gcsm/fig/DataGraph.pdf> <./2.gcsm/fig/DataGraph.pdf> <./2.gcsm/fig/DataGr
+aph.pdf>] [2]
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 7
+4.
+
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/ts1ptm.fd
+File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
+) [3]
+Overfull \hbox (16.0073pt too wide) in paragraph at lines 110--114
+[]\OT1/ptm/m/n/12 Conventionally, a dy-namic graph is mod-eled as a se-quence o
+f edge up-dates [$\OT1/ztmcm/m/n/12 (\OML/ztmcm/m/it/12 e[]; \OMS/ztmcm/m/n/12 
+^^H\OT1/ztmcm/m/n/12 )\OML/ztmcm/m/it/12 ; \OT1/ztmcm/m/n/12 (\OML/ztmcm/m/it/1
+2 e[]; \OMS/ztmcm/m/n/12 ^^H\OT1/ztmcm/m/n/12 )\OML/ztmcm/m/it/12 ; []$\OT1/ptm
+/m/n/12 ]
  []
 
+[4] (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2020/03/24 1.8d listings language file
+)
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2020/03/24 1.8d listings language file
+)
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2020/03/24 1.8d (Carsten Heinz)
+)
+Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
+nput line 131.
+
+(./2.gcsm/fig/l0.cpp
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <5> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 628.
-<1.stmatch/figure/scalability.pdf, id=796, 869.2475pt x 178.6675pt>
-File: 1.stmatch/figure/scalability.pdf Graphic file (type pdf)
-<use 1.stmatch/figure/scalability.pdf>
-Package pdftex.def Info: 1.stmatch/figure/scalability.pdf  used on input line 6
-66.
-(pdftex.def)             Requested size: 460.69897pt x 94.69331pt.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1.
+) (./2.gcsm/fig/l1.cpp) (./2.gcsm/fig/l2.cpp)
+(./2.gcsm/fig/l3.cpp) (./2.gcsm/fig/l4.cpp) (./2.gcsm/fig/l5.cpp) [5] [6]
+[7] [8]
+<2.gcsm/fig/workflow.pdf, id=442, 546.04pt x 445.665pt>
+File: 2.gcsm/fig/workflow.pdf Graphic file (type pdf)
+<use 2.gcsm/fig/workflow.pdf>
+Package pdftex.def Info: 2.gcsm/fig/workflow.pdf  used on input line 244.
+(pdftex.def)             Requested size: 327.62653pt x 267.40106pt.
+ [9] [10 <./2.gcsm/fig/workflow.pdf>]
+<2.gcsm/fig/execution_tree.pdf, id=485, 281.05pt x 199.74625pt>
+File: 2.gcsm/fig/execution_tree.pdf Graphic file (type pdf)
+<use 2.gcsm/fig/execution_tree.pdf>
+Package pdftex.def Info: 2.gcsm/fig/execution_tree.pdf  used on input line 277.
 
-Overfull \hbox (5.62117pt too wide) in paragraph at lines 675--704
- [][] 
- []
+(pdftex.def)             Requested size: 168.63129pt x 119.84866pt.
+<2.gcsm/fig/sampled_paths.pdf, id=486, 209.78375pt x 185.69376pt>
+File: 2.gcsm/fig/sampled_paths.pdf Graphic file (type pdf)
+<use 2.gcsm/fig/sampled_paths.pdf>
+Package pdftex.def Info: 2.gcsm/fig/sampled_paths.pdf  used on input line 280.
+(pdftex.def)             Requested size: 125.8712pt x 111.4171pt.
+ [11 <./2.gcsm/fig/execution_tree.pdf> <./2.gcsm/fig/sampled_paths.pdf>]
 
-[20] [21 <./1.stmatch/figure/scalability.pdf>]
-<1.stmatch/figure/benefit_enron.pdf, id=847, 408.52625pt x 141.52875pt>
-File: 1.stmatch/figure/benefit_enron.pdf Graphic file (type pdf)
-<use 1.stmatch/figure/benefit_enron.pdf>
-Package pdftex.def Info: 1.stmatch/figure/benefit_enron.pdf  used on input line
- 745.
-(pdftex.def)             Requested size: 224.69012pt x 77.84105pt.
-<1.stmatch/figure/benefit_mico.pdf, id=848, 417.56pt x 141.52875pt>
-File: 1.stmatch/figure/benefit_mico.pdf Graphic file (type pdf)
-<use 1.stmatch/figure/benefit_mico.pdf>
-Package pdftex.def Info: 1.stmatch/figure/benefit_mico.pdf  used on input line 
-748.
-(pdftex.def)             Requested size: 229.65869pt x 77.84105pt.
-<1.stmatch/figure/benefit_youtube.pdf, id=849, 408.52625pt x 141.52875pt>
-File: 1.stmatch/figure/benefit_youtube.pdf Graphic file (type pdf)
-<use 1.stmatch/figure/benefit_youtube.pdf>
-Package pdftex.def Info: 1.stmatch/figure/benefit_youtube.pdf  used on input li
-ne 751.
-(pdftex.def)             Requested size: 224.69012pt x 77.84105pt.
-<1.stmatch/figure/benefit_livejournal.pdf, id=850, 418.56375pt x 141.52875pt>
-File: 1.stmatch/figure/benefit_livejournal.pdf Graphic file (type pdf)
-<use 1.stmatch/figure/benefit_livejournal.pdf>
-Package pdftex.def Info: 1.stmatch/figure/benefit_livejournal.pdf  used on inpu
-t line 754.
-(pdftex.def)             Requested size: 230.21077pt x 77.84105pt.
-<1.stmatch/figure/utilization.pdf, id=851, 407.5225pt x 178.6675pt>
-File: 1.stmatch/figure/utilization.pdf Graphic file (type pdf)
-<use 1.stmatch/figure/utilization.pdf>
-Package pdftex.def Info: 1.stmatch/figure/utilization.pdf  used on input line 7
+LaTeX Warning: Citation `pavan2013counting' on page 12 undefined on input line 
+314.
+
+
+LaTeX Warning: Citation `iyer2018asap' on page 12 undefined on input line 314.
+
+[12] [13]
+
+LaTeX Warning: Citation `wasserman2010statistics' on page 14 undefined on input
+ line 364.
+
+[14]
+<2.gcsm/fig/adj_list.pdf, id=590, 398.48875pt x 375.4025pt>
+File: 2.gcsm/fig/adj_list.pdf Graphic file (type pdf)
+<use 2.gcsm/fig/adj_list.pdf>
+Package pdftex.def Info: 2.gcsm/fig/adj_list.pdf  used on input line 405.
+(pdftex.def)             Requested size: 199.24388pt x 187.70079pt.
+ [15 <./2.gcsm/fig/adj_list.pdf>]
+<2.gcsm/fig/gpu_data.pdf, id=621, 234.8775pt x 156.585pt>
+File: 2.gcsm/fig/gpu_data.pdf Graphic file (type pdf)
+<use 2.gcsm/fig/gpu_data.pdf>
+Package pdftex.def Info: 2.gcsm/fig/gpu_data.pdf  used on input line 437.
+(pdftex.def)             Requested size: 140.92758pt x 93.95172pt.
+ [16] [17 <./2.gcsm/fig/gpu_data.pdf>]
+[18]
+<2.gcsm/fig/6.QueryVis-crop.pdf, id=664, page=1, 283.0575pt x 166.6225pt>
+File: 2.gcsm/fig/6.QueryVis-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/fig/6.QueryVis-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/fig/6.QueryVis-crop.pdf , page1 used on input l
+ine 524.
+(pdftex.def)             Requested size: 33.96542pt x 19.99384pt.
+<2.gcsm/fig/6.QueryVis-crop.pdf, id=665, page=3, 357.335pt x 175.65625pt>
+File: 2.gcsm/fig/6.QueryVis-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/fig/6.QueryVis-crop.pdf, page 3>
+Package pdftex.def Info: 2.gcsm/fig/6.QueryVis-crop.pdf , page3 used on input l
+ine 527.
+(pdftex.def)             Requested size: 42.87834pt x 21.07784pt.
+<2.gcsm/fig/6.QueryVis-crop.pdf, id=666, page=4, 315.1775pt x 168.63pt>
+File: 2.gcsm/fig/6.QueryVis-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/fig/6.QueryVis-crop.pdf, page 4>
+Package pdftex.def Info: 2.gcsm/fig/6.QueryVis-crop.pdf , page4 used on input l
+ine 530.
+(pdftex.def)             Requested size: 37.81966pt x 20.23471pt.
+<2.gcsm/fig/6.QueryVis-crop.pdf, id=667, page=6, 205.76875pt x 173.64874pt>
+File: 2.gcsm/fig/6.QueryVis-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/fig/6.QueryVis-crop.pdf, page 6>
+Package pdftex.def Info: 2.gcsm/fig/6.QueryVis-crop.pdf , page6 used on input l
+ine 533.
+(pdftex.def)             Requested size: 24.69118pt x 20.83694pt.
+<2.gcsm/fig/6.QueryVis-crop.pdf, id=668, page=7, 166.6225pt x 166.6225pt>
+File: 2.gcsm/fig/6.QueryVis-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/fig/6.QueryVis-crop.pdf, page 7>
+Package pdftex.def Info: 2.gcsm/fig/6.QueryVis-crop.pdf , page7 used on input l
+ine 536.
+(pdftex.def)             Requested size: 36.65706pt x 36.65706pt.
+<2.gcsm/fig/6.QueryVis-crop.pdf, id=669, page=8, 166.6225pt x 168.63pt>
+File: 2.gcsm/fig/6.QueryVis-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/fig/6.QueryVis-crop.pdf, page 8>
+Package pdftex.def Info: 2.gcsm/fig/6.QueryVis-crop.pdf , page8 used on input l
+ine 539.
+(pdftex.def)             Requested size: 36.65706pt x 37.09871pt.
+
+
+LaTeX Warning: Citation `snapnets' on page 19 undefined on input line 549.
+
+
+LaTeX Warning: Citation `iosup2016ldbc' on page 19 undefined on input line 549.
+
+
+
+LaTeX Warning: Citation `sun2022depth' on page 19 undefined on input line 550.
+
+
+LaTeX Warning: Citation `sun2022depth' on page 19 undefined on input line 553.
+
+[19] [20 <./2.gcsm/fig/6.QueryVis-crop.pdf> <./2.gcsm/fig/6.QueryVis-crop.pdf> 
+<./2.gcsm/fig/6.QueryVis-crop.pdf> <./2.gcsm/fig/6.QueryVis-crop.pdf> <./2.gcsm
+/fig/6.QueryVis-crop.pdf> <./2.gcsm/fig/6.QueryVis-crop.pdf>]
+<2.gcsm/expfig/FR4096-1-crop.pdf, id=727, page=1, 216.81pt x 227.85126pt>
+File: 2.gcsm/expfig/FR4096-1-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/FR4096-1-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/FR4096-1-crop.pdf , page1 used on input 
+line 595.
+(pdftex.def)             Requested size: 71.54752pt x 75.19113pt.
+<2.gcsm/expfig/FR4096-2-crop.pdf, id=728, page=1, 186.6975pt x 233.87375pt>
+File: 2.gcsm/expfig/FR4096-2-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/FR4096-2-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/FR4096-2-crop.pdf , page1 used on input 
+line 599.
+(pdftex.def)             Requested size: 61.61035pt x 77.17856pt.
+<2.gcsm/expfig/FR4096-3-crop.pdf, id=729, page=1, 185.69376pt x 233.87375pt>
+File: 2.gcsm/expfig/FR4096-3-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/FR4096-3-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/FR4096-3-crop.pdf , page1 used on input 
+line 603.
+(pdftex.def)             Requested size: 61.27911pt x 77.17856pt.
+<2.gcsm/expfig/FR4096-4-crop.pdf, id=730, page=1, 225.84375pt x 232.87pt>
+File: 2.gcsm/expfig/FR4096-4-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/FR4096-4-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/FR4096-4-crop.pdf , page1 used on input 
+line 607.
+(pdftex.def)             Requested size: 74.52866pt x 76.84732pt.
+<2.gcsm/expfig/FR4096-5-crop.pdf, id=731, page=1, 205.76875pt x 233.87375pt>
+File: 2.gcsm/expfig/FR4096-5-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/FR4096-5-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/FR4096-5-crop.pdf , page1 used on input 
+line 611.
+(pdftex.def)             Requested size: 67.90388pt x 77.17856pt.
+<2.gcsm/expfig/FR4096-6-crop.pdf, id=732, page=1, 203.76125pt x 227.85126pt>
+File: 2.gcsm/expfig/FR4096-6-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/FR4096-6-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/FR4096-6-crop.pdf , page1 used on input 
+line 615.
+(pdftex.def)             Requested size: 67.24141pt x 75.19113pt.
+<2.gcsm/expfig/3K4096-1-crop.pdf, id=733, page=1, 218.8175pt x 226.8475pt>
+File: 2.gcsm/expfig/3K4096-1-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/3K4096-1-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/3K4096-1-crop.pdf , page1 used on input 
+line 627.
+(pdftex.def)             Requested size: 72.20999pt x 74.8599pt.
+<2.gcsm/expfig/3K4096-2-crop.pdf, id=734, page=1, 178.6675pt x 231.86626pt>
+File: 2.gcsm/expfig/3K4096-2-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/3K4096-2-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/3K4096-2-crop.pdf , page1 used on input 
+line 631.
+(pdftex.def)             Requested size: 58.96045pt x 76.51608pt.
+<2.gcsm/expfig/3K4096-3-crop.pdf, id=735, page=1, 179.67125pt x 232.87pt>
+File: 2.gcsm/expfig/3K4096-3-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/3K4096-3-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/3K4096-3-crop.pdf , page1 used on input 
+line 635.
+(pdftex.def)             Requested size: 59.29169pt x 76.84732pt.
+<2.gcsm/expfig/3K4096-4-crop.pdf, id=736, page=1, 218.8175pt x 225.84375pt>
+File: 2.gcsm/expfig/3K4096-4-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/3K4096-4-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/3K4096-4-crop.pdf , page1 used on input 
+line 639.
+(pdftex.def)             Requested size: 72.20999pt x 74.52866pt.
+<2.gcsm/expfig/3K4096-5-crop.pdf, id=737, page=1, 187.70125pt x 232.87pt>
+File: 2.gcsm/expfig/3K4096-5-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/3K4096-5-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/3K4096-5-crop.pdf , page1 used on input 
+line 643.
+(pdftex.def)             Requested size: 61.94159pt x 76.84732pt.
+<2.gcsm/expfig/3K4096-6-crop.pdf, id=738, page=1, 188.705pt x 231.86626pt>
+File: 2.gcsm/expfig/3K4096-6-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/3K4096-6-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/3K4096-6-crop.pdf , page1 used on input 
+line 647.
+(pdftex.def)             Requested size: 62.27283pt x 76.51608pt.
+<2.gcsm/expfig/10K8192-1-crop.pdf, id=739, page=1, 218.8175pt x 228.855pt>
+File: 2.gcsm/expfig/10K8192-1-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/10K8192-1-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/10K8192-1-crop.pdf , page1 used on input
+ line 659.
+(pdftex.def)             Requested size: 72.20999pt x 75.52237pt.
+<2.gcsm/expfig/10K8192-2-crop.pdf, id=740, page=1, 178.6675pt x 229.85875pt>
+File: 2.gcsm/expfig/10K8192-2-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/10K8192-2-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/10K8192-2-crop.pdf , page1 used on input
+ line 663.
+(pdftex.def)             Requested size: 58.96045pt x 75.8536pt.
+<2.gcsm/expfig/10K8192-3-crop.pdf, id=741, page=1, 178.6675pt x 229.85875pt>
+File: 2.gcsm/expfig/10K8192-3-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/10K8192-3-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/10K8192-3-crop.pdf , page1 used on input
+ line 667.
+(pdftex.def)             Requested size: 58.96045pt x 75.8536pt.
+<2.gcsm/expfig/10K8192-4-crop.pdf, id=742, page=1, 216.81pt x 229.85875pt>
+File: 2.gcsm/expfig/10K8192-4-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/10K8192-4-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/10K8192-4-crop.pdf , page1 used on input
+ line 671.
+(pdftex.def)             Requested size: 71.54752pt x 75.8536pt.
+<2.gcsm/expfig/10K8192-5-crop.pdf, id=743, page=1, 199.74625pt x 228.855pt>
+File: 2.gcsm/expfig/10K8192-5-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/10K8192-5-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/10K8192-5-crop.pdf , page1 used on input
+ line 675.
+(pdftex.def)             Requested size: 65.91646pt x 75.52237pt.
+<2.gcsm/expfig/10K8192-6-crop.pdf, id=744, page=1, 187.70125pt x 222.8325pt>
+File: 2.gcsm/expfig/10K8192-6-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/10K8192-6-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/10K8192-6-crop.pdf , page1 used on input
+ line 679.
+(pdftex.def)             Requested size: 61.94159pt x 73.53494pt.
+<2.gcsm/expfig/mc-1-crop.pdf, id=745, page=1, 208.78pt x 229.85875pt>
+File: 2.gcsm/expfig/mc-1-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/mc-1-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/mc-1-crop.pdf , page1 used on input line
+ 690.
+(pdftex.def)             Requested size: 68.8976pt x 75.8536pt.
+<2.gcsm/expfig/mc-2-crop.pdf, id=746, page=1, 196.735pt x 231.86626pt>
+File: 2.gcsm/expfig/mc-2-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/mc-2-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/mc-2-crop.pdf , page1 used on input line
+ 693.
+(pdftex.def)             Requested size: 64.92273pt x 76.51608pt.
+<2.gcsm/expfig/mc-3-crop.pdf, id=747, page=1, 196.735pt x 231.86626pt>
+File: 2.gcsm/expfig/mc-3-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/mc-3-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/mc-3-crop.pdf , page1 used on input line
+ 696.
+(pdftex.def)             Requested size: 64.92273pt x 76.51608pt.
+<2.gcsm/expfig/mc-4-crop.pdf, id=748, page=1, 208.78pt x 229.85875pt>
+File: 2.gcsm/expfig/mc-4-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/mc-4-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/mc-4-crop.pdf , page1 used on input line
+ 699.
+(pdftex.def)             Requested size: 68.8976pt x 75.8536pt.
+<2.gcsm/expfig/mc-5-crop.pdf, id=749, page=1, 197.73875pt x 231.86626pt>
+File: 2.gcsm/expfig/mc-5-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/mc-5-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/mc-5-crop.pdf , page1 used on input line
+ 702.
+(pdftex.def)             Requested size: 65.25398pt x 76.51608pt.
+<2.gcsm/expfig/mc-6-crop.pdf, id=750, page=1, 197.73875pt x 230.8625pt>
+File: 2.gcsm/expfig/mc-6-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/mc-6-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/mc-6-crop.pdf , page1 used on input line
+ 705.
+(pdftex.def)             Requested size: 65.25398pt x 76.18484pt.
+<2.gcsm/expfig/3KQ6-crop.pdf, id=751, page=1, 367.3725pt x 183.68625pt>
+File: 2.gcsm/expfig/3KQ6-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/3KQ6-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/3KQ6-crop.pdf , page1 used on input line
+ 717.
+(pdftex.def)             Requested size: 117.56158pt x 58.78079pt.
+<2.gcsm/expfig/10KQ5-crop.pdf, id=752, page=1, 355.3275pt x 181.67876pt>
+File: 2.gcsm/expfig/10KQ5-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/10KQ5-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/10KQ5-crop.pdf , page1 used on input lin
+e 721.
+(pdftex.def)             Requested size: 113.7071pt x 58.13838pt.
+ [21] [22 <./2.gcsm/expfig/FR4096-1-crop.pdf> <./2.gcsm/expfig/FR4096-2-crop.pd
+f> <./2.gcsm/expfig/FR4096-3-crop.pdf> <./2.gcsm/expfig/FR4096-4-crop.pdf> <./2
+.gcsm/expfig/FR4096-5-crop.pdf> <./2.gcsm/expfig/FR4096-6-crop.pdf>] [23 <./2.g
+csm/expfig/3K4096-1-crop.pdf> <./2.gcsm/expfig/3K4096-2-crop.pdf> <./2.gcsm/exp
+fig/3K4096-3-crop.pdf> <./2.gcsm/expfig/3K4096-4-crop.pdf> <./2.gcsm/expfig/3K4
+096-5-crop.pdf> <./2.gcsm/expfig/3K4096-6-crop.pdf>]
+<2.gcsm/expfig/vsgm-3k-q1-crop.pdf, id=1199, page=1, 197.73875pt x 202.7575pt>
+File: 2.gcsm/expfig/vsgm-3k-q1-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/vsgm-3k-q1-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/vsgm-3k-q1-crop.pdf , page1 used on inpu
+t line 802.
+(pdftex.def)             Requested size: 65.25398pt x 66.91017pt.
+<2.gcsm/expfig/vsgm-3k-q2-crop.pdf, id=1200, page=1, 191.71625pt x 203.76125pt>
+
+File: 2.gcsm/expfig/vsgm-3k-q2-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/vsgm-3k-q2-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/vsgm-3k-q2-crop.pdf , page1 used on inpu
+t line 806.
+(pdftex.def)             Requested size: 63.26656pt x 67.24141pt.
+<2.gcsm/expfig/vsgm-3k-q3-crop.pdf, id=1201, page=1, 191.71625pt x 203.76125pt>
+
+File: 2.gcsm/expfig/vsgm-3k-q3-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/vsgm-3k-q3-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/vsgm-3k-q3-crop.pdf , page1 used on inpu
+t line 810.
+(pdftex.def)             Requested size: 63.26656pt x 67.24141pt.
+<2.gcsm/expfig/vsgm-10k-q1-crop.pdf, id=1202, page=1, 206.7725pt x 203.76125pt>
+
+File: 2.gcsm/expfig/vsgm-10k-q1-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/vsgm-10k-q1-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/vsgm-10k-q1-crop.pdf , page1 used on inp
+ut line 815.
+(pdftex.def)             Requested size: 68.23512pt x 67.24141pt.
+<2.gcsm/expfig/vsgm-10k-q2-crop.pdf, id=1203, page=1, 191.71625pt x 202.7575pt>
+
+File: 2.gcsm/expfig/vsgm-10k-q2-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/vsgm-10k-q2-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/vsgm-10k-q2-crop.pdf , page1 used on inp
+ut line 819.
+(pdftex.def)             Requested size: 63.26656pt x 66.91017pt.
+<2.gcsm/expfig/vsgm-10k-q3-crop.pdf, id=1204, page=1, 191.71625pt x 202.7575pt>
+
+File: 2.gcsm/expfig/vsgm-10k-q3-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/vsgm-10k-q3-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/vsgm-10k-q3-crop.pdf , page1 used on inp
+ut line 823.
+(pdftex.def)             Requested size: 63.26656pt x 66.91017pt.
+<2.gcsm/expfig/rp-lj-q1-crop.pdf, id=1205, page=1, 210.7875pt x 181.67876pt>
+File: 2.gcsm/expfig/rp-lj-q1-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/rp-lj-q1-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/rp-lj-q1-crop.pdf , page1 used on input 
+line 836.
+(pdftex.def)             Requested size: 69.56009pt x 59.95416pt.
+<2.gcsm/expfig/rp-lj-q2-crop.pdf, id=1206, page=1, 188.705pt x 181.67876pt>
+File: 2.gcsm/expfig/rp-lj-q2-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/rp-lj-q2-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/rp-lj-q2-crop.pdf , page1 used on input 
+line 840.
+(pdftex.def)             Requested size: 62.27283pt x 59.95416pt.
+<2.gcsm/expfig/rp-lj-q3-crop.pdf, id=1207, page=1, 201.75375pt x 174.6525pt>
+File: 2.gcsm/expfig/rp-lj-q3-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/rp-lj-q3-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/rp-lj-q3-crop.pdf , page1 used on input 
+line 844.
+(pdftex.def)             Requested size: 66.57893pt x 57.6355pt.
+<2.gcsm/expfig/rp-amazon-q4-crop.pdf, id=1208, page=1, 205.76875pt x 182.6825pt
+>
+File: 2.gcsm/expfig/rp-amazon-q4-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/rp-amazon-q4-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/rp-amazon-q4-crop.pdf , page1 used on in
+put line 849.
+(pdftex.def)             Requested size: 67.90388pt x 60.2854pt.
+<2.gcsm/expfig/rp-amazon-q5-crop.pdf, id=1209, page=1, 184.69pt x 180.675pt>
+File: 2.gcsm/expfig/rp-amazon-q5-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/rp-amazon-q5-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/rp-amazon-q5-crop.pdf , page1 used on in
+put line 853.
+(pdftex.def)             Requested size: 57.2533pt x 56.00867pt.
+<2.gcsm/expfig/rp-amazon-q6-crop.pdf, id=1210, page=1, 184.69pt x 180.675pt>
+File: 2.gcsm/expfig/rp-amazon-q6-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/rp-amazon-q6-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/rp-amazon-q6-crop.pdf , page1 used on in
+put line 856.
+(pdftex.def)             Requested size: 60.94788pt x 59.62292pt.
+ [24 <./2.gcsm/expfig/10K8192-1-crop.pdf> <./2.gcsm/expfig/10K8192-2-crop.pdf> 
+<./2.gcsm/expfig/10K8192-3-crop.pdf> <./2.gcsm/expfig/10K8192-4-crop.pdf> <./2.
+gcsm/expfig/10K8192-5-crop.pdf> <./2.gcsm/expfig/10K8192-6-crop.pdf>]
+<2.gcsm/expfig/percentage-crop.pdf, id=1430, page=1, 348.30125pt x 208.78pt>
+File: 2.gcsm/expfig/percentage-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/percentage-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/percentage-crop.pdf , page1 used on inpu
+t line 887.
+(pdftex.def)             Requested size: 114.93976pt x 68.8976pt.
+<2.gcsm/expfig/coverage-crop.pdf, id=1431, page=1, 345.29pt x 208.78pt>
+File: 2.gcsm/expfig/coverage-crop.pdf Graphic file (type pdf)
+<use 2.gcsm/expfig/coverage-crop.pdf, page 1>
+Package pdftex.def Info: 2.gcsm/expfig/coverage-crop.pdf , page1 used on input 
+line 892.
+(pdftex.def)             Requested size: 113.94604pt x 68.8976pt.
+ [25 <./2.gcsm/expfig/mc-1-crop.pdf> <./2.gcsm/expfig/mc-2-crop.pdf> <./2.gcsm/
+expfig/mc-3-crop.pdf> <./2.gcsm/expfig/mc-4-crop.pdf> <./2.gcsm/expfig/mc-5-cro
+p.pdf> <./2.gcsm/expfig/mc-6-crop.pdf> <./2.gcsm/expfig/3KQ6-crop.pdf> <./2.gcs
+m/expfig/10KQ5-crop.pdf>] [26 <./2.gcsm/expfig/vsgm-3k-q1-crop.pdf> <./2.gcsm/e
+xpfig/vsgm-3k-q2-crop.pdf> <./2.gcsm/expfig/vsgm-3k-q3-crop.pdf> <./2.gcsm/expf
+ig/vsgm-10k-q1-crop.pdf> <./2.gcsm/expfig/vsgm-10k-q2-crop.pdf> <./2.gcsm/expfi
+g/vsgm-10k-q3-crop.pdf> <./2.gcsm/expfig/rp-lj-q1-crop.pdf> <./2.gcsm/expfig/rp
+-lj-q2-crop.pdf> <./2.gcsm/expfig/rp-lj-q3-crop.pdf> <./2.gcsm/expfig/rp-amazon
+-q4-crop.pdf> <./2.gcsm/expfig/rp-amazon-q5-crop.pdf> <./2.gcsm/expfig/rp-amazo
+n-q6-crop.pdf>] [27 <./2.gcsm/expfig/percentage-crop.pdf> <./2.gcsm/expfig/cove
+rage-crop.pdf>]
+
+LaTeX Warning: Citation `he2010query' on page 28 undefined on input line 948.
+
+
+LaTeX Warning: Citation `mawhirter2019automine' on page 28 undefined on input l
+ine 950.
+
+
+LaTeX Warning: Citation `wang2020fast' on page 28 undefined on input line 951.
+
+
+LaTeX Warning: Citation `guo2020gpu' on page 28 undefined on input line 953.
+
+
+LaTeX Warning: Citation `min2021symmetric' on page 28 undefined on input line 9
 61.
-(pdftex.def)             Requested size: 224.13806pt x 98.26741pt.
- [22] [23 <./1.stmatch/figure/benefit_enron.pdf> <./1.stmatch/figure/benefit_mi
-co.pdf> <./1.stmatch/figure/benefit_youtube.pdf> <./1.stmatch/figure/benefit_li
-vejournal.pdf> <./1.stmatch/figure/utilization.pdf>] [24] [25]) [26] (./main.bb
-l [27
 
-] [28] [29] [30]) [31]
-(./main.aux (./text/7_toc.aux))
+[28]
 
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+LaTeX Warning: Citation `Bressan2019MotivoFM' on page 29 undefined on input lin
+e 966.
+
+
+LaTeX Warning: Citation `abdelhamid2016scalemine' on page 29 undefined on input
+ line 966.
+
+
+LaTeX Warning: Citation `jiang2022samplemine' on page 29 undefined on input lin
+e 966.
+
+
+LaTeX Warning: Citation `pandey2020c' on page 29 undefined on input line 966.
+
+) [29] (./main.bbl [30
+
+] [31] [32]) [33] (./main.aux (./text/7_toc.aux))
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: There were multiply-defined labels.
 
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 8974E4252844476F94ED45D5FFEAB8AA;4421.
+(rerunfilecheck)             Checksum: B55590FF4F2F07D677172ED9239D8847;5077.
  ) 
 Here is how much of TeX's memory you used:
- 27027 strings out of 478293
- 509194 string characters out of 5847506
- 867405 words of memory out of 5000000
- 44543 multiletter control sequences out of 15000+600000
- 528745 words of font info for 160 fonts, out of 8000000 for 9000
+ 30166 strings out of 478293
+ 557996 string characters out of 5847506
+ 1279860 words of memory out of 5000000
+ 47486 multiletter control sequences out of 15000+600000
+ 527477 words of font info for 162 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,20n,80p,592b,931s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,16n,80p,1331b,1809s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texliv
-e/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texm
-f-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/
-fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/
-type1/public/amsfonts/cm/cmtt10.pfb></usr/share/texlive/texmf-dist/fonts/type1/
-public/amsfonts/cm/cmtt12.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/sy
-mbol/usyr.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb><
-/usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texl
-ive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (35 pages, 692339 bytes).
+e/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist
+/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/
+type1/public/amsfonts/cm/cmss12.pfb></usr/share/texlive/texmf-dist/fonts/type1/
+public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public
+/amsfonts/cm/cmtt12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfo
+nts/cm/cmtt8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/sym
+bols/msbm10.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/symbol/usyr.pfb>
+</usr/share/texlive/texmf-dist/fonts/type1/urw/symbol/usyr.pfb></usr/share/texl
+ive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/
+fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw
+/times/utmri8a.pfb>
+Output written on main.pdf (38 pages, 1405072 bytes).
 PDF statistics:
- 1284 PDF objects out of 1440 (max. 8388607)
- 975 compressed objects within 10 object streams
- 150 named destinations out of 1000 (max. 500000)
- 279 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 2225 PDF objects out of 2487 (max. 8388607)
+ 1553 compressed objects within 16 object streams
+ 239 named destinations out of 1000 (max. 500000)
+ 483 words of extra memory for PDF output out of 10000 (max. 10000000)
 

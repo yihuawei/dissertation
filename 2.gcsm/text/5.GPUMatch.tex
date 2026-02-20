@@ -1,0 +1,180 @@
+\section{Exact Incremental Matching with Cached Data on GPU}
+\label{sec:GPUMatch}
+
+
+The main task of our system is to compute the exact incremental matching result on the GPU. The computation involves set operations on both the original and updated neighbor lists, as shown in the nested loop in Fig.~\ref{fig:for_loop}. To achieve high performance, we need to 1) efficiently access the neighbor lists with minimal data transfer between the CPU and GPU, 2) perform fast set intersection on the neighbor lists, and 3) efficiently update the graph data on the CPU.
+This section describes the key designs and implementations of our system to achieve the goals.
+
+%, which requires well-designed data structures to meet the four requirements: 1) The overheads of accessing $N(v)$ from both the GPU global memory and CPU host memory are negligible. \textcolor{blue}{does host access N(v)?} 2) $N(v_i) \cap N(v_j)$ can be implemented in a linear time complexity~\textcolor{blue}{is it linear? and why is this a requirement?}. 3) The time spent on data packing and transferring is negligible. 4) The dynamic graph on the CPU can be maintained efficiently. We design the graph data structures both on CPU and GPU to meet the above four requirements.}
+
+
+%------------------------------------------------------------------------------------------------------------------------------------%
+\subsection{Graph Data Structure on CPU}
+\label{sec:gpu_graph}
+
+
+\begin{figure}
+    \centering
+        \includegraphics[scale=0.36]{fig/adj_list.pdf}
+    \caption{Maintenance of graph data structure on the CPU for the graph update in Fig.~\ref{fig:csm}. New edges (colored in green) are appended to the end of corresponding neighbor lists; Deleted edges (colored in orange) are marked as negative values.}
+    \label{fig:adj_list}
+    \vspace{-.5em}
+\end{figure}
+
+
+
+We store the data graph as adjacency lists in CPU memory, as shown in Fig.~\ref{fig:adj_list}. For each vertex, we allocate a contiguous memory space on the CPU (using \texttt{cudaHostAlloc}) to store its neighbors. Then, we map the allocated memory into the GPU address space (using \texttt{cudaHostGetDevicePointer}). Two arrays are used to store the addresses of the neighbor lists: one ($pHost$) for the CPU addresses and one ($pDevice$) for the GPU addresses. 
+The CPU addresses are used by the CPU to maintain the graph data structure. 
+The GPU addresses are used by the GPU for accessing the neighbor lists during the matching procedure. 
+%shows the graph data structure with the example graph in Fig.~\ref{fig:csm}. 
+%The data graph is organized as adjacency lists. Each vertex has a contiguous memory space for storing its neighbor set as a sorted array. There is also an auxiliary array denoted by $PA$(array of pointers) recording starting address of the memory space for each vertex. \textcolor{blue}{PA not in the figure..} 
+%For example, $PA[5]$ returns the starting address of $v_5$'s neighbor array. Some other mata data are not shown in the figure for simplicity, like the size of the neighbor array and the capacity of the memory space. 
+Upon each graph update, the following four steps are executed on the CPU:
+\begin{enumerate}[leftmargin=*, label=\arabic*)]
+    \item The new edges are appended to the end of their corresponding neighbor lists. 
+To achieve fast edge insertion, we preallocate the array of each neighbor list to double the size of the initial number of neighbors. If an array is full, a new array with double capacity will be allocated and initialized with the existing data. 
+This ensures an average of $O(1)$ time complexity for edge insertion. 
+
+\item If new vertices are added, we allocate an array with an initial size of the average degree of the graph for each new vertex. The CPU and GPU addresses of the new arrays are appended to the end of $pHost$ and $pDevice$. Similar to the neighbor lists, we preallocate some extra space for $pHost$ and $pDevice$ to achieve efficient insertion of new vertices. 
+\item The edges to be deleted are marked. In our implementation, we simply set the neighbor index $v$ to $-v$ to indicate the edge is removed. Since the neighbor lists are always sorted after an update, each edge deletion can be done with a binary search on the neighbor list. 
+\item Each updated neighbor list is reorganized by removing the deleted edges and sorting the remaining elements. This step can be done with a merge-sort procedure in linear time for each updated neighbor list.  
+\end{enumerate}
+
+\iffalse
+\textcolor{red}{To enable zero-copy access to the data on the CPU from GPU, the CPU and GPU share a unified memory address in which the memory addresses recorded in $PA$ and the starting memory address of $PA$ itself are identical from both the CPU and GPU perspectives.}
+
+\textcolor{blue}{sorting happens asynchronously with data transfer and GPU matching..}
+
+\textcolor{green}{add a figure and explain the data structure with the figure...}
+\fi
+
+%------------------------------------------------------------------------------------------------------------------------------------%
+
+
+
+\subsection{Data Preparation for GPU}
+\label{sec:data_prep}
+
+\begingroup
+\setlength{\columnsep}{1em}%
+\begin{wrapfigure}{r}{0.23\textwidth}
+    \centering
+    \vspace{-1em}
+    \includegraphics[scale=0.38]{fig/gpu_data.pdf}
+      %  \vspace{-.5em}
+    \caption{Graph data sent to GPU in DCSR format.}
+          \vspace{-.6em}
+    \label{fig:csr}
+\end{wrapfigure}
+During the graph update on the CPU, 
+our system selects the most frequent vertices based on the estimated frequency and packs their neighbor lists into a contiguous chunk of memory. 
+The data is stored in a Doubly Compressed Sparse Row (DCSR) format, which consists of three arrays: $rowidx$, $rowptr$, and $colidx$. 
+The $rowidx$ array, which is sorted by vertex indices, records selected vertices.  
+The $colidx$ array stores the neighbors of the selected vertices contiguously. 
+For a vertex with an un-updated neighbor list, we simply copy the neighbor list to the array. 
+For an updated neighbor list, we copy the data after Step-3 above. That is, the deleted neighbors are marked, and the new neighbors are appended to the end of the list. 
+The $rowptr$ array stores the offsets of the neighbor lists in $colidx$. 
+Each entry in $rowptr$ stores two offsets: one for the starting location of the original neighbor list, and one for the starting location of the appended new neighbors. 
+If a selected vertex does not have new neighbors, the second offset is set to -1. 
+
+
+Fig.~\ref{fig:csr} shows an example of the DCSR data structure with the graph update in Fig.~\ref{fig:adj_list}. 
+Suppose $v_3$ and $v_4$ are selected for caching. The two vertex indices are stored in $rowidx$, and their neighbor lists are stored in $colidx$. The neighbors of $v_3$ start from location 0, and the new neighbor starts from location 1, so its offset is $rowptr[0]=(0,1)$. The neighbors of $v_4$ start from location 2, and there is no new neighbor, so its offset is $rowptr[0]=(2,-1)$. The last entry of $rowptr$ indicates the length of $colidx$. 
+
+
+\endgroup
+
+Note that the sizes of the three arrays are known before data copying. The lengths of $rowidx$ and $rowptr$ are determined by the number of selected vertices, and the length of $colidx$ is determined by the sum of degrees of selected vertices.
+This allows us to allocate the three arrays contiguously with a single memory allocation on the CPU and send the packed data to GPU global memory with a single DMA transaction. 
+
+
+
+
+
+
+%------------------------------------------------------------------------------------------------------------------------------------%
+%Fig.~\ref{fig:before_update}
+%Fig.~\ref{fig:after_update}
+%Fig.~\ref{fig:adj_list}
+%Fig.~\ref{fig:sampled_subgraph}
+%Fig.~\ref{fig:edge_graph}
+%Fig.~\ref{fig:csr}
+
+\subsection{Parallel Incremental Matching on GPU}
+\label{sec:gpu_impl}
+
+Once the data is cached on GPU, a GPU kernel for incremental matching is invoked to execute the nested loops in Fig.~\ref{fig:for_loop}. 
+We build the kernel on top of a recent GPU subgraph matching system called STMatch~\cite{wei2022stmatch}. The system reportedly achieves state-of-the-art performance for static matching tasks on a GPU by managing the intermediate data using a stack data structure and incorporating a series of code optimization techniques. 
+
+To adapt STMatch for incremental matching, the first modification we make is to support access to both the original and new neighbor lists in the matching procedure (denoted as $N$ and $N'$ in Fig.~\ref{fig:for_loop}). 
+Since the new neighbors are appended to the end of each neighbor list, we can treat $N'$ as $N\cup \Delta N$ where $\Delta N$ are the appended neighbors, and perform set operations involving $N'$ separately for $N$ and $\Delta N$. 
+\iffalse
+More precisely, due to the distributive property of set operations, we have 
+\begin{equation}
+    N(v_x)\cap N'(v_y)=(N(v_x)\cap N(v_y)) \cup (N(v_x)\cap \Delta N(v_y)),  
+\end{equation}
+and 
+\begin{equation}
+\begin{split}
+    N'(v_x)\cap N'(v_y)=(N(v_x)\cap N(v_y)) \cup (N(v_x)\cap \Delta N(v_y)) \\ \cup(\Delta N(v_x)\cap  N(v_y)) \cup (\Delta N(v_x)\cap \Delta N(v_y)). 
+    \end{split}
+\end{equation}
+\fi
+Since $N$ and $\Delta N$ are sorted, we can exploit the existing code optimizations in STMatch (including code motion and unrolled set intersection with SIMD parallelism~\cite{wei2022stmatch}) for each term on the right-hand side. 
+For a neighbor list with deleted edges, since the deleted neighbors are marked by negative values, we simply skip the negative indices when accessing $N'$. 
+
+The second adaptation we need to make is to efficiently utilize the data cached on the GPU. STMatch assumes that the entire graph is stored on GPU, and it only accesses GPU global memory for neighbor lists. In our setting, most of the graph data is maintained on the CPU, and only a small number of selected vertices are cached on the GPU. To access data from the GPU cache whenever possible, we need to look up the vertex in the cache before every access. This can be done efficiently by performing a binary search on the $rowidx$ array in Figure~\ref{fig:csr}.
+If the target vertex is found in $rowidx$, we load its neighbors from the corresponding location in $colidx$ on the GPU. If the target vertex is not found in $rowidx$, we obtain the starting address of the vertex's neighbor list on the CPU (from the $pDevice$ array in Figure~\ref{fig:adj_list}), and then load the data from the CPU memory by GPU zero-copy access. 
+
+To ensure that the matching procedure accesses consistent data, the graph reorganization on CPU (Step-4 in Sec.~\ref{sec:gpu_graph}) is conducted after the matching is completed on the GPU. Our experiments show that the overhead of graph reorganization is negligible compared to the matching task.
+
+
+
+
+
+% In the first step, we send not only the sampled subgraph and edge graph; but a sorted array containing the indices of the sampled vertices (referred to as the "Array of sampled vertices") to the GPU global memory. To determine the location of the neighbor list to be accessed, we first perform a parallel binary search on the array of sampled vertices. If the index of the target vertex is found in the array, its neighbor list is cached on the GPU. Otherwise, the neighbor list stays in the CPU host memory. Algorithm~\ref{alg:bsearch} provides pseudocode for the binary search on GPU. To optimize kernel efficiency, we call algorithm~\ref{alg:bsearch} immediately after extending the set $C_u$ in algorithm.~\ref{alg:lftj} to mark $C_u$. $C_u$ stores the candidate vertices for each loop. For extending the current $C_u$, we need to perform a set intersection among the neighbor lists of the previously selected vertices in the previous $C_u$s, and the location of each vertex in the current $C_u$ needs to be marked for offering the position information for the set intersections at the deeper levels. The input of algorithm~\ref{alg:bsearch} includes the array of sampled vertices, current $C_u$, and result, respectively. Since each warp typically has 32 threads and the extension is performed on a warp level, the 32 threads will perform a parallel binary search for all the vertices in the input $C_u$ in the array of sampled vertices.
+
+% \input{fig/5.Mem.tex}
+
+% For the second step, if the neighbor list is in GPU global memory, we can directly access it. However, if the neighbor list is in the CPU's main memory, we need to first transfer it to the GPU. To keep track of the location of each neighbor list, we maintain an "Array of Addresses (AOA)" on the CPU's main memory. The AOA records the unified addresses of all neighbor lists, and its start address is stored in the GPU's global memory. To access a neighbor list on the CPU, we first need to retrieve its unified address from the AOA, and then transfer it to the GPU in a coalesced access pattern. To optimize the transfer efficiency, we reserve space for each warp to perform coalesced downloading of the neighbor list from the CPU. To avoid redundant page-sized data transfer, all communications between the CPU and GPU are conducted using zero-copy, rather than unified memory. If a new set of edges is added to the data graph and the capacity of some vectors is exceeded, these vectors are reallocated in memory, and their AOA addresses are updated simultaneously.
+
+
+
+
+%------------------------------------------------------------------------------------------------------------------------------------%
+% \textcolor{red}{I don't understand this paragraph...
+% The edge graph is built on the edges of the current batch. The only distinction between the sampled subgraph and the edge graph is the utilization of the neighbor lists from the input data graph. In the sampled subgraph, the neighbor list of each vertex corresponds to its neighbor list in the input data graph, while in the edge graph, the neighbor list of each vertex only involves the vertices in the edge batch. The sampled subgraph together with the edge graph is sent to GPU global memory to be used as manageable cache data for exact incremental matching. As stated in section~\ref{sec:Background}, exact incremental matching is a recursive procedure that involves accessing the neighbor lists of a vertex at each step. A neighbor list may be accessed repeatedly several times. The cached sampled subgraph contains the most frequently accessed neighbor lists. If the neighbor list at a step is not cached in GPU global memory, the GPU will access it from the CPU main memory by zero-copy features provided by GPU. }
+
+
+% \subsection{GPU Kernel for Incremental Matching}
+% Our GPU kernel is developed based on a previous GPU system for static subgraph  matching~\cite{wei2022stmatch}. 
+% To support incremental matching, we need to add two functionalities: 
+% 1) Differentiate between old and new neighbor lists (i.e., $N$ and $N'$ in Fig.~\ref{fig:for_loop}(b)-(f)).
+% 2) Check if a neighbor list is on GPU before every access. 
+
+% \iffalse
+% Moreover, we propose a GPU memory management system, achieving the search optimization for searching on-GPU neighbor lists and memory-coalesced access optimization for accessing zero-copy neighbor lists. 
+
+% After obtaining the sampled vertices and edges, we transfer them to the GPU global memory as the GPU cache data and perform exact incremental matching on the GPU. Our incremental matching kernel is built upon many previous works\cite{mawhirter2021dryadic}\cite{wei2022stmatch}\cite{guo2020gpu} of static subgraph matching and incorporates all the optimizations from these works, even making our kernel the fastest GPU kernel even on static subgraph matching.  (1) Parallel exact incremental matching, which allows for faster processing, and (2) a memory management system that operates seamlessly across multiple devices, enabling efficient data transfer and processing.
+% \fi
+
+
+
+% \subsection{Parallel Incremental matching}
+
+% The incremental matching is based on equation (1) in section~\ref{sec:Background}. It utilizes two levels of parallelization. The multi-way join operations can be executed in parallel by invoking algorithm~\ref{alg:lftj} for each of them. For each multi-way join operation, only the outermost loop is parallelized, so only the for-loop at level zero is parallelized. To avoid load imbalance, we have incorporated work-stealing in our system. The parallelization is performed by warps, with each warp executing the extension of a selected edge.
+
+% \subsection{GPU Memory Management System}
+% As discussed in Section~\ref{sec:AppMatch}, the algorithm accesses the neighbor list of a selected vertex at each step. This access involves two steps: (1) determining whether the neighbor list is cached in GPU global memory, and (2) copying the neighbor list from CPU to GPU if it resides in CPU host memory, or directly accessing it if it is already cached in GPU global memory. To address these two steps efficiently, we have designed a memory management system. Fig.~\ref{fig:Mem} gives an overview of the GPU memory management system. 
+
+% \input{algorithm/5.BinarySearch.tex}
+
+% In the first step, we send not only the sampled subgraph and edge graph; but a sorted array containing the indices of the sampled vertices (referred to as the "Array of sampled vertices") to the GPU global memory. To determine the location of the neighbor list to be accessed, we first perform a parallel binary search on the array of sampled vertices. If the index of the target vertex is found in the array, its neighbor list is cached on the GPU. Otherwise, the neighbor list stays in the CPU host memory. Algorithm~\ref{alg:bsearch} provides pseudocode for the binary search on GPU. To optimize kernel efficiency, we call algorithm~\ref{alg:bsearch} immediately after extending the set $C_u$ in algorithm.~\ref{alg:lftj} to mark $C_u$. $C_u$ stores the candidate vertices for each loop. For extending the current $C_u$, we need to perform a set intersection among the neighbor lists of the previously selected vertices in the previous $C_u$s, and the location of each vertex in the current $C_u$ needs to be marked for offering the position information for the set intersections at the deeper levels. The input of algorithm~\ref{alg:bsearch} includes the array of sampled vertices, current $C_u$, and result, respectively. Since each warp typically has 32 threads and the extension is performed on a warp level, the 32 threads will perform a parallel binary search for all the vertices in the input $C_u$ in the array of sampled vertices.
+
+% \input{fig/5.Mem.tex}
+
+% For the second step, if the neighbor list is in GPU global memory, we can directly access it. However, if the neighbor list is in the CPU's main memory, we need to first transfer it to the GPU. To keep track of the location of each neighbor list, we maintain an "Array of Addresses (AOA)" on the CPU's main memory. The AOA records the unified addresses of all neighbor lists, and its start address is stored in the GPU's global memory. To access a neighbor list on the CPU, we first need to retrieve its unified address from the AOA, and then transfer it to the GPU in a coalesced access pattern. To optimize the transfer efficiency, we reserve space for each warp to perform coalesced downloading of the neighbor list from the CPU. To avoid redundant page-sized data transfer, all communications between the CPU and GPU are conducted using zero-copy, rather than unified memory. If a new set of edges is added to the data graph and the capacity of some vectors is exceeded, these vectors are reallocated in memory, and their AOA addresses are updated simultaneously.
+
+% \section{Updating Graph on CPU}
+
+% After approximate matching, an updating procedure is invoked to dynamically maintain the real-time updates for CPU graph data. The update workflow is outlined in Figure~\ref{fig:AdjList}. The data graph is organized in a sorted adjacency list using \texttt{std::vector}. To enable pinned memory pages on the CPU, we customize the internal memory allocator of each \texttt{std::vector} using \texttt{cudaHostAlloc}. To decrease the time complexity of the subsequent step, each neighbor list of the edge graph is sorted in step one. In step two, the sorted edge graph is merged into the data graph. Since each pair of neighbor lists being merged is already sorted, the overall time complexity is O(N), where N is the total number of elements in both lists. If the size of the combined neighbor list exceeds the previous memory capacity, a new memory space with twice the space is allocated to store the combined neighbor list. Since memory reallocation is infrequent, the average time complexity of inserting data into the vector is O(1). In step three, when memory reallocation occurs, the GPU memory address for zero-copy must be updated. This requires remapping the previous memory address on the GPU to the newly reallocated memory address, which can be easily achieved by calling \texttt{cudaHostGetDevicePointer}. Given the NP-hard complexity of subgraph matching, the updating procedure of the current batch aligns well with the exact incremental matching procedure of the previous batch.

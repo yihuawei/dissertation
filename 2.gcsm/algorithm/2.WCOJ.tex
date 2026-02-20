@@ -1,0 +1,51 @@
+
+\begin{algorithm}[ht]
+    \footnotesize
+        \caption{Leapfrog Triejoin}
+        \label{alg:lftj}
+        \SetKwFunction{LeapfrogTriejoin}{LeapfrogTriejoin}
+        \SetKwProg{Fn}{Procedure}{:}{}
+        \Fn{\LeapfrogTriejoin{$Q=(V, E), R, \delta, i, ES, M$}}{
+            \BlankLine
+            \lIf{$i == |V|$} {Output $M$, \Return}
+            \BlankLine
+            $u = \delta[i] $\;
+            \BlankLine
+            $E_{u}$ = Edges in $E$ adjacent to node $u$ \;
+            \BlankLine
+            $C_u$ = $\cup_{(u, u') \in E_u}\pi_{u}(R(u, u'))$\;
+            \BlankLine
+            $ES\_T = \{\}$\;
+            \BlankLine
+            \ForEach{$(u, u') \in E_u$}{
+                \BlankLine
+                \eIf{$(u, u')$ $\in$ ES}{
+                    \BlankLine
+                    $C_u = C_u \Join \pi_{u}(\sigma_{u'= M[u']}(R(u, u')))$\;
+                    \BlankLine
+                }
+                {
+                    \BlankLine
+                    $C_u = C_u \Join \pi_{u}(R(u, u'))$ \;
+                    \BlankLine
+                    Add $(u, u')$ and $(u', u)$ to $ES\_T$\;
+                }
+            }
+            \BlankLine
+            Add $ES\_T$ to $ES$\;
+            \ForEach{$v \in C_u$}{
+                \BlankLine
+                \lIf{$v$ \textbf{in} M.values()}{\textbf{Continue}}
+                \BlankLine
+                Add key $u$ to $M$ with value $v$\;
+                \BlankLine
+                LeapfrogTriejoin($Q, R, \delta, i, ES, M$)\;
+                \BlankLine
+                Remove key $u$ from $M$\;
+                \BlankLine
+            }
+            Remove $ES\_T$ from $ES$\;
+            \BlankLine
+
+        }
+\end{algorithm}

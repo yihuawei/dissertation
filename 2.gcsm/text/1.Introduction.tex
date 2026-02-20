@@ -1,0 +1,94 @@
+\section{Introduction}
+
+Subgraph matching, which involves finding all matches of a query pattern $Q$ in a data graph $G$, is a fundamental task in graph analytics. 
+ It is widely used for retrieving information from graph-structured data in various domains, including bioinformatics~\cite{Milo824}, social network analysis~\cite{noel2018review}, and cybersecurity~\cite{noel2018review}. 
+
+
+%  \input{fig/2.Query.tex}
+% \begin{figure}[t]
+%   \centering
+%   \includegraphics[scale=0.36, page=6]{fig/2.Background-crop.pdf}
+%   \caption{An example of continuous subgraph matching.}
+%   \label{fig:csm_eg}
+% \end{figure}
+
+
+
+While subgraph matching on static graphs has been extensively studied in the past decade~\cite{ullmann1976algorithm, cordella2001improved,10.14778/1453856.1453899, 10.1145/3299869.3319880, bi2016efficient, xiang2021cuts, wei2022stmatch}, there is a growing interest in supporting subgraph matching on dynamic graphs. 
+The task is often referred to as {\it continuous subgraph matching} (CSM). 
+Fig.~\ref{fig:csm} shows an example of CSM. 
+Given a data graph $G_0$ and a query pattern $Q$. $G_0$ has one subgraph $(v_2, v_4, v_5, v_6)$ that matches $Q$. 
+If an edge $(v_1, v_3)$ is added to $G_0$, the updated graph $G_1$ contains a new subgraph $(v_0, v_1, v_2, v_3)$ that matches $Q$. 
+If the edge $(v_4, v_6)$ is removed from $G_1$ at the next step, the subgraph $(v_2, v_4, v_5, v_6)$ will no longer be a match of $Q$ and should be removed from the matching results.  
+
+
+\begin{figure}
+    \centering
+    \captionsetup[subfigure]{width=40pt}%
+    \subfloat[Query Q]{
+        \includegraphics[scale=0.35, page=3]{fig/DataGraph.pdf}
+        \label{fig:query}
+    } \hfil
+    \captionsetup[subfigure]{width=80pt}%
+    \subfloat[Data graph $G_0$]{
+        \includegraphics[scale=0.35, page=1]{fig/DataGraph.pdf}
+        \label{fig:g0}
+    } \\
+    \captionsetup[subfigure]{width=100pt}%
+    \subfloat[Graph update: $G_0 + \Delta E_0$]{
+        \includegraphics[scale=0.35, page=2]{fig/DataGraph.pdf}
+        \label{fig:g1}
+    }
+    \caption{An example of continuous subgraph matching.}
+    \label{fig:csm}
+        %\vspace{-1em}
+\end{figure}
+
+CSM can be useful in many scenarios. For example, the message transmission on a social network can be modeled as a dynamic graph, and CSM can be used to detect the spread of rumors~\cite{wang2015detecting}. The financial transactions among bank accounts are also a dynamic graph, and CSM can be used to monitor suspected transaction patterns such as money laundering~\cite{qiu2018real}. 
+
+Different algorithms and optimizations have been proposed for CSM~\cite{fan2013incremental, kankanamge2017graphflow, choudhury2015selectivity, sun2022rapidflow}. 
+An early work~\cite{fan2013incremental} simply re-matches the query pattern on the data graph every time the data graph is updated. 
+More recent work~\cite{kankanamge2017graphflow,choudhury2015selectivity,kim2018turboflux,sun2022rapidflow} adopts an incremental matching approach, where the query pattern is only matched on the updated edges of the data graph. 
+Their basic idea is to treat the dynamic data graph as multiple constantly updating tables and model CSM as an \textit{Incremental View Maintenance} (IVM) problem~\cite{ramakrishnan2003database, griffin1995incremental} (explained in more detail in Sec.~\ref{sec:Background}). 
+
+Despite their different optimizations, the existing CSM systems are all CPU-based. As subgraph matching is NP-hard, it is always desirable to use GPU to accelerate the computation. 
+Although many GPU-based systems have been proposed for static subgraph matching~\cite{zeng2020gsi,xiang2021cuts,wei2022stmatch}, utilizing GPUs to accelerate continuous subgraph matching faces a major challenge. 
+Since the data graph is constantly updated and can easily exceed the GPU memory capacity, we must store the graph on CPU. 
+A matching procedure on GPU involves a lot of data access from the CPU, which can significantly slow down the system. %In fact, our experiments show that a naive implementation of CSM on GPU can be even slower than performing CSM on CPU only, due to the large data movement overhead (see Sec.~\ref{sec:overall_performance}). 
+
+Previous work~\cite{10.5555/3571885.3571954} has proposed data caching for static subgraph matching on large graphs that cannot fit on a GPU. They divide the graph vertices into small bins and copy the $k$-hop neighbors of vertices in each bin to the GPU for processing. 
+Here, $k$ is the diameter of the query pattern, which ensures that the vertices copied onto the GPU include all vertices accessed in the matching process. Since many vertices are accessed multiple times during matching, caching them on the GPU reduces redundant accesses from the CPU and achieves better performance than a naive implementation. 
+However, this method does not work for CSM. First, their ``bin packing'' algorithm for dividing the vertices involves an expensive clustering procedure. While the overhead can be justified for static graphs because the $k$-hop neighbors can be reused by different query patterns, it cannot be amortized in a dynamic setting. 
+Second, the $k$-hop neighbors of a small batch of updated edges can still be very large and exceed the GPU memory. 
+
+
+We propose a fine-grained data caching method to achieve efficient continuous subgraph matching on a GPU for large graphs. Our method is based on an important observation that the vertices are accessed in a highly skewed frequency distribution, and most of the $k$-hop vertices are actually not accessed during matching. 
+Even within the accessed vertices, only a tiny fraction is frequently accessed. 
+If we select the vertices that are frequently accessed and cache them on the GPU, it will significantly reduce CPU-GPU data communication. 
+% Moreover, because the cached data is small for a batch of incoming edges, it supports CSM on graphs that far exceed the capacity of the GPU memory. \textcolor{red}{"This approach can enhance both the scalability of memory capacity on the CPU and the scalability of computing resources on the GPU. ". Again, this sentence is confusing and incorrect, don't write it if you are not 100\% sure what you want to say...we usually say the scalability of a system or an algorithm...what do you mean here?} 
+The remaining question is how to obtain the most frequently accessed vertices for matching a batch of incoming edges. 
+
+To obtain the frequent vertices, we perform multiple random walks from the updated edges on the data graph and estimate the access frequency of different vertices on the CPU. 
+Our random walk strategy ensures that the estimated access frequency is an unbiased estimation of the true access frequency. 
+We then copy the neighbor lists of the most frequently accessed vertices to the GPU and run an exact incremental matching procedure on GPU. 
+Since the distribution of data access frequency is highly skewed for real-world graphs, the matching process only accesses data on GPU most of the time. 
+If it requires vertices that are not on the GPU, data can be accessed from the CPU main memory through the GPU zero-copy mechanism. 
+
+
+
+In summary, we make the following contributions:
+\begin{itemize}
+    \item Our work is the first to support continuous subgraph matching on a CPU-GPU system and achieve state-of-the-art performance by overcoming the data transfer bottleneck between the CPU and GPU. 
+
+\item Our system provides an end-to-end design that supports both efficient dynamic graph maintenance on the CPU and efficient subgraph matching on the GPU. 
+
+    \item We proposed an efficient random walk technique to identify the most frequently accessed vertices for data caching on GPU.  
+
+    \item We developed an efficient CUDA kernel for incremental subgraph matching on GPU. 
+
+\end{itemize}
+
+We evaluated our system using a variety of query patterns and input graphs and compared it with two CPU baselines and four naive GPU implementations. 
+The experiments show that our system addresses the data movement bottleneck in naive GPU implementations, and achieves 1.4x to 2.9x speedups (with an average of 1.8x) against the best naive GPU version. 
+Our system also significantly outperforms the CPU baselines (including a state-of-the-art CPU system~\cite{sun2022rapidflow}), achieving 1.4x to 11.4x speedups (with an average of 4.1x) against the best CPU implementation. 
+

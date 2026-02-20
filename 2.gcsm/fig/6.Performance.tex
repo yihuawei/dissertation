@@ -1,0 +1,152 @@
+
+\begin{figure}[t]
+   \centering
+    \captionsetup[subfigure]{oneside,margin={0.4cm,0cm}}
+   \subfloat[Q1]{ 
+        \includegraphics[scale=0.33, page=1]{expfig/FR4096-1-crop.pdf}
+    }\hfil
+     \captionsetup[subfigure]{oneside,margin={0.0cm,0cm}}
+    \subfloat[Q2]{
+        \includegraphics[scale=0.33, page=1]{expfig/FR4096-2-crop.pdf}
+    } \hfil
+     \captionsetup[subfigure]{oneside,margin={0.0cm,0cm}}
+    \subfloat[Q3]{
+        \includegraphics[scale=0.33, page=1]{expfig/FR4096-3-crop.pdf}
+    }\\  \vspace{-.5em}
+    \captionsetup[subfigure]{oneside,margin={0.4cm,0cm}}
+    \subfloat[Q4]{
+        \includegraphics[scale=0.33, page=1]{expfig/FR4096-4-crop.pdf}
+    } \hfil
+     \captionsetup[subfigure]{oneside,margin={0.2cm,0cm}}
+    \subfloat[Q5]{
+        \includegraphics[scale=0.33, page=1]{expfig/FR4096-5-crop.pdf}
+    }\hfil
+     \captionsetup[subfigure]{oneside,margin={0.2cm,0cm}}
+    \subfloat[Q6]{
+        \includegraphics[scale=0.33, page=1]{expfig/FR4096-6-crop.pdf}
+    }
+    \caption{Execution time for matching different query patterns from a batch of 4096 edges on FR graph. Data access sizes from CPU are labeled on each bar.}
+    \vspace{-1em}
+    \label{fig:performance_fr}
+\end{figure}
+
+
+\begin{figure}[t]
+   \centering
+    \captionsetup[subfigure]{oneside,margin={0.4cm,0cm}}
+   \subfloat[Q1]{
+        \includegraphics[scale=0.33, page=1]{expfig/3K4096-1-crop.pdf}
+    }\hfil
+     \captionsetup[subfigure]{oneside,margin={0.0cm,0cm}}
+    \subfloat[Q2]{
+        \includegraphics[scale=0.33, page=1]{expfig/3K4096-2-crop.pdf}
+    } \hfil
+     \captionsetup[subfigure]{oneside,margin={0.0cm,0cm}}
+    \subfloat[Q3]{
+        \includegraphics[scale=0.33, page=1]{expfig/3K4096-3-crop.pdf}
+    }\\ \vspace{-.5em}
+     \captionsetup[subfigure]{oneside,margin={0.4cm,0cm}}
+    \subfloat[Q4]{
+        \includegraphics[scale=0.33, page=1]{expfig/3K4096-4-crop.pdf}
+    } \hfil
+     \captionsetup[subfigure]{oneside,margin={0.0cm,0cm}}
+    \subfloat[Q5]{
+        \includegraphics[scale=0.33, page=1]{expfig/3K4096-5-crop.pdf}
+    }\hfil
+     \captionsetup[subfigure]{oneside,margin={0.0cm,0cm}}
+    \subfloat[Q6]{
+        \includegraphics[scale=0.33, page=1]{expfig/3K4096-6-crop.pdf}
+    }
+    \caption{Execution time for matching different query patterns from a batch of 4096 edges on SF3K graph.}
+    % \vspace{-1em}
+    \label{fig:performance_3k}
+\end{figure}
+
+
+\begin{figure}[t]
+   \centering
+   \captionsetup[subfigure]{oneside,margin={0.4cm,0cm}}
+   \subfloat[Q1]{
+        \includegraphics[scale=0.33, page=1]{expfig/10K8192-1-crop.pdf}
+    }\hfil
+    \captionsetup[subfigure]{oneside,margin={0.0cm,0cm}}
+    \subfloat[Q2]{
+        \includegraphics[scale=0.33, page=1]{expfig/10K8192-2-crop.pdf}
+    } \hfil
+    \captionsetup[subfigure]{oneside,margin={0.0cm,0cm}}
+    \subfloat[Q3]{
+        \includegraphics[scale=0.33, page=1]{expfig/10K8192-3-crop.pdf}
+    }\\  \vspace{-.5em}
+    \captionsetup[subfigure]{oneside,margin={0.4cm,0cm}}
+    \subfloat[Q4]{
+        \includegraphics[scale=0.33, page=1]{expfig/10K8192-4-crop.pdf}
+    } \hfil
+    \captionsetup[subfigure]{oneside,margin={0.1cm,0cm}}
+    \subfloat[Q5]{
+        \includegraphics[scale=0.33, page=1]{expfig/10K8192-5-crop.pdf}
+    }\hfil
+    \captionsetup[subfigure]{oneside,margin={0.0cm,0cm}}
+    \subfloat[Q6]{
+        \includegraphics[scale=0.33, page=1]{expfig/10K8192-6-crop.pdf}
+    }
+    \caption{Execution time for matching different query patterns from a batch of 8192 edges on SF10K graph.}
+    \vspace{-1em}
+    \label{fig:performance_10k}
+\end{figure}
+
+
+% \begin{figure}[t]
+%    \centering
+%         \includegraphics[scale=0.55, page=1]{expfig/roadnet-crop.pdf}
+%     \caption{Execution time for matching query graphs of size-3 Wedge($\wedge$), size-4 Cycle($\Box$), and size-5 Star ($+$) on graph RoadNetPA(PA) and RoadNetCA(CA). Batch size is set to 8192. \textcolor{red}{can we change this to MC-3,4,5 on PA and CA? }}
+%     % \vspace{-1em}
+%     \label{fig:performance_roadnet}
+% \end{figure}
+
+\begin{figure}[t]
+\vspace{-1em}
+   \centering
+   \subfloat[PA-MC3]{
+        \includegraphics[scale=0.33, page=1]{expfig/mc-1-crop.pdf}
+    }\hfil
+    \subfloat[PA-MC4]{
+        \includegraphics[scale=0.33, page=1]{expfig/mc-2-crop.pdf}
+    } \hfil
+    \subfloat[PA-MC5]{
+        \includegraphics[scale=0.33, page=1]{expfig/mc-3-crop.pdf}
+    }\\  \vspace{-.5em}
+    \subfloat[CA-MC3]{
+        \includegraphics[scale=0.33, page=1]{expfig/mc-4-crop.pdf}
+    } \hfil
+    \subfloat[CA-MC4]{
+        \includegraphics[scale=0.33, page=1]{expfig/mc-5-crop.pdf}
+    }\hfil
+    \subfloat[CA-MC5]{
+        \includegraphics[scale=0.33, page=1]{expfig/mc-6-crop.pdf}
+    }
+    \caption{Execution time for counting size-3, 4, and 5 motifs on RoadNetPA and RoadNetCA. The batch size is set to 4096.}
+    \vspace{-1em}
+    \label{fig:performance_roadnet}
+\end{figure}
+
+
+\begin{figure}[t]
+   \centering
+   % \captionsetup[subfigure]{oneside,margin={0.4cm,0cm}}
+   \subfloat[SF3K-Q6]{
+        \includegraphics[scale=0.32, page=1]{expfig/3KQ6-crop.pdf}
+    } %\hfil \\
+    % \captionsetup[subfigure]{oneside,margin={0.0cm,0cm}}
+    \subfloat[SF10K-Q5]{
+        \includegraphics[scale=0.32, page=1]{expfig/10KQ5-crop.pdf}
+    } \hfil
+    
+    \caption{Execution time of different batch size for matching Q6 on SF3K graph and  Q5 on SF10K graph. The speedups of GCSM against zero-copy are marked above the line.}
+    % \vspace{-1em}
+    \label{fig:performance_batchsize}
+\end{figure}
+
+
+
+
+

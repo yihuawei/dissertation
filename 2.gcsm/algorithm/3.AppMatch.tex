@@ -1,0 +1,63 @@
+% \begin{algorithm}[t]
+%     \footnotesize
+%     \caption{Uniform Sampling} 
+%     \label{alg:AppMatch}
+
+%     \KwIn{a data graph $G$ and a sampling ratio $r$}
+%     \KwOut{A set containing sampled vertices}
+
+%     \SetKwFunction{UniformSampling}{UniformSampling}
+%     \SetKwProg{Fn}{Procedure}{:}{}
+%     \Fn{\UniformSampling{$G, r$}}{
+%         $C[0]$ = All Vertices in the Input Data Graph $G$\;
+%         \For{$v0 \subseteq C[0] $}{
+%             \BlankLine
+%             $C[1] = set\_operation(N(v0))$\;
+%             \For{$v1 \subseteq C[1] $}{
+%                 \lIf{rand() $>$ r}{continue}
+%                 \BlankLine
+%                 $C[2] = set\_operation(N(v0), N(v1))$\;
+%                 \For{$v2 \subseteq C[2] $}{
+%                     \lIf{rand() $>$ r}{continue}
+%                     \BlankLine
+%                     $C[3] = set\_operation(N(v0), N(v1), N(v2))$\;
+%                     \For{$v3 \subseteq C[3] $}{
+%                         \lIf{rand() $>$ r}{continue}
+%                         $...$\;
+%                         $...$\;
+%                         $...$\;
+%                     }
+            
+%                 }
+%             }
+%         }  
+%     }
+% \end{algorithm}
+
+
+\begin{algorithm}[ht]
+    \footnotesize
+        \caption{Sampling-based Algorithm.~\ref{alg:lftj}}
+        \label{alg:AppMatch}
+        \SetKwFunction{ApproximateLFTJ}{ApproximateLFTJ}
+        \SetKwProg{Fn}{Procedure}{:}{}
+        \Fn{\ApproximateLFTJ{$Q=(V, E), R, \delta, r, i, ES, M, Freq$}}{
+            $\textbf{......}$
+            \BlankLine
+            \ForEach{$v \in C_u$}{
+                \BlankLine
+                \lIf{rand(0, 1) $>$ $r[i]$}{\textbf{Continue}}
+                \BlankLine
+                $Freq[v]+=1$\;
+                \BlankLine
+                $\textbf{......}$
+                \BlankLine
+                ApproximateLFTJ($Q, R, \delta, r, i, ES, M, Freq$)\;
+                \BlankLine
+                $\textbf{......}$
+                \BlankLine
+            }
+            $\textbf{......}$
+            \BlankLine
+        }
+\end{algorithm}

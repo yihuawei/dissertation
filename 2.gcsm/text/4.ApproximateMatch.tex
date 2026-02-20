@@ -1,0 +1,247 @@
+\section{Obtaining Frequent Vertices}
+\label{sec:AppMatch}
+
+An important step of our system is to identify the vertices that can serve as the optimal cache data for the matching task on GPU. 
+The procedure should meet two requirements: 1) Its overhead must be small compared to the exact matching on the GPU; 2) To ensure good cache efficiency, the identified vertices should have substantial overlap with the most frequently accessed vertices during exact matching. To achieve these two goals, we propose a frequency estimation technique based on random walks on the graph. 
+
+\subsection{Estimating Access Frequency with Random Walk}
+%\input{algorithm/3.AppMatch.tex}
+
+% \begin{figure}[t]
+%     \centering
+%     \includegraphics[scale=0.6, page=5]{fig/3.Overview-crop.pdf}
+%     \caption{\textcolor{red}{Visualization of the nested for loop in Fig.~\ref{fig:l4} as a search tree, with the matching order $u_2, u_3, u_1, u_0$ and the data graph G in Fig.~\ref{fig:csm}. The right box above is the query graph which is the same as the query graph Q in Fig.~\ref{fig:csm}. The left box indicates the set intersection for each loop. The middle box is the Visualized search tree.}}
+%     \label{fig:LatentTree}
+% \end{figure}
+
+\begin{figure}[t]
+     \centering
+     \subfloat[An example execution tree]{
+         \includegraphics[scale=0.36]{fig/execution_tree.pdf}
+            \label{fig:execution_tree}}\hfil
+      \subfloat[Two sampled paths]{
+         \includegraphics[scale=0.36]{fig/sampled_paths.pdf}
+            \label{fig:sampled_path}}      
+    \caption{Sampling multiple paths from an execution tree. }
+    \label{fig:tree}
+\end{figure}
+Consider the exact matching procedure in Fig.~\ref{fig:for_loop}. 
+The execution of each nested loop can be depicted as a tree structure where different tree levels represent different loop levels and each tree node represents one iteration of the loop. 
+For example, Fig.~\ref{fig:execution_tree} shows the execution tree of the nested loop in Fig.~\ref{fig:for_loop}b with $G_0$ and $\Delta E$ from Fig.~\ref{fig:csm}. 
+The first tree level contains two nodes representing the two edges $(v_3, v_1)$ and $(v_6,v_4)$ in $\Delta E$. (For simplicity of illustration, we did not include the reverse edges $(v_1, v_3)$ and $(v_4, v_6)$ in the drawing.)
+The node $(v_3, v_1)$ has one child node $v_2$ which represents the intersection of $N'(v_3)$ and $N'(v_1)$. 
+Similarly, the node $(v_6, v_4)$ has one child node $v_5$ representing the intersection of $N'(v_6)$ and $N'(v_4)$. 
+The nodes in the third tree level represent the iterations of the innermost loop in Fig.~\ref{fig:for_loop}b. 
+We differentiate a `node' in the execution tree from a vertex in the graph. The computation in each node of the tree requires accessing the neighbor lists of multiple vertices, as shown in the parenthesis in Fig.~\ref{fig:execution_tree}. 
+
+\iffalse
+To prevent the overhead from outweighing the benefits of GPU execution, we randomly sample loop iterations at each loop level on the CPU. 
+Specifically, we sample the iterations of the same loop with equal probability and execute only one of them. 
+As shown in Fig.~\ref{fig:LatentTree}, this corresponds to sampling a single path in the execution tree of the nested loop. 
+A node in the tree represents one iteration of the loop.  
+We differentiate a `node' in the execution tree and a vertex in the graph. The computation in each node of the execution tree may require accessing the neighbor lists of multiple vertices. 
+\textcolor{red}{Draw the figure and change the text here...}In this example, the node $v_6$ in the second level of the tree means that $N'(v_6)$ is accessed and is intersected with $N(v_4)$ to compute the candidate vertices in the next level; since $u_1$ is connected to both $u_2$ and $u_3$. $u_2$, $u_3$ correspond to the first loop, and $u_1$ correspond to the second loop. Similarly,  $v_2$ at the last level is computed by  $N(v_4) \cap N(v_5)$ since $u_0$ is connected to both $u_2$ and $u_1$ but not $u_3$. 
+\fi
+
+Our main idea for obtaining frequent vertices with minimal overhead is to sample multiple paths from the execution tree instead of executing the entire tree. The sampling process can be considered as conducting multiple random walks on the data graph guided by the matching procedure.
+Specifically, we start by randomly selecting one edge from $\Delta E$, with a probability of $1/|\Delta E|$. From the sampled edge, we compute the set of matching vertices $V$ for the next pattern vertex.
+We then randomly select one vertex from $V$, with a probability of $1/|V|$.
+After the matching vertex is selected, we decide whether to continue the walk with a probability of $|V|/D$, where $D$ is the maximum degree of the data graph.
+Fig.~\ref{fig:sampled_path} shows two example paths sampled from the execution tree in Fig.~\ref{fig:execution_tree}. 
+
+
+
+During the random walk, we record the access to each vertex at each step (shown in the parenthesis in Fig.~\ref{fig:sampled_path}). 
+Suppose a random walk generates a path of $k$ nodes in the execution tree. 
+We know that the first node is sampled at probability $1/|\Delta E|$, and the remaining nodes are sampled at probability $(1/|V_i|)\cdot (|V_i|/D) = 1/D$. 
+An unbiased estimation of the access frequency of different vertices can be obtained as
+\begin{equation}
+    \label{eq:avg}
+        \tilde{C_v} = \sum_{i=1}^{k} |\Delta E|\cdot D^{i-1}\cdot c_{v,i}. 
+    \end{equation}
+Here, $c_{v,i}$ is equal to 1 if vertex $v$ is accessed in the $i$th node of the random walk, and 0 otherwise. 
+
+
+
+ Our random walk technique is reminiscent of the neighbor sampling technique for approximate subgraph matching~\cite{pavan2013counting, iyer2018asap}. 
+ However, unlike the previous technique, which samples an entire path of the execution tree and estimates the number of subgraphs at the bottom level, our random walk may stop at any level of the tree, and it estimates the access frequency of vertices at all levels. 
+ It is clear that a single random walk will not be sufficient for obtaining a good set of frequent vertices. 
+To reduce the estimation variance, we generate multiple random walks and use the average of $\tilde{C_v}$ as our estimate. 
+The effectiveness of our method in identifying frequent vertices is summarized below. 
+
+\begin{theorem}
+    Suppose the access frequency of two vertices $x$ and $y$ are $C_x$ and $C_y$ in an exact matching procedure and $C_x = (1+\alpha)C_y$ with $\alpha>0$. The probability that our estimation method incorrectly ranks $y$ before $x$ is bounded as 
+    \begin{equation}
+    \label{eq:pr_bound}
+        \Pr[\tilde{C_x}<\tilde{C_y}]\leq \frac{(n-1)(2+\alpha)|\Delta E|D^{n-2}}{\alpha^2 M C_y}.
+    \end{equation}
+    Here, $n\ge 2$ is the pattern size, and $M$ is the number of generated random walks. 
+\end{theorem}
+Formula (\ref{eq:pr_bound}) indicates that the probability of incorrect ranking is smaller for vertices with a larger difference between $C_x$ and $C_y$. As more random walks are drawn (i.e., a larger $M$), this probability can be decreased to an arbitrarily small value. 
+To achieve an estimation that correctly ranks the vertices with confidence $\delta$, we set the right-hand side of (\ref{eq:pr_bound}) to be $\leq 1-\delta$ and compute the minimum number of random walks needed to achieve the confidence level: 
+\begin{equation}
+    \label{eq:time_complexity}
+    M \geq \frac{(n-1)(2+\alpha)|\Delta E|D^{n-2}}{\alpha^2 (1-\delta) C_y}.
+\end{equation}
+\noindent
+Assuming the query pattern size $n$ is a constant w.r.t. the input graph size, a random walk takes constant time. Formula (\ref{eq:time_complexity}) represents the time complexity of our estimation algorithm. The formula indicates that fewer random walks are needed for more frequent vertices  (i.e., vertices with larger $C_y$). 
+
+
+Since $C_y$ is unknown before the matching procedure, in practice, we can set $M$ to a small value initially. Once we obtain the estimated access frequency of different vertices based on the $M$ random walks, we can set $C_y$ in (\ref{eq:time_complexity}) to the smallest estimated frequency and check if our initial $M$ is large enough. If not, we calculate a new $M$ based on (\ref{eq:time_complexity}), collect more samples, and re-estimate the access frequency. 
+
+
+\begin{proof}
+For each node $t$ at level $i$ of the execution tree, we define a variable $y_t$ and let $y_t=1$ if $v$ is accessed in node $t$, and $y_t=0$ if $v$ is not accessed.  
+The number of accesses to $v$ in an exact matching can be written as $C_v = \sum_{i=1}^n\sum_{t\in S_i} y_t$, where $S_i$ represents all nodes at level $i$ of the tree. 
+We then define a random variable $Y_t$ and let $Y_t=y_t$ if tree node $t$ is sampled in a single walk, and $Y_t=0$ if it is not sampled. 
+We can see that $\mathbb{E}[Y_t]=P_{t} y_t + (1-P_{t})\cdot 0 = P_ty_t$ where $P_t=1/(|\Delta E|\cdot D^{i-1})$, and the $c_{v,i}$ in (\ref{eq:avg}) is equal to $\sum_{t\in S_i} Y_t$.  
+It follows that 
+\begin{equation}
+\label{eq:summ}
+\begin{split}
+    \mathbb{E}[\tilde{C_v}] = \mathbb{E}\left[\sum_{i=1}^{k} |\Delta E|\cdot D^{i-1}\cdot c_{v,i} \right] = \mathbb{E}\left[\sum_{i=1}^{n-1} \sum_{t\in S_i} \frac{Y_t}{P_t}\right]  \\=\sum_{i=1}^{n-1} \sum_{t\in S_i} \mathbb{E}\left[\frac{Y_t}{P_t}\right]= \sum_{i=1}^{n-1} \sum_{t\in S_i} y_t = C_v. 
+    \end{split}
+\end{equation}
+\noindent
+This validates that our estimation of access frequency in (\ref{eq:avg}) is unbiased. 
+The variance of $Y_t$ is $P_t(y_t-P_ty_t)^2 + (1-P_t)(0-P_ty_t)^2 = (1-P_t)P_ty_t^2$. It follows that 
+\begin{equation}
+\label{eq:var}
+\begin{split}
+\mathrm{Var}[\tilde{C_v}]=\mathrm{Var}\left[\sum_{i=1}^{n-1} \sum_{t\in S_i} \frac{Y_t}{P_t}\right] \leq (n-1) \sum_{i=1}^{n-1}\mathrm{Var}\left[ \sum_{t\in S_i} \frac{Y_t}{P_t} \right] \\   \leq (n-1) \sum_{i=1}^{n-1} \left(|\Delta E|D^{i-1} \sum_{t\in S_i} y_t^2\right) \leq (n-1)|\Delta E| D^{n-2} C_v. 
+    \end{split}
+\end{equation}
+The third step above is due to the independent sampling of $t\in S_i$. 
+According to the law of large numbers, the sample average of $M$ random walks converges to the expected value $C_v$ and its variance is $\mathrm{Var}[\tilde{C_v}]/M$. 
+Next, we define a random variable $e=\tilde{C}-C$. It is easy to see that $\Pr[\tilde{C_x}<\tilde{C_y}] = \Pr[e_x-e_y - \mathbb{E}[e_x-e_y] < -\alpha C_y]$. According to Chebyshev’s inequality~\cite{wasserman2010statistics}, we have 
+\begin{equation}
+\label{eq:chev}
+    \Pr[\tilde{C_x}<\tilde{C_y}]\leq \frac{\mathrm{Var}[e_x-e_y]}{\alpha^2C_y^2}= \frac{\mathrm{Var}[\tilde{C_x}]+\mathrm{Var}[\tilde{C_y}]}{\alpha^2C_y^2}. 
+\end{equation}
+    Plugging (\ref{eq:var}) into (\ref{eq:chev}), we obtain (\ref{eq:pr_bound}). 
+    
+\end{proof}
+
+
+\iffalse
+Consider one particular node $s_m$ at level $m$ of the execution tree. 
+Suppose its ancestors from the root are $s_0, s_1, \dots s_{m-1}$. 
+The probability of node $s_m$ being executed is 
+\begin{equation}
+\Pr[s_0, s_1, \ldots, s_m]=\Pr[s_1|s_0]\Pr[s_2|s_1]\ldots\Pr[s_m|s_{m-1}] \nonumber  
+\end{equation}
+where $\Pr[s_l|s_{l-1}$ is the conditional probability of $s_l$ being executed given $s_{l-1}$ is executed, and it represents the sampling probability of the loop iterations at level $l$ of the nested loop. 
+If we set $\Pr[s_l|s_{l-1}]$ to a constant value $p_l$, we can achieve a uniform sampling of all the nodes at level $l$ of the execution tree. 
+The uniform sampling allows us to obtain an unbiased estimation of the access frequency of vertices based on $c_{v,l}$. 
+
+
+
+\begin{theorem}
+    Suppose $C_v$ is the number of accesses to a vertex $v$ during the exact matching. If we run a sampled matching with a constant sampling ratio $p_l$ at each loop level $l$, an unbiased estimation of $C_v$ can be obtained as
+    \begin{equation}
+    \label{eq:avg}
+        \tilde{C_v} = \sum_{l=1}^{n} \frac{c_{v,l}}{P_l}
+    \end{equation}
+    where  $n$ is the query pattern size, $c_{v,l}$ is the number of accesses to $v$ at level $l$ during the sampled matching, and $P_l=p_1p_2\cdots p_l$ is the probability of a tree node at level $l$  being executed. The estimation variance is bounded as
+\begin{equation}
+\label{eq:var}
+     \mathrm{Var}[\tilde{C_v}]\leq nC_v\sum_{l=1}^n \frac{1-P_l}{P_l}. 
+\end{equation}
+\end{theorem}
+\begin{proof}
+For each node $t$ at level $l$ of the execution tree, we define a variable $y_t$ and let $y_t=1$ if $v$ is accessed for computing node $t$, and $y_t=0$ if $v$ is not accessed.  
+The number of actual accesses to $v$ can be written as $C_v = \sum_{l=1}^n\sum_{t\in S_l} y_t$, where $S_l$ represents all nodes at level $l$ of the tree. 
+We then define a random variable $Y_t$ and let $Y_t=y_t$ if the tree node is sampled, and $Y_t=0$ if it is not sampled. 
+We can see that $\mathbb{E}[Y_t]=P_l y_t + (1-P_l)\cdot 0 = P_ly_t$. 
+It follows that 
+\begin{equation}
+\label{eq:summ}
+\begin{split}
+    \mathbb{E}[\tilde{C}] = \mathbb{E}\left[\sum_{l=1}^{n} \frac{c_{v,l}}{P_l}\right] = \mathbb{E}\left[\sum_{l=1}^{n} \sum_{t\in S_l} \frac{Y_t}{P_l}\right]  \\=\sum_{l=1}^{n} \sum_{t\in S_l} \mathbb{E}\left[\frac{Y_t}{P_l}\right]= \sum_{l=1}^{n} \sum_{t\in S_l} y_t = C_v. 
+    \end{split}
+\end{equation}
+\noindent
+Similarly,  we have $\mathrm{Var}[Y_t]=P_l(y_t-P_ly_t)^2 + (1-P_l)(0-P_ly_t)^2 = (1-P_l)P_ly_t^2$. It follows that 
+\begin{equation}
+\begin{split}
+\mathrm{Var}[\tilde{C_v}]=\mathrm{Var}\left[\sum_{l=1}^{n} \sum_{t\in S_l} \frac{Y_t}{P_l}\right] \leq n \sum_{l=1}^{n}\mathrm{Var}\left[ \sum_{t\in S_l} \frac{Y_t}{P_l} \right] \\=n \sum_{l=1}^{n} \sum_{t\in S_l} \mathrm{Var}\left[\frac{Y_t}{P_l} \right] = n \sum_{l=1}^{n}\left(\frac{1-P_l}{P_l} \sum_{t\in S_l} y_t^2 \right)\leq nC_v\sum_{l=1}^n \frac{1-P_l}{P_l}. 
+    \end{split}
+\end{equation}
+\textcolor{red}{give some explanation to third and last step..}
+\end{proof}
+
+\fi
+
+
+
+
+\subsection{Multiple Random Walks with One Single Execution}
+\iffalse
+In our derivation of the estimation variance (Formula (\ref{eq:var})), we make an important assumption that the nodes at each level of the execution tree are sampled independently. 
+This assumption, however, does not hold if we simply set a sampling ratio to the nested loops in Fig.~\ref{fig:for_loop}. 
+\textcolor{red}{update here after updating Fig.5..}
+To see this, let us consider $nx$ and $ny$ sampled at level two of the execution tree in Fig.~\ref{fig:LatentTree}. 
+The two nodes are not sampled independently
+because both of them assume the sampling of $n1..$. 
+
+To achieve independent sampling of nodes at each level, we can set
+$p_l$'s to very small numbers so that at most one
+iteration can be sampled at each level. 
+Then, we can run
+the nested loop multiple times to obtain independent
+samples. 
+Specifically, we can divide the sampling ratio $p_l$ by a large number $SCALE$ and run the sampling $SCALE^n$ times. 
+Each run will produce an estimated access frequency of different nodes based on Formula (\ref{eq:avg}), and $\tilde{C_v}$ is the average of the  $SCALE^n$ runs. 
+\fi
+
+According to (\ref{eq:pr_bound}), we need to generate many random walks to achieve a confident estimation. 
+If we run the nested loop for each walk, the sampling process will be slow due to redundant set operations and poor data locality between different runs. 
+To accelerate the process, we propose a novel implementation that merges multiple random walks into one single execution of the nested loop. 
+Specifically, at the beginning of each iteration at loop level $i$, we generate a random number $B_i$ to indicate the number of times the iteration is sampled in the $M$ runs. 
+Since the random walk samples a loop iteration (i.e., a neighboring node) with a fixed probability at each step, the number of times a node is sampled (i.e., $B_i$) follows a binomial distribution.
+It is obvious that $B_1$ follows a binomial distribution with the number of trials $M$ and sampling probability $1/|\Delta E|$. 
+If $B_1\geq 1$, which means the iteration is sampled at least once, we continue to the second loop level. 
+If $B_1 = 0$, which means the iteration is not sampled in the $M$ runs, we skip the iteration and proceed to the next iteration in the first loop. 
+Similarly, for an iteration at loop level $i$, the number of times it is executed follows a binomial distribution with the number of trials $B_{i-1}$ and sampling probability $1/D$. 
+This simulated execution is equivalent to $M$ independent random walks but with much better data locality and no redundant set operations. 
+
+We keep updating the estimated frequency of different vertices based on (\ref{eq:avg}) without materializing the random walks, so the space complexity of our estimation procedure is $O(|V|)$.
+
+\iffalse
+Algorithm~\ref{alg:AppMatch} is designed based on the observation that the probability of a vertex being sampled is directly proportional to its real number of occurrences of exact matching. Considering the locality of vertex access during the matching process, the probability $P(l, K)$ of a vertex $K$ being accessed at a certain level $l$ is equal to its conditional probability of being accessed given the surrounding vertices were accessed at the previous level. Let $r_0, r_1, ..., r_n$ represent the sampling ratios for $n$ levels, and $SK_0, SK_1, ..., SK_n$ denote the number of occurrences of a vertex $K$ from $n$ levels on approximate matching, $P(l, K)$ can be computed by $r_0*r1*...r_l$, and the estimated exact number of occurrence $EK$ of all levels of vertex $K$ can be computed by:
+
+\begin{equation}
+    EK = SK_0/r_0 + SK_1/(r_0*r_1) + ... SK_n/(r_0*r_1*...*r_n)
+\end{equation}
+
+By fixing $r_i...$ for all levels, we observe that as $EK$ increases, the sum of $SK_0+...+SK_N$ also increases, indicating that the vertex is more likely to be sampled if it has a higher occurrence frequency in exact matching. Given that the sampled data should represent the most frequently accessed portion of the data in exact incremental matching, we can cache the neighboring edges of the sampled vertices on the GPU. 
+
+In our implementation, $r_0, r_1, ..., r_n$ are all set to an initial fixed sampling ratio $r$. We do not sample vertices at level zero because ignoring certain key vertices at this level can significantly impact the overall result. The occurrence estimation function can be expressed as follows:
+\begin{equation}
+    EK = SK_0/r^0 + SK_1/r^1 + ... SK_n/r^n
+\end{equation}
+
+This method is known as \textit{uniform sampling}, which ensures that each vertex is sampled with the same sampling ratio at different levels. Since the occurrence of any given vertex increases exponentially with each level of recursion, the exponential growth of the sampling ratios guarantees that each vertex has an equal likelihood of being sampled from different levels. 
+\fi
+
+
+
+
+\iffalse
+\subsection{Caching Neighboring Edges to GPU}
+
+During the GPU-based matching process, the data regions that are accessed more frequently are selected for caching. One potential source of caching data is the neighboring edges of the sampled vertices.
+
+Some previous works\cite{guo2020gpu}\cite{wei2022stmatch}\cite{xiang2021cuts}\cite{mawhirter2021dryadic} of static subgraph matching rely on the set operations among the neighbor sets of the backward-matched vertices for computing the candidate set for each level. These works are categorized into exploration-based subgraph matching\cite{sun2020rapidmatch}. Exploration-based and join-based subgraph matching algorithms(algorithm.~\ref{alg:lftj})\cite{mhedhbi2019optimizing}\cite{aberger2017emptyheaded} have been studied separately for many years. But we find that there is no fundamental difference between exploration-based subgraph matching and worst-case optimal join. 
+
+The join operator $\Join$ in algorithm.~\ref{alg:lftj} can be replaced by set intersection $\cap$. The statement $\pi_{u}(\sigma_{u'=v}(R(u, u')))$ can be interpreted as the neighbor vertices of the vertex $v$ that match the label of $u$ in the input graph $G$ since $R(u, u')$ is all the edges in $G$ which have the same vertex labels with the edge $(u, u')$ in $Q$.  
+
+By examining the algorithm.~\ref{alg:lftj}, $C_u$ is computed by doing a join operation from line 7 to line 12. Once a vertex passes the sampling check, it will be added to $M$. After recursively calling the function itself, $M$ will be visited again at the deeper levels. As mentioned just now, $\pi_{u}(\sigma_{u'= M[u']}(R(u, u')))$ at line 9 is essentially accessing the label-matched neighbor list of $M[u']$, so once a vertex $v$ is sampled, its neighbor list will be accessed latter. Considering this, the frequency of accessing the neighbor list of a vertex is directly proportional to its vertex frequency of occurrence. 
+\fi
+
+
+
+
+
+
+

@@ -1,0 +1,28 @@
+
+\begin{algorithm}[ht]
+    \footnotesize
+        \caption{LFTJ-based Triangle Counting}
+        \label{alg:wcoj_tri}
+        \SetKwFunction{TriangleCounting}{TriangleCounting}
+        \SetKwProg{Fn}{Procedure}{:}{}
+        \Fn{\TriangleCounting{$Q=(V, E), R, \delta$}}{
+            \BlankLine
+            $C_{u0} = \pi_{u0}(R(u0, u1)) \Join \pi_{u0}(R(u0, u2)) $\;
+            \BlankLine
+            \For{$v0 \subseteq C_{u0}$}{
+                \BlankLine
+                $C_{u1} = \pi_{u1}(\sigma_{u0=v0}(R(u1, u0))) \Join \pi_{u1}(R(u1, u2)) $\;
+                \BlankLine
+                \For{$v1 \subseteq C_{u1}$}{
+                    \BlankLine
+                    $C_{u2} = \pi_{u2}(\sigma_{u0=v0}(R(u2, u0))) \Join \pi_{u2}(\sigma_{u1=v1}(R(u2, u1))) $\;
+                    \BlankLine
+                    \For{$v2 \subseteq C_{u2}$}{
+                        \BlankLine
+                        Output $v0v1v2$ \;
+                    }
+
+                }
+            }  
+        }
+\end{algorithm}

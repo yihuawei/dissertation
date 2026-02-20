@@ -1,0 +1,125 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockou
+
+\usepackage{amsmath, amsfonts}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usepackage{wrapfig}
+\usepackage{tikz}
+\usepackage{subfig}
+\usepackage{url}
+\usepackage{ragged2e}
+\usepackage{booktabs,makecell, multirow, tabularx}
+\usepackage{bigstrut}
+\usepackage{multirow}
+\usepackage{amsthm}
+\usepackage{enumitem}
+\usepackage{circledsteps}
+\usepackage[10pt]{moresize}
+
+
+\definecolor{pakistangreen}{rgb}{0.0, 0.4, 0.0}
+
+\usepackage{listings}
+\lstset{
+  commentstyle=\color{pakistangreen},
+  basicstyle=\ttfamily\scriptsize,
+  breaklines=true,
+  showstringspaces=false,
+  escapeinside=@@,
+  morecomment=[l]{//},
+  mathescape=true,
+  frame = single
+}
+
+
+
+
+\newcommand\myCircled[2][]{\ifmmode
+\Circled[fill color=white,inner color=black,#1]{\mathsf{#2}}
+\else
+\Circled[fill color=white,inner color=black,#1]{\sffamily#2}
+\fi
+}
+
+
+    
+\newcommand\mycommfont[1]{\footnotesize\ttfamily\textcolor{blue}{#1}}
+\SetCommentSty{mycommfont}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}[theorem]
+
+
+
+\theoremstyle{definition}
+\newtheorem{example}{Example}
+
+\newtheorem{definition}{Definition}
+
+
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+            \node[shape=circle,draw,inner sep=.4pt] (char) {#1};}}
+\newcommand*\squared[1]{\tikz[baseline=(char.base)]{
+            \node[shape=rectangle,draw,inner sep=1pt] (char) {#1};}}
+
+
+    
+\begin{document}
+
+% \documentstyle[twocolumn]{article}
+% \pagestyle{empty}
+
+% \twocolumn[
+% \begin{@twocolumnfalse}
+% \input{text/8.NewContent}
+% \end{@twocolumnfalse}
+% ]
+
+
+
+
+\title{GCSM: GPU-Accelerated Continuous Subgraph Matching for Large Graphs\\
+\thanks{This work was supported by NSF award CNS-2311610.}}
+
+\author{\IEEEauthorblockN{Yihua Wei}
+\IEEEauthorblockA{
+\textit{University of Iowa}\\
+yihua-wei@uiowa.edu}
+\and
+\IEEEauthorblockN{Peng Jiang}
+\IEEEauthorblockA{
+\textit{University of Iowa}\\
+peng-jiang@uiowa.edu}}
+
+
+\maketitle
+
+\thispagestyle{empty}
+\pagestyle{empty}
+
+\newpage
+\setcounter{page}{0}
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\input{text/0.Abstract}
+\input{text/1.Introduction}
+\input{text/2.Background}
+\input{text/3.Overview}
+\input{text/4.ApproximateMatch}
+\input{text/5.GPUMatch}
+\input{text/6.Experiment}
+\input{text/7.RelatedWorks}
+
+\bibliographystyle{IEEEtran}
+\bibliography{jp.bib}
+
+
+
+
+
+\end{document}

@@ -1,0 +1,49 @@
+
+\begin{algorithm}[ht]
+    \footnotesize
+        \caption{Parallel Binary Search }
+        \label{alg:bsearch}
+        \SetKwFunction{ParallelBinarySearch}{ParallelBinarySearch}
+        \SetKwProg{Fn}{Procedure}{:}{}
+        \Fn{\ParallelBinarySearch{$IndexArray, C_u, Result$}}{
+            \BlankLine
+            $ThreadIdxInWarp = threadIdx.x\%WarpSize$\;
+            \BlankLine
+            \For{$(i = ThreadIdxInWarp; i<C_u.size(); i+=WarpSize)$}{
+                \BlankLine
+                $Target = C_u[i]$\;
+                \BlankLine
+                $Start = 0$\;
+                \BlankLine
+                $End = IndexArray.size()$\;
+                \BlankLine
+                
+                \While{$Start < End$}{
+                    \BlankLine
+                    $Mid = Start + (End-Start)/2$\;
+                    \BlankLine
+                    \eIf{$IndexArray[Mid] < Target$}{  
+                        \BlankLine                  
+                        $Start = Mid + 1$\;
+                        \BlankLine
+                    }
+                    {
+                        \BlankLine
+                        $end = mid$\;
+                        \BlankLine
+                    }
+                }
+                \BlankLine
+                \eIf{$IndexArray[Start] >= Target$}{
+                    \BlankLine
+                    $Result[i] = True$\;
+                    \BlankLine
+                }
+                {
+                    \BlankLine
+                    $Result[i] = False$\;
+                    \BlankLine
+                }
+            }
+        }
+\end{algorithm}

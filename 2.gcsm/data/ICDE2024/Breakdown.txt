@@ -1,0 +1,59 @@
+依次为
+../data/icde2023//5_12.txt
+../data/icde2023//5_15.txt
+../data/icde2023//6_50.txt
+../data/icde2023//6_62.txt
+../data/icde2023//7_846.txt
+../data/icde2023//7_851.txt
+
+Update Time:	16.106140
+
+FR-ZP 8192
+Profiled Time:	1068.958156	Data Size:	690.099136MB	Copy Data Time:	1120.324053		GPU Time: 65326.830078
+Profiled Time:	212.744592	Data Size:	98.416108MB		Copy Data Time:	159.919656		GPU Time: 2714.075005
+Profiled Time:	2102.669542	Data Size:	980.429952MB	Copy Data Time:	1595.695921	 	GPU Time: 644762.287109
+Profiled Time:  482.512045  Data Size:  157.238472MB    Copy Data Time: 255.546099		GPU Time: 198009.227783
+Profiled Time:  675.123961  Data Size:  87.292149MB     Copy Data Time: 143.633526      GPU Time: 3316292
+Profiled Time:  506.486422  Data Size:  35.159215MB     Copy Data Time: 57.294947		GPU Time: 1043250.203125
+
+FR-GCSM 8192
+Profiled Time:  1037.642238     Data Size:      690.118654MB    Copy Data Time: 1126.094157     GPU Time: 34346.384277
+Profiled Time:  219.804041      Data Size:      98.439239MB     Copy Data Time: 159.506165      GPU Time: 1554.292259
+Profiled Time:  2120.554166     Data Size:      980.454221MB    Copy Data Time: 1613.577153     GPU Time: 251203.050781
+Profiled Time:  440.518970      Data Size:      154.903809MB    Copy Data Time: 250.236689      GPU Time: 106685.254395
+Profiled Time:  635.442382      Data Size:      86.925651MB     Copy Data Time: 140.787888      GPU Time: 2267651.78125
+Profiled Time:  400.754398      Data Size:      35.159215MB     Copy Data Time: 58.058835		GPU Time: 699927.669922
+
+
+datagen-sf3k-fb-ZP 8192
+Profiled Time:  1216.414458     Data Size:      1604.246812MB   Copy Data Time: 2441.627963	GPU Time: 101199.818359
+Profiled Time:  211.632556      Data Size:      265.283109MB    Copy Data Time: 653.310332	GPU Time: 4485.027946
+Profiled Time:  1807.693958     Data Size:      1398.118799MB   Copy Data Time: 1168.024538	GPU Time: 719151.675293
+Profiled Time:  403.693826      Data Size:      400.187204MB    Copy Data Time: 318.674237	GPU Time: 119772.609619
+Profiled Time:  532.335408      Data Size:      215.258247MB    Copy Data Time: 175.315188	GPU Time: 107713.614502
+Profiled Time:  273.548737      Data Size:      89.455755MB     Copy Data Time: 73.671747	GPU Time: 19745.024231
+
+datagen-sf3k-fb-GCSM 8192
+Profiled Time:  1203.611005     Data Size:      1604.326511MB   Copy Data Time: 3305.880042	GPU Time: 44677.799805
+Profiled Time:  214.547283      Data Size:      265.011134MB    Copy Data Time: 427.768470	GPU Time: 2166.515175
+Profiled Time:  1813.694091     Data Size:      1397.792809MB   Copy Data Time: 2257.365847	GPU Time: 193000.421021
+Profiled Time:  425.194270      Data Size:      400.231122MB    Copy Data Time: 636.201162	GPU Time: 64027.016602
+Profiled Time:  527.849389      Data Size:      215.144020MB    Copy Data Time: 343.542422	GPU Time: 49012.533569
+Profiled Time:  321.722791      Data Size:      89.455755MB     Copy Data Time: 144.208717	GPU Time: 7064.361145
+
+
+
+datagen-sf10k-fb-ZP 8192
+
+
+
+
+datagen-sf10k-fb-GCSM 8192
+Profiled Time:  1404.644758     Data Size:      2208.296508MB   Copy Data Time: 7131.109551	GPU Time: 62184.668457
+Profiled Time:  244.365707      Data Size:      321.277786MB    Copy Data Time: 262.177464	GPU Time: 2646.675322
+Profiled Time:  2003.584697     Data Size:      1805.207166MB   Copy Data Time: 3204.086796	GPU Time: 250354.782471
+Profiled Time:  455.289052      Data Size:      501.651167MB    Copy Data Time: 1045.121528	GPU Time: 85824.321289
+Profiled Time:  590.558153      Data Size:      258.856598MB    Copy Data Time: 427.237694	GPU Time: 62401.384521
+Profiled Time:  469.379225      Data Size:      101.395164MB    Copy Data Time: 169.673038	GPU Time: 7653.698090
+
+

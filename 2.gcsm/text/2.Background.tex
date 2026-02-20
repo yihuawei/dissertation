@@ -1,0 +1,214 @@
+\section{Background}
+\label{sec:Background}
+
+This section gives a formal definition of the continuous subgraph graph matching problem and describes a join-based algorithm for solving the problem. 
+We also provide a background on CPU-GPU data communication to facilitate our discussion. 
+
+
+\subsection{Problem Definition}
+\label{sec:Preliminaries}
+
+
+A {\em graph} $G$ is defined as $G = (V, E, L)$, consisting of a set of vertices $V$, a set of edges $E$, and a labeling function $L$ that assigns labels to vertices. A graph $G' = (V', E', L')$ is a {\em subgraph} of graph $G = (V, E, L)$ if $V'$ is a subset of $V$, $E'$ is a subset of $E$, and $L'(v) = L(v)$, for all $v$ in $V'$. 
+
+\begin{definition}[Isomorphism]
+Two graphs $G_a = (V_a, E_a, L_a)$ and $G_b = (V_b, E_b, L_b)$ are isomorphic if there is a bijective function $f: V_a\Rightarrow V_b$ such that $(v_i, v_j)\in E_a$ if and only if $(f(v_i), f(v_j))\in E_b$ and $L_a(v_i)=L_b(f(v_i)), L_a(v_j)=L_b(f(v_j))$. 
+\end{definition}
+
+
+
+% \iffalse
+% \begin{example} 
+%     \textit{In Fig.~\ref{fig:data_graph}, cells (1)(2)(3)  show a graph G with nine vertices; and examples of G's edge-induced and vertex-induced subgraphs.  A vertex-induced subgraph always preserves the original graph's connectivity structure, but an edge-induced subgraph doesn't necessarily do so. A vertex-induced subgraph is always an edge-induced subgraph, but the reverse is not necessarily true. }
+% \end{example}
+% \fi
+
+The subgraph matching problem is defined as finding all the subgraphs in $G$ that are isomorphic to a given query graph $Q$. 
+A {\em continuous subgraph matching} (CSM) procedure aims to find the matching subgraphs of a given query in a {\em dynamic} graph. 
+
+
+Conventionally, a dynamic graph is modeled as a sequence of edge updates [$(e_0, \oplus), (e_1, \oplus), \ldots $] applied to an initial graph $G_0$. Here, $e_i$ represents an edge, and the symbol $\oplus$ can be either $+$ or $-$, meaning an edge insertion or deletion. 
+A newly inserted edge may consist of new vertices, while the deleted edges only involve existing vertices. 
+The edge updates generate a sequence of graph snapshots [$G_0, G_1, G_2, \ldots $] where 
+$G_{k+1}=G_k \oplus e_k$. 
+
+
+CSM can be conducted on a dynamic graph with either single-edge updates or batch updates.  
+In the single-edge setting, a matching procedure is invoked at each edge update ($e_k, \oplus)$ to find all the subgraphs that contain $e_k$. 
+Depending on whether $e_k$ is inserted or deleted, 
+the subgraphs are either added or deleted from the previous matching result. 
+In the batch setting, CSM computes the incremental subgraphs for a batch of edges simultaneously. 
+A more rigorous description of the CSM algorithm is given below. 
+
+%-----------------------------------------------------------------------------------------------------------------------------------------%
+\subsection{Worst-Case Optimal Join for CSM}
+\label{sec:csm_algorithm}
+
+\input{fig/2.loop.tex}
+
+
+% \iffalse
+% The algorithms of static and continuous subgraph matching can be categorized into exploration-based\cite{mawhirter2021dryadic}\cite{mawhirter2019automine} and join-based approaches \cite{kankanamge2017graphflow}\cite{veldhuizen2014leapfrog}, and have been studied separately for many years. The join-based algorithms can be implemented by pair-wise join or worst-case optimal join(WCOJ)\cite{ngo2018worst}\cite{mhedhbi2019optimizing}. A recent work\cite{sun2020rapidmatch} finds that there is no fundamental difference between exploration-based algorithms and WCOJ. In this section, we provide the details of the exploration-based CSM algorithm and the outline of the join-based CSM algorithm. For further insights into the equivalence between these two algorithms and the process of deriving the exploration-based algorithm from WCOJ, please refer to this paper\cite{sun2020rapidmatch}.
+% %-----------------------------------------------------------------------------------------------------------------------------------------%
+% \subsubsection{Exploration-based Algorithm for Continuous Subgraph Matching}
+
+% The \textit{exploration-based static subgraph matching} algorithm is divided into two steps: (1) It first assigns a matching order(schedule) to the nodes in the query graph, this process is also called "schedule". Different matching orders can affect performance, and extensive research\cite{10.1145/3299869.3319880}\cite{he2010query} has been conducted in this area in previous works. The assigned matching order must ensure that each node except for the first one is connected to at least one of the nodes with smaller order indexes. The first node is assigned to index zero and can be any node in the query graph. (2) Then it compiles a scheduled query graph into a nested for-loop program. The outermost loop iterates all the edges in the data graph. The undirected edges in the data graph are regarded as bi-direction edges, each direction is added to the candidate set in the outermost loop. The set operation in each loop is determined by the connectivity between the current node to be matched and all the previously matched nodes in the pattern. It does a set intersection if there is a connection. 
+
+% \begin{example} 
+%     \textit{The left-most query graph marked with "schedule (0)" in Fig.~\ref{fig:schedule} gives a schedule example for the query graph Q in Fig.~\ref{fig:data_graph}. We label the nodes in the query graph in Fig.~\ref{fig:schedule} with u0, u1, u2 and u3 to indicate the matching order. In Fig.~\ref{fig:for_loop}, cell (0) gives the nested for-loop program generated for schedule (0) in Fig.~\ref{fig:schedule}. $v0 v1 v2 v3$ accordingly map to $u0 u1 u2 u3$ in schedule (0). $N(v)$ means the neighbor list of vertex $v$ in data graph. The candidate set for $v2$ is computed by $N(v0) \cap N(v1)$ since $u2$ is connected to both $u0$ and $u1$. The candidate set for $v3$ is computed by $N(v1) \cap N(v2)$ since $u3$ is connected to both $u1$, $u2$ but not $u0$}. 
+% \end{example}
+
+% The \textit{exploration-based continuous subgraph matching} algorithm first generates a matching order(schedule) for each undirected edge in the input query graph. Each edge is the starting edge for its own schedule. The number of generated schedules is equal to the number of undirected edges in the given query graph. Either of the points in the starting edge can be designated as index $u0$ and the other as $u1$. If an edge is used as the starting edge in any previous schedule, it will be marked as the "New Neighbor Set" in the current schedule; otherwise, it will be marked as the "Old Neighbor Set. Then, for each schedule, it generates a nested for-loop using the aforementioned method. The difference is that, in the outermost loop, the candidate set is replaced by all the edges in a batch rather than all the edges in the data graph, and the type of neighbor set depends on whether the corresponding edge is labeled as "New Neighbor Set" or "Old Neighbor Set". The undirected edges in a batch are also regarded as bi-direction edges, and each direction is added to the candidate set in the outermost loop.
+
+
+% \fi
+%-----------------------------------------------------------------------------------------------------------------------------------------%
+%\subsubsection{Join-based Algorithm for Continuous Subgraph Matching}
+% This section covers the pair-wise join\cite{mhedhbi2019optimizing} and worst-case optimal join algorithm\cite{ngo2018worst} for static subgraph matching, and how to scale the join-based algorithm to continuous subgraph matching with batch-updates for edges. 
+
+
+It is well-known that subgraph matching on a static graph can be considered as a multi-way join on graph edges~\cite{mhedhbi2019optimizing,ngo2018worst,tran2015fast}. 
+For example, matching $Q$ in $G_0$ in Fig.~\ref{fig:csm} is equivalent to $R(u_0, u_1) \Join R(u_0, u_2) \Join R(u_1, u_2) \Join R(u_1, u_3) \Join R(u_2, u_3)$ where $R(u_i, u_j)$ is a relation that contains the edges in the data graph that can be mapped to the edge $(u_i, u_j)$ in the query graph. $R(u_0, u_1) \Join R(u_0, u_2)$ returns a list of subgraphs with two edges connected on a common vertex mapped to $u_0$. Suppose the result of the first join is $R(u_0, u_1, u_2)$. We can see that $R(u_0, u_1, u_2) \Join R(u_1, u_2)$ returns the subgraphs in $R(u_0, u_1, u_2)$ with the two vertices mapped to $u_1$ and $u_2$ connected. 
+Each join operation extends an edge on some partially matched subgraphs until all the edges in the query pattern are matched. 
+More formally, for any query pattern $Q$, its matching subgraphs in a data graph $G$ can be computed as 
+$\Join_{e(u_x, u_y) \subseteq E(Q)}R(u_x, u_y)$ where $E(Q)$ is the edge set of the query graph and $R(u_x, u_y)=\{e(v_x, v_y) \subseteq E(G) | L(v_x) = L(u_x) \land L(v_y) = L(u_y)\}$.
+%Since a subgraph can be constructed with different join orders, there are duplicate subgraphs in the result. These duplicates can be easily avoided by using a symmetry-breaking technique that forces the subgraphs to be constructed in a specific order~\cite{mawhirter2019graphzero}. 
+
+
+% ....\textcolor{green}{complete this sentence with an example, explain why ....}. 
+
+
+
+
+
+
+Based on the connection between subgraph matching and multi-way join, CSM can be modeled as an \textit{Incremental View Maintenance} (IVM) problem~\cite{ramakrishnan2003database, griffin1995incremental}, which joins multiple constantly updating tables $R_1, \ldots, R_m$ where $m$ is number of edges in the query pattern.  
+Instead of joining from scratch after each update, it only computes an incremental join result for the update. Suppose the update to relation $R_i$ is $\Delta R_i$  and $R_i'=R_i+\Delta R_i$ is the table after the update. The incremental join result $\Delta M$ can be computed as
+\begin{equation}
+    \begin{gathered} 
+    \Delta M_1 = \Delta R_1 \Join R_2' \Join ... \Join R_m' \\
+    \Delta M_i = R_1 \Join...\Join \Delta R_i \Join R'_{i+1}\Join... \Join R_m' \\
+    \Delta M_m = R_1 \Join R_2 \Join R_3 \Join ... \Join \Delta R_m \\
+    \Delta M = \bigcup_{i=1}^n \Delta M_i. \\
+    \end{gathered} 
+    \label{csm_formula}
+\end{equation}
+The formula can be verified by subtracting the join result before the update (i.e., $R_1 \Join...\Join R_n$) from the join result after the update (i.e., $(R_1+\Delta R_1) \Join ... \Join (R_n+\Delta R_n)$). Readers are referred to~\cite{kankanamge2017graphflow} for a more detailed explanation.
+In continuous subgraph matching, $R_i(u_x,u_y)$ is a relation corresponding to an edge $(u_x,u_y)$ in the query graph. $\Delta R_i$ includes the updated edges (either added or deleted) that can be mapped to $(u_x,u_y)$. 
+
+
+
+
+
+Since CSM can be computed by multi-way joins, previous work~\cite{kankanamge2017graphflow, aberger2017emptyheaded} has employed worst-case optimal join (WCOJ) algorithms (e.g., Leapfrog Triejoin~\cite{veldhuizen2014leapfrog}) for CSM. 
+When applied to subgraph matching, it joins multiple edge lists on a common vertex at each step, instead of binary joining an edge at each step. 
+The algorithm can be expressed as nested loops, as shown in Fig.~\ref{fig:for_loop}. The loop in Fig.~\ref{fig:for_loop}a matches $Q$ in Fig.~\ref{fig:query} on the initial graph $G_0$. The algorithm first iterates over all graph edges that match $(u_0,u_1)$. Since $u_2$ is adjacent to both $u_0$ and $u_1$, the nodes that match $u_2$ can be computed by performing a set intersection on $N(x_0)$ and $N(x_1)$. Next, since $u_3$ is connected to both $u_1$ and $u_2$, the nodes that match $u_3$ can be computed as the set intersection of $N(x_1)$ and $N(x_2)$. Once all the pattern vertices are matched, the matching subgraph is outputted in the innermost loop. 
+
+
+
+
+
+%Here, we assume the query vertices are matched in alphabetical order for simple illustration, but the vertices can be matched in a different order. A carefully selected order can significantly improve the practical performance of the program. Many techniques have been proposed to obtain a good matching order~\cite {10.1145/3299869.3319880, he2010query}.  
+
+
+Since $Q$ has five edges, we need five nested loops to compute $\Delta M_1$ to $\Delta M_5$. 
+Fig.~\ref{fig:for_loop}b shows the nested loop for computing $\Delta M_1$. 
+It iterates over all edges in $\Delta E$ that match $(u_0,u_1)$, which correspond to $\Delta R_1$ in (\ref{csm_formula}). 
+Because $\Delta R_1(u_0, u_1)$ joins with the updated $R_2'(u_0, u_2)$, $R_3'(u_1, u_2)$, $R_4'(u_1, u_3)$,  $R_5'(u_2, u_3)$, the program computes matching nodes for $u_2$ by performing set intersections on updated neighbor lists $N'(x_0)$ and $N'(x_1)$. 
+The matching nodes for $u_3$ are also computed with the updated neighbor lists. 
+The remaining loops are generated based on a similar argument. 
+
+It is known that the WCOJ algorithm has a time complexity bounded by the worst-case output size of the join result~\cite{ngo2018worst}. Therefore, 
+the join operations in Formula (\ref{csm_formula}) has a time complexity bounded by the size of $\Delta M_i$, which follows the AGM inequality~\cite{atserias2008size}:
+\begin{equation}
+    \label{eq:agm}
+    |\Delta M_i| \leq  \prod_{j=1}^{i-1}|R_j|^{\mu_j} \cdot |\Delta R_i|^{\mu_i} \cdot \prod_{j=i+1}^{m}|R_j'|^{\mu_j}
+\end{equation}
+where $\mu = (\mu_1,\ldots, \mu_m)$ is a fractional edge cover of the query pattern $Q$, which follows the constraints $\mu_j>0, \forall j\in \{1,\ldots, m\}$ and $\forall v \in V(Q), \sum_{e\in E(Q), v \in e} \mu_e \geq 1$. 
+The time complexity of continuous subgraph matching is $O(\sum_{i=1}^{m}|\Delta M_i|)$. 
+
+\iffalse
+\textcolor{blue}{It is known that the output size of WCOJ is bounded by AGM inequality~\cite{atserias2008size}: $|OUT| \leq \prod_{j=1}^{m}|R_j|^{x_j}$. For example, $|\Delta M_i|$ in equation (\ref{csm_formula}) has the bound:
+\begin{equation}
+    \label{eq:agm}
+    |\Delta M_i| \leq |\Delta R_i|^{x_i} * \prod_{j=1}^{i-1}|R_j|^{x_j} * \prod_{j=i+1}^{m}|R_j'|^{x_j}
+    % |\Delta M_i| \leq |R_1|^{x_1}...|\Delta R_i|^{x_i}|R_{i+1}'|^{x_{i+1}}...|R_m'|^{x_m}
+\end{equation}
+$|R_j|$ is the size of the relation $R_j$, and ${x_j}$ is the item of fractional edge cover $x=(x_1, ..., x_m)$, which is defined by 
+${\forall{j \in \{1,...,m\}}}, {x_j}>0$, and $\forall{u_i \in Q}$, $\sum_{u_i \in R_j} x_j \geq 1$. The output size $|\Delta M_i|$ is determined by minimizing the right-hand side of inequality
+(\ref{eq:agm}). Since the running time of WCOJ matches $|\Delta M_i|$, the time complexity of CSM is }. 
+
+
+\textcolor{red}{To compute the incremental matched subgraphs for $\Delta E$, according to Formula (\ref{csm_formula}), we need to perform five multi-way joins. Fig.~\ref{fig:for_loop}(b)-(f) shows the code for computing $\Delta M_1$ to $\Delta M_5$, which accordingly correspond to $\Delta M(u_0, u_1)$, $\Delta M(u_0, u_2)$, $\Delta M(u_1, u_2)$, $\Delta M(u_2, u_3)$ and $\Delta M(u_1, u_3)$. $\Delta M(u_i, u_j)$ is the incremental joining result for update $\Delta R(u_i, u_j)$. For computing $\Delta M(u_i, u_j)$, the WCOJ algorithm first generates a schedule starting from the edge $(u_i, u_j)$, and then generates the nested for-loop using the same approach aforementioned. The candidate set of the outermost loop is the edges in the coming batch and certain neighbor functions($N'(v)$) use the updated neighbor set of the data graph.  As an example, Fig.~\ref{fig:l4} shows the nested for-loop for computing $\Delta M(u_2, u_3) = R(u_0, u_1) \Join R(u_0, u_2) \Join R(u_1, u_2) \Join \Delta R(u_2, u_3) \Join R'(u_1, u_3)$ with the schedule $\{u2, u3, u1, u0\}$. The mapping is $m(v_0)=u_2, m(v_1)=u_3, m(v_2)=u_1, m(v_3)=u_0$. Since $m(v_2)$ is connected to both $m(v_0)$ and $m(v_1)$, and the backward edge $m(v_2) \rightarrow m(v_0)$ correspond to $R(u_1, u_2)$ (neighbors before update) and the backward edge $m(v_2) \rightarrow m(v_1)$ correspond $R'(u_1, u_3)$ (neighbors after update) in $\Delta M(u_2, u_3)$, the candidate set for $v2$ is computed by $N(v0) \cap N'(v1)$.} 
+\fi
+
+
+
+% \begin{equation}
+%     \begin{gathered} 
+%         \Delta M_1 = \Delta R1 \Join R2' \Join R3' \Join R4' \Join R5' \\
+%         \Delta M_2 = R1 \Join \Delta R2 \Join R3' \Join R4' \Join R5' \\
+%         \Delta M_3 = R1 \Join R2 \Join \Delta R3 \Join R4' \Join R5' \\
+%         \Delta M_4 = R1 \Join R2 \Join R3 \Join \Delta R4 \Join R5' \\
+%         \Delta M_5 = R1 \Join R2 \Join R3 \Join R4 \Join \Delta R5 \\
+%     \end{gathered} 
+%     \label{csm2_formula}
+% \end{equation}
+
+% LFTJ evaluates the input query $Q$ with the relations $R$ built on the input data graph and a matching order $\delta$ of the nodes $V$ in $Q$. LFTJ recursively matches every node $u$ in $Q$ with a candidate set $C_u$ at each level, it then iterates over each element in $C_u$, recursively calling itself to get into the next level. $M$ is a map recording the matching result. The input variable $i$ indicates the recursion depth. $ES$ records the adjacent edges of the already traversed nodes in $Q$. The symbol $\pi$ is the projection operation and $\sigma$ is the selection in relational algebra. The innermost level identifies a matched subgraph. Initially, $i=0, ES=\{\}, M=\{\}$, and $R$ is the relations built on the $Q$ and the input data graph $G$. 
+
+% Section~\ref{sec:Preliminaries} defines the continuous subgraph matching with a single edge update at each step. For batched edges update, we can't simply compute $\Delta M_k = M_{k+b} - M_{k}$ where $b$ is the batch size with $b$ edge operations because that makes latter edge operations influence the matching result of the former edge operations in a single batch.
+
+
+
+
+
+%-----------------------------------------------------------------------------------------------------------------------------------------%
+
+% The join operator $\Join$ in algorithm.~\ref{alg:lftj} can be replaced by set intersection $\cap$. The statement $\pi_{u}(\sigma_{u'=v}(R(u, u')))$ can be interpreted as the neighbor set of the vertex $v$ in the input graph $G$ since $R(u, u')$ is all the edges in $G$ which have the same vertex labels with the edge $(u, u')$ in $Q$.  
+
+% Let $B$ denote the batch size and $\Delta G_k$ denote the updated edges of batch $k$, so $\Delta G_k$ is $[(e_{B*k}, \bigoplus) ... (e_{B*(k+1)}, \bigoplus))$. 
+% The problem is \textit{single-update} if $B==1$ and \textit{batch-update} if $B>1$.
+
+% \subsection{Join-based Algorithm for Subgraph Matching}
+
+% % Fig.~\ref{fig:join} is an example of the pair-wise join procedure for matching Fig.~\ref{fig:query_graph} in Fig.~\ref{fig:data_graph}, three tables are joined for getting the matching results. The result has duplications such that $v5v6v7$ and $v5v7v6$ are the same subgraphs, a partial ordering can be enforced to avoid such duplications.
+% % \input{fig/2.Join.tex}
+% \subsubsection{Join-based Algorithm for Static Subgraph Matching}
+
+% % Algorithm.~\ref{alg:wcoj_tri} gives an instance of the Leapfrog Triejoin algorithm for matching a triangle. It is rewritten as a nested-for loop.
+
+% \input{algorithm/2.WCOJ.tex}
+% % \input{algorithm/2.WCOJ_TRI.tex}
+
+
+% \subsubsection{Join-based Algorithm for Batched Continuous Subgraph Matching}
+
+
+% For example, let us regard the three single updates $(v1v3, +), (v6v8, -)$ and $(v5v6, -)$ as a batched update. Both $\Delta R(u0, u1)$ and $\Delta R(u0, u2)$ equal to $(+v1v3, -v5v6, -v8v6)$ and $\Delta R(u1, u2)$ is an empty set. After applying updates, $dQ_{(u0, u1)}$ will be $(+v1v3v2, -v5v6v7, -v8v6v7)$, $dQ_{(u0, u2)}$ will be $(+v1v2v3, -v5v7v6, -v8v7v6)$. Finally, $(v1v3v2, v1v2v3)$ in $dQ$ will be added to $R(u0, u1, u2)$ while $(v5v6v7, v8v6v7, v5v7v6, v8v7v6)$ in $dQ$ will be removed from $R(u0, u1, u2)$. Our work uses algorithm.~\ref{alg:lftj} to compute the join result of each line in equation (1) and then combine all the results to get the incremental matches of each new incoming batch. 
+
+
+%-----------------------------------------------------------------------------------------------------------------------------------------%
+% \subsection{Dynamic Graph Maintenance on CPU and GPU}
+% Some graph data structures accommodating dynamic real-time updating are proposed both on CPU and GPU. The most classic is the adjacent matrix which stores the graph as a 2B matrix but consumes huge memory space for large graphs. STINGER proposes a graph data structure on the CPU based on the adjacent list. The adjacent vertices of a vertex are stored as the edge blocks. Even though STINGER improves the edge compaction, it still suffers a heavy probing workload when doing a graph update. GraphTinker uses a new hashing schema to reduce probe distance and improve the edge update performance on the CPU. Hornet designed a BTree-based memory pool for efficiently supporting the memory management of each adjacent list on the CPU. PMA and GPMA are the same graph data structure implemented on the CPU and GPU respectively. They maintain a sparse adjacent list for each vertex with an auxiliary balanced binary search tree recording the start position of each valid array region. Due to the sparsity, retrieving a consecutive adjacent list from the sparse list is not efficient. FaimGraph proposes a dynamic memory management system on the GPU to support efficient memory free and allocation. SlabHash is a dynamic hash table data structure on the GPU supporting asynchronous and concurrent updates and reduces the average time complexity of both insertion and deletion to O(1), but needs to rehash whenever the load factor exceeds the threshold. 
+
+\subsection{CPU-GPU Communication}
+
+%\textcolor{red}{
+ %   The GPU has a memory hierarchy similar to that of the CPU. The GPU has a global memory similar to the main memory, and a cache far smaller than the global memory. The global memory is shared among all threads on the GPU and is slower than the cache. Unlike the CPU, the cache of the GPU can be manually allocated and managed. We refer to a manually managed cache, shared within a block(a group of threads), as the shared memory. Both GPU core and global memory are on the device. }
+    
+In a CPU-GPU system, the GPU is connected to CPU through PCIe or NVLink. A program running on the GPU can directly access its global memory. 
+However, because the size of the global memory is limited (typically 10$\sim$30GB on a modern GPU), the data of a program may exceed the GPU memory limit. In such cases, we must store data in the CPU main memory and synchronize data between the CPU and GPU. 
+This is often referred to as ``out-of-core'' GPU computation in the literature~\cite{6968748}.
+CUDA provides three ways for CPU-GPU data communication\cite{cuda}: 1) \textit{DMA}, 2) \textit{unified memory}, and 3) \textit{zero-copy access}. 
+
+The DMA API (\texttt{cudaMemcpy}) is efficient for transferring large blocks of data between CPU and GPU. It uses a copy engine to asynchronously move the data over PCIe rather than loads and stores. It offloads the computing units on GPU, leaving them free for other work. 
+However, DMA is not efficient for transferring small data because every DMA request incurs an overhead for packing the data and setting up the communication. 
+Unified memory enables a GPU kernel to access data on the CPU directly, without explicit data transfer operations. This is accomplished by allocating a chunk of managed memory on the CPU (through \texttt{cudaMallocManaged}) and mapping it into the GPU address space. 
+When the GPU kernel attempts to access the mapped data, the GPU automatically transfers the pages that contain the data between the CPU and GPU. This simplifies programming and supports caching for the accessed pages. However, unified memory is not efficient for fine-grained data access, as the data are always transferred at page granularity (4KB), which wastes PCIe bandwidth. 
+In contrast, zero-copy is most suitable for fine-grained data access between the CPU and GPU. 
+It directly loads (or stores) data on the CPU in cache lines (128B). 
+Compared to DMA and unified memory, it does not have the communication setup overhead and only copies data that are needed. 
+However, zero-copy access stalls the GPU kernel. The GPU computing units must wait for the data access to finish before it can continue execution. 
+Our system uses a combination of DMA and zero-copy access for synchronizing graph data between CPU and GPU and achieves high performance by caching the most frequently accessed data on the GPU. 
+
