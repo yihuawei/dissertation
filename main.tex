@@ -68,6 +68,78 @@
 %------------------- GCSM -------------------%
 
 
+%------------------- Matcha -------------------%
+\usepackage{rotating}
+\usepackage{float}
+
+\usepackage{xcolor}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\usepackage{setspace}
+\usepackage{etoolbox}
+\usepackage{soul}
+\makeatletter
+\patchcmd{\lst@frameInit}
+  {\vrule\@width\lst@framerulewidth}
+  {\smash{\vrule\@width\lst@framerulewidth\@height1.2\ht\strutbox\@depth1.2\dp\strutbox}}
+  {}{}
+\makeatother
+
+
+\lstset{
+frame=single,
+  framexleftmargin=0pt,
+  xleftmargin=1em, 
+  xrightmargin=1em,
+  rulecolor=\color{black},
+  numberstyle=\scriptsize\color{black},
+  commentstyle=\color{pakistangreen},
+  basicstyle=\ttfamily\footnotesize,
+  breaklines=true,
+  showstringspaces=false,
+  escapeinside=@@,
+  morecomment=[l]{//},
+  keywordstyle=\color{blue},
+}
+
+\let\origthelstnumber\thelstnumber
+\makeatletter
+\newcommand*\Suppressnumber{%
+  \lst@AddToHook{OnNewLine}{%
+    \let\thelstnumber\relax%
+     \advance\c@lstnumber-\@ne\relax%
+    }%
+}
+
+\newcommand*\Reactivatenumber{%
+  \lst@AddToHook{OnNewLine}{%
+   \let\thelstnumber\origthelstnumber%
+   \advance\c@lstnumber\@ne\relax}%
+}
+
+\definecolor{myblue}{RGB}{166, 193, 231}
+\definecolor{myorange}{RGB}{241, 211,193}
+\definecolor{mygrey}{RGB}{203, 203, 203}
+\definecolor{mygreen}{RGB}{197, 219, 183}
+\definecolor{mypurple}{RGB}{249, 226, 165}
+\definecolor{myyellow}{RGB}{219, 190, 218}
+
+\DeclareRobustCommand{\hlmyblue}[1]{{\sethlcolor{myblue}\hl{#1}}}
+\DeclareRobustCommand{\hlmyorange}[1]{{\sethlcolor{myorange}\hl{#1}}}
+\DeclareRobustCommand{\hlmygrey}[1]{{\sethlcolor{mygrey}\hl{#1}}}
+\DeclareRobustCommand{\hlmygreen}[1]{{\sethlcolor{mygreen}\hl{#1}}}
+\DeclareRobustCommand{\hlmypurple}[1]{{\sethlcolor{mypurple}\hl{#1}}}
+\DeclareRobustCommand{\hlmyyellow}[1]{{\sethlcolor{myyellow}\hl{#1}}}
+
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+
+%------------------- Matcha -------------------%
+
 %%%%%% This thesis template was originally created by Zhiya Zuo and Erin Kaufman in May 2019, and revised by Marina Zhang and Erin Kaufman in July 2022. %%%%%%
 
 %%%%%% start: define some names here %%%%%%
@@ -366,9 +438,9 @@ Thesis Committee: \myadvisor, Thesis Supervisor
 %% main contents %%
 
 
-% \input{1.stmatch/text/abstract}
 % \input{1.stmatch/stmatch}
-\input{2.gcsm/gcsm}
+% \input{2.gcsm/gcsm}
+\input{3.matcha/matcha}
 % \input{1.stmatch/text/background}
 % \input{1.stmatch/text/challenge}
 % \input{1.stmatch/text/overview}

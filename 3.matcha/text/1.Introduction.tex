@@ -1,0 +1,104 @@
+\section{Introduction}
+
+Subgraph matching is the key building block of many graph analytics and learning applications. It aims to find subgraphs in a data graph conforming to the structural constraints of a query pattern. A subgraph matching algorithm can be used to extract information from graph-structured data in many domains, including bioinformatics~\cite{Milo824}, social network analysis~\cite{10.1145/2488388.2488502}, and cybersecurity~\cite{noel2018review}. Recently, subgraph matching also finds increasing use in graph-based machine learning applications, such as anomaly detection \cite{akoglu2015graph, noble2003graph}, entity resolution \cite{bhattacharya2006entity}, and community detection \cite{schaeffer2007graph}. 
+
+
+
+
+
+Fig.~\ref{fig:graph} shows an example of the most basic subgraph matching problem. Given a data graph $G$ and a query pattern $Q$, the task is to find all subgraphs in $G$ that match the pattern $Q$. 
+Both $G$ and $Q$ here have labeled vertices. 
+There are two subgraphs in  
+$G$ with the same structure as $Q$. One subgraph ($v_{10,}v_{15},v_{0},v_{7}$) is a valid match, while the other  ($v_{0},v_{10},v_{15},v_{6}$) is not due to mismatched labels. 
+
+As an NP-hard problem, subgraph matching can be time-consuming on large graphs. Following the basic idea of backtracking \cite{ullmann1976algorithm}, many advanced algorithms have been developed~\cite{cordella2001improved, bonnici2013subgraph, 10.1145/3299869.3319880, aberger2017emptyheaded, kankanamge2017graphflow}. Most of these algorithms are implemented on CPU, while some recent systems utilize GPU to accelerate computation~\cite{sun2020rapidmatch,10.14778/1453856.1453899,10.1145/3299869.3319880,mawhirter2019automine,mawhirter2021dryadic,chen2022decomine}. 
+
+
+Table~\ref{tab:intro} compares the state-of-the-art subgraph matching systems regarding their supported tasks, algorithms, and optimizations. 
+Since each system features unique algorithms and optimizations, it has been increasingly difficult to compare and combine different solutions, thus hindering progress in this research area. For example, RapidMatch~\cite{sun2020rapidmatch} proposes a relation-filtering technique with join plan optimization. Its join-based algorithm performs better than many other subgraph matching systems on CPU. However, migrating the algorithm to GPU is nontrivial. It is unclear whether the algorithm can outperform an efficient implementation of more basic algorithms on a GPU (e.g., G2Miner~\cite{chen2022efficient}). 
+
+\begin{figure}[t]
+    \centering
+    \subfloat[Data Graph $G$]{
+        \includegraphics[scale=0.40, page=3]{fig/example1-crop.pdf}
+        \label{fig:g0}
+    } \hfil
+    \subfloat[Query $Q$]{
+        \includegraphics[scale=0.40, page=2]{fig/example1-crop.pdf}
+        \label{fig:query}
+    } 
+    \caption{Example data graph and query pattern. }
+    \vspace{-.5em}
+    \label{fig:graph}
+\end{figure}
+
+Although some previous systems aim to be general-purpose \cite{chen2018g, chen2022efficient, 10.14778/3389133.3389137}, they hard-code algorithms for different tasks and support limited computation patterns. For example, G2Miner~\cite{chen2022efficient} assumes the subgraph is always extended vertex by vertex using set operations. Users cannot express the join-based algorithm of RapidMatch~\cite{sun2020rapidmatch} with its programming interface. It also does not support backtracking with edge extension as adopted by Everest~\cite{yuan2023everest}. 
+
+To overcome the limitations of existing systems, we propose a domain-specific language called Matcha for implementing subgraph matching algorithms. The key language constructs in Matcha include a \texttt{List} data type and an \texttt{apply} operation that applies a user-defined function to items in the \texttt{List}s. Our design is based on the observation that the backtracking procedure in subgraph matching algorithms can be modeled as nested data stream processing. A Matcha program stores intermediate subgraphs in a \texttt{List} and applies a function to each subgraph to generate a new \texttt{List} of larger subgraphs until the desired pattern size is reached. 
+By allowing programmers to specify different exploration strategies with the \texttt{apply} operator, Matcha supports a broader range of subgraph matching algorithms than previous systems. 
+
+% \begin{figure}[t]
+%     \centering
+%     \includegraphics[scale=0.5]{Matcha-IPDPS/fig/overview-crop.pdf}
+%     \caption{Overview of Matcha.}
+%     \label{fig:Overview}
+%     %\vspace{-1em}
+% \end{figure}
+We implement a domain-specific compiler that generates efficient C++/CUDA code based on Matcha programs. 
+\textcolor{red}{Fig.~\ref{fig:overview} presents the workflow of Matcha compiler.
+The compiler first translates the 
+Abstract Syntax Graph (ASG) built by Matcha program into an intermediate representation (IR).} Unlike previous systems that hard-code the optimizations, we decouple the optimizations from algorithm specification by implementing optimizations as transformations on the IR. The advantage of such a design is that it allows us to compose and configure optimizations for different subgraph matching tasks, achieving better performance and portability than previous systems. Finally, the optimized IR is translated into C++/CUDA code with a code generator. 
+
+
+In summary, the paper makes the following contributions:
+\begin{itemize}[leftmargin=1.5em]
+    \item We propose a DSL called Matcha for expressing various backtracking-based subgraph matching algorithms. 
+    \item We implement a compiler that translates Matcha programs into C++/CUDA code that runs on CPU and GPU.
+    \item We implement a number of optimization passes including operator fusion, code motion, and work stealing in our compiler to improve the performance of generated code. 
+    \item Our system provides a unified framework for developing and comparing subgraph matching algorithms. 
+\end{itemize}
+
+
+\begin{wrapfigure}{r}{0.2\textwidth}
+     \centering
+      %   \vspace{-.5em}
+    \includegraphics[scale=0.56]{fig/overview-crop.pdf}
+    \vspace{-.5em}
+    \caption{\textcolor{red}{ Workflow of Matcha compiler.}}
+    \vspace{-.5em}
+    \label{fig:overview}
+\end{wrapfigure}
+The experiments show that 1) Matcha can be used to easily reimplement state-of-the-art subgraph systems, and the reimplementations perform comparably to the original systems when the same optimizations are applied; 2) Additional optimizations can be easily incorporated into Matcha programs, and the optimized re-implementations outperform the original systems by 23.7x on average; 3) Matcha simplifies the comparison of algorithms originally implemented on different platforms. For example, we find that the join-based algorithm proposed in RapidMatch does not have an obvious performance advantage over the basic vertex-extension backtracking algorithm on the GPU; 4) Developing new algorithms using Matcha is convenient. As an example, we combine a decomposition-based algorithm with the join-based algorithm of RapidMatch, which results in better performance than either algorithm alone.
+
+
+
+\begin{table}[t]
+  \centering
+  \footnotesize
+  \caption{Comparison of state-of-the-art subgraph matching systems: G2Miner (GM) \cite{chen2022efficient}, STMatch (STM) \cite{wei2022stmatch}, DecoMine (DM) \cite{chen2022decomine}, RapidMatch (RM) \cite{sun2020rapidmatch}, Everest (EV) \cite{yuan2023everest}, and our system Matcha (Mt), in terms of support for algorithms, performance optimizations, and matching tasks.}
+    \begin{tabular}{c|c||c|c|c|c|c|c}
+    \multicolumn{2}{c||}{} & \textbf{GM} & \textbf{STM} & \textbf{DM} & \textbf{RM} & \textbf{EV} & \textbf{Mt} \bigstrut\\
+    \hline  \hline
+     \multirow{4}[2]{*}{\begin{sideways}\textbf{Algorithms}\end{sideways}} 
+          & Vertex Ext. & \checkmark & \checkmark & \checkmark & \checkmark & x & \checkmark \bigstrut[t]\\
+          & Edge Ext. & x     & x     & x     & \checkmark & \checkmark & \checkmark \\
+          & Pattern Decomp. & \checkmark     & x     & \checkmark & x     & x  & \checkmark\\
+          & Hash Join & x     & x     & x     & \checkmark & x & \checkmark \\
+    \hline
+    \multirow{6}[2]{*}{\begin{sideways}\textbf{Optimizations}\end{sideways}} 
+          & Multi-threading& x     & x     & \checkmark & x & x & \checkmark\bigstrut[t] \\
+          & GPU & \checkmark & \checkmark & x     & x     & \checkmark & \checkmark \\
+          & Code Motion & \checkmark & \checkmark & \checkmark & x     & x & \checkmark \\
+          & Work Stealing & x     & \checkmark & x     & x     & \checkmark & \checkmark \\
+          & Dyn. Scheduling & \checkmark & x     & \checkmark & x     & x & \checkmark \\
+          & Thread Group & x     & x & x     & x     & x & \checkmark \bigstrut[b]\\
+    \hline
+    \multirow{4}[2]{*}{\begin{sideways}\textbf{Tasks}\end{sideways}} 
+          & Edge-Induced & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \bigstrut[t]\\
+          & Vertex-Induced & \checkmark     & \checkmark & \checkmark & x     & \checkmark & \checkmark\\
+          & Labeled & \checkmark     & \checkmark & \checkmark     & \checkmark & \checkmark & \checkmark\\
+          & Temporal & x     & x     & x     & x     & \checkmark & \checkmark \bigstrut[b]\\
+    \hline
+    \end{tabular}%
+  \label{tab:intro}%
+\end{table}%

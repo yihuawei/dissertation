@@ -1,72 +1,27 @@
-\contentsline {figure}{\numberline {1}{\ignorespaces An example of continuous subgraph matching.\relax }}{1}{figure.caption.3}%
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Query Q}}}{1}{subfigure.1.1}%
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Data graph $G_0$}}}{1}{subfigure.1.2}%
-\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Graph update: $G_0 + \Delta E_0$}}}{1}{subfigure.1.3}%
-\contentsline {figure}{\numberline {2}{\ignorespaces Continuous subgraph matching implemented as worst-case optimal join. $E$ represents the edges in the initial graph. $\Delta E$ represents a batch of edge updates. $N$ and $N'$ represent the original and the updated neighbor lists respectively. \relax }}{5}{figure.caption.4}%
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Matching $Q$ on $G_0$}}}{5}{subfigure.2.1}%
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {$\Delta M_1$}}}{5}{subfigure.2.2}%
-\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {$\Delta M_2$}}}{5}{subfigure.2.3}%
-\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {$\Delta M_3$}}}{5}{subfigure.2.4}%
-\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {$\Delta M_4$}}}{5}{subfigure.2.5}%
-\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {$\Delta M_5$}}}{5}{subfigure.2.6}%
-\contentsline {figure}{\numberline {3}{\ignorespaces Workflow of GCSM.\relax }}{10}{figure.caption.5}%
-\contentsline {figure}{\numberline {4}{\ignorespaces Sampling multiple paths from an execution tree. \relax }}{11}{figure.caption.6}%
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {An example execution tree}}}{11}{subfigure.4.1}%
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Two sampled paths}}}{11}{subfigure.4.2}%
-\contentsline {figure}{\numberline {5}{\ignorespaces Maintenance of graph data structure on the CPU for the graph update in Fig.\nobreakspace {}\ref {fig:csm}. New edges (colored in green) are appended to the end of corresponding neighbor lists; Deleted edges (colored in orange) are marked as negative values.\relax }}{15}{figure.caption.7}%
-\contentsline {figure}{\numberline {6}{\ignorespaces Graph data sent to GPU in DCSR format.\relax }}{17}{figure.caption.8}%
-\contentsline {figure}{\numberline {7}{\ignorespaces Query graphs.\relax }}{20}{figure.caption.10}%
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Q1}}}{20}{subfigure.7.1}%
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Q2}}}{20}{subfigure.7.2}%
-\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Q3}}}{20}{subfigure.7.3}%
-\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {Q4}}}{20}{subfigure.7.4}%
-\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {Q5}}}{20}{subfigure.7.5}%
-\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {Q6}}}{20}{subfigure.7.6}%
-\contentsline {figure}{\numberline {8}{\ignorespaces Execution time for matching different query patterns from a batch of 4096 edges on FR graph. Data access sizes from CPU are labeled on each bar.\relax }}{22}{figure.caption.11}%
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Q1}}}{22}{subfigure.8.1}%
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Q2}}}{22}{subfigure.8.2}%
-\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Q3}}}{22}{subfigure.8.3}%
-\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {Q4}}}{22}{subfigure.8.4}%
-\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {Q5}}}{22}{subfigure.8.5}%
-\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {Q6}}}{22}{subfigure.8.6}%
-\contentsline {figure}{\numberline {9}{\ignorespaces Execution time for matching different query patterns from a batch of 4096 edges on SF3K graph.\relax }}{23}{figure.caption.12}%
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Q1}}}{23}{subfigure.9.1}%
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Q2}}}{23}{subfigure.9.2}%
-\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Q3}}}{23}{subfigure.9.3}%
-\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {Q4}}}{23}{subfigure.9.4}%
-\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {Q5}}}{23}{subfigure.9.5}%
-\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {Q6}}}{23}{subfigure.9.6}%
-\contentsline {figure}{\numberline {10}{\ignorespaces Execution time for matching different query patterns from a batch of 8192 edges on SF10K graph.\relax }}{24}{figure.caption.13}%
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Q1}}}{24}{subfigure.10.1}%
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Q2}}}{24}{subfigure.10.2}%
-\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Q3}}}{24}{subfigure.10.3}%
-\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {Q4}}}{24}{subfigure.10.4}%
-\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {Q5}}}{24}{subfigure.10.5}%
-\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {Q6}}}{24}{subfigure.10.6}%
-\contentsline {figure}{\numberline {11}{\ignorespaces Execution time for counting size-3, 4, and 5 motifs on RoadNetPA and RoadNetCA. The batch size is set to 4096.\relax }}{25}{figure.caption.14}%
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {PA-MC3}}}{25}{subfigure.11.1}%
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {PA-MC4}}}{25}{subfigure.11.2}%
-\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {PA-MC5}}}{25}{subfigure.11.3}%
-\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {CA-MC3}}}{25}{subfigure.11.4}%
-\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {CA-MC4}}}{25}{subfigure.11.5}%
-\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {CA-MC5}}}{25}{subfigure.11.6}%
-\contentsline {figure}{\numberline {12}{\ignorespaces Execution time of different batch size for matching Q6 on SF3K graph and Q5 on SF10K graph. The speedups of GCSM against zero-copy are marked above the line.\relax }}{25}{figure.caption.15}%
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {SF3K-Q6}}}{25}{subfigure.12.1}%
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {SF10K-Q5}}}{25}{subfigure.12.2}%
-\contentsline {figure}{\numberline {13}{\ignorespaces Breakdown execution time of VSGM and GCSM. `DC' includes the time for identifying the caching vertices and copying their neighbor lists to GPU. `Match' is the matching kernel execution time on GPU. \relax }}{26}{figure.caption.17}%
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {SF3K-Q1}}}{26}{subfigure.13.1}%
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {SF3K-Q2}}}{26}{subfigure.13.2}%
-\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {SF3K-Q3}}}{26}{subfigure.13.3}%
-\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {SF10K-Q1}}}{26}{subfigure.13.4}%
-\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {SF10K-Q2}}}{26}{subfigure.13.5}%
-\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {SF10K-Q3}}}{26}{subfigure.13.6}%
-\contentsline {figure}{\numberline {14}{\ignorespaces Performance comparison with RapidFlow. \relax }}{26}{figure.caption.18}%
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {LJ-Q1}}}{26}{subfigure.14.1}%
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {LJ-Q2}}}{26}{subfigure.14.2}%
-\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {LJ-Q3}}}{26}{subfigure.14.3}%
-\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {AZ-Q4}}}{26}{subfigure.14.4}%
-\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {AZ-Q5}}}{26}{subfigure.14.5}%
-\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {AZ-Q6}}}{26}{subfigure.14.6}%
-\contentsline {figure}{\numberline {15}{\ignorespaces Memory access distribution and cache coverage of incremental matching.\relax }}{27}{figure.caption.19}%
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Memory Access Distribution}}}{27}{subfigure.15.1}%
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Cache Coverage}}}{27}{subfigure.15.2}%
+\contentsline {figure}{\numberline {1}{\ignorespaces Example data graph and query pattern. \relax }}{2}{figure.caption.3}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Data Graph $G$}}}{2}{subfigure.1.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Query $Q$}}}{2}{subfigure.1.2}%
+\contentsline {figure}{\numberline {2}{\ignorespaces Compiling a Matcha program to C++ code. The IR of each ASG node contains an output (out), some auxiliary data (aux), and instructions (inst) for computing the output.\relax }}{11}{figure.caption.7}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {ASG to IR}}}{11}{subfigure.2.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Generated C++ code}}}{11}{subfigure.2.2}%
+\contentsline {figure}{\numberline {3}{\ignorespaces Graph $G$ from Fig.\nobreakspace {}\ref {fig:graph}(a) stored in four \texttt {Arrays}.\relax }}{12}{figure.caption.8}%
+\contentsline {figure}{\numberline {4}{\ignorespaces Effect of thread-grouping (TG) and work-stealing (WS) on mGM for 3-MC. `ocp', `ut' stand for SM occupancy and thread utilization.\relax }}{19}{figure.caption.13}%
+\contentsline {figure}{\numberline {5}{\ignorespaces Scalability of multi-threaded mDM on CPU. \relax }}{19}{figure.caption.14}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {4-MC}}}{19}{subfigure.5.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {5-MC}}}{19}{subfigure.5.2}%
+\contentsline {figure}{\numberline {6}{\ignorespaces Query patterns for subgraph listing.\relax }}{20}{figure.caption.15}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Q1}}}{20}{subfigure.6.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Q2}}}{20}{subfigure.6.2}%
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Q3}}}{20}{subfigure.6.3}%
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {Q4}}}{20}{subfigure.6.4}%
+\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {Q5}}}{20}{subfigure.6.5}%
+\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {Q6}}}{20}{subfigure.6.6}%
+\contentsline {figure}{\numberline {7}{\ignorespaces Effect of thread-grouping (TG) and work-stealing (WS) on mGM for subgraph listing on DBLP graph.\relax }}{21}{figure.caption.17}%
+\contentsline {figure}{\numberline {8}{\ignorespaces Effect of code motion and multi-threading on RM for labeled subgraph listing. \relax }}{23}{figure.caption.20}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Multi-threading}}}{23}{subfigure.8.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Code motion on DBLP graph}}}{23}{subfigure.8.2}%
+\contentsline {figure}{\numberline {9}{\ignorespaces Temporal Queries.\relax }}{25}{figure.caption.23}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Q7}}}{25}{subfigure.9.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Q8}}}{25}{subfigure.9.2}%
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Q9}}}{25}{subfigure.9.3}%
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {Q10}}}{25}{subfigure.9.4}%

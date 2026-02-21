@@ -8,6 +8,10 @@ Repeated entry---line 1579 of file ref.bib
  : @article{Milo824
  :                 ,
 I'm skipping whatever remains of this entry
+Repeated entry---line 1590 of file ref.bib
+ : @inproceedings{10.1145/2488388.2488502
+ :                                       ,
+I'm skipping whatever remains of this entry
 Repeated entry---line 1607 of file ref.bib
  : @article{noel2018review
  :                        ,
@@ -24,9 +28,9 @@ Repeated entry---line 1686 of file ref.bib
  : @inproceedings{10.1145/3299869.3319880
  :                                       ,
 I'm skipping whatever remains of this entry
-Repeated entry---line 1748 of file ref.bib
- : @inproceedings{tran2015fast
- :                            ,
+Repeated entry---line 1731 of file ref.bib
+ : @inproceedings{mawhirter2021dryadic
+ :                                    ,
 I'm skipping whatever remains of this entry
 Repeated entry---line 1765 of file ref.bib
  : @inproceedings{zeng2020gsi
@@ -36,45 +40,129 @@ Repeated entry---line 1775 of file ref.bib
  : @inproceedings{xiang2021cuts
  :                             ,
 I'm skipping whatever remains of this entry
-You've used 28 entries,
+Repeated entry---line 2147 of file ref.bib
+ : @article{ullmann1976algorithm
+ :                              ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2161 of file ref.bib
+ : @inproceedings{cordella2001improved
+ :                                    ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2236 of file ref.bib
+ : @article{10.14778/1453856.1453899
+ :                                  ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2285 of file ref.bib
+ : @inproceedings{10.1145/3299869.3319880
+ :                                       ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2344 of file ref.bib
+ : @inproceedings{bi2016efficient
+ :                               ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2380 of file ref.bib
+ : @inproceedings{mawhirter2019automine
+ :                                     ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2388 of file ref.bib
+ : @inproceedings{mawhirter2021dryadic
+ :                                    ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2422 of file ref.bib
+ : @inproceedings{zeng2020gsi
+ :                           ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2432 of file ref.bib
+ : @inproceedings{xiang2021cuts
+ :                             ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2451 of file ref.bib
+ : @inproceedings{wei2022stmatch
+ :                              ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2531 of file ref.bib
+ : @article{10.14778/3389133.3389137
+ :                                  ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2626 of file ref.bib
+ : @inproceedings{chen2018g
+ :                         ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2671 of file ref.bib
+ : @inproceedings{kankanamge2017graphflow
+ :                                       ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2822 of file ref.bib
+ : @inproceedings{atserias2008size
+ :                                ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2831 of file ref.bib
+ : @article{mhedhbi2019optimizing
+ :                               ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2849 of file ref.bib
+ : @article{sun2020rapidmatch
+ :                           ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2860 of file ref.bib
+ : @article{aberger2017emptyheaded
+ :                                ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2987 of file ref.bib
+ : @article{Milo824
+ :                 ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2999 of file ref.bib
+ : @inproceedings{10.1145/2488388.2488502
+ :                                       ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 3007 of file ref.bib
+ : @article{noel2018review
+ :                        ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 3215 of file ref.bib
+ : @inproceedings{pinar2017escape
+ :                               ,
+I'm skipping whatever remains of this entry
+You've used 33 entries,
             2118 wiz_defined-function locations,
-            664 strings with 9718 characters,
-and the built_in function-call counts, 12246 in all, are:
-= -- 1214
-> -- 626
-< -- 15
-+ -- 250
-- -- 218
-* -- 852
-:= -- 1903
-add.period$ -- 90
-call.type$ -- 28
-change.case$ -- 192
+            696 strings with 11023 characters,
+and the built_in function-call counts, 14770 in all, are:
+= -- 1488
+> -- 731
+< -- 19
++ -- 291
+- -- 254
+* -- 1002
+:= -- 2268
+add.period$ -- 107
+call.type$ -- 33
+change.case$ -- 224
 chr.to.int$ -- 0
-cite$ -- 28
-duplicate$ -- 488
-empty$ -- 910
-format.name$ -- 218
-if$ -- 2651
+cite$ -- 33
+duplicate$ -- 604
+empty$ -- 1089
+format.name$ -- 254
+if$ -- 3225
 int.to.chr$ -- 0
-int.to.str$ -- 28
-missing$ -- 28
-newline$ -- 142
-num.names$ -- 56
-pop$ -- 227
+int.to.str$ -- 33
+missing$ -- 32
+newline$ -- 168
+num.names$ -- 66
+pop$ -- 258
 preamble$ -- 1
-purify$ -- 165
+purify$ -- 191
 quote$ -- 0
-skip$ -- 390
+skip$ -- 506
 stack$ -- 0
-substring$ -- 765
-swap$ -- 183
-text.length$ -- 15
+substring$ -- 955
+swap$ -- 244
+text.length$ -- 19
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 110
+type$ -- 132
 warning$ -- 0
-while$ -- 110
-width$ -- 30
-write$ -- 313
-(There were 8 error messages)
+while$ -- 135
+width$ -- 35
+write$ -- 373
+(There were 30 error messages)

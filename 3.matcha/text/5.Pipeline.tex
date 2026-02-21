@@ -1,0 +1,104 @@
+\section{Matcha Compilation Pipeline}
+\label{sec:pipeline}
+
+
+
+
+A Matcha program can be depicted as an Abstract Syntax Graph (ASG). In this graph, nodes represent data objects and operators, while edges connect each operator to its inputs. The Matcha compiler generates an intermediate representation (IR) from the ASG. The IR may go through several optimization stages before converting into C++/CUDA code. 
+
+
+\begin{figure*}[t]
+    \centering
+\subfloat[ASG to IR]{
+\includegraphics[scale=.43]{fig/asg.pdf}\vspace{2em}
+}\hfil
+ \subfloat[Generated C++ code]{
+    \begin{minipage}{8.2cm}
+\lstinputlisting[language=C++, keywordstyle=\color{blue}, stringstyle=\color{red},  breaklines=true, showspaces=false, showstringspaces=false, tabsize=4]{codelistings/cpu3.cpp}
+\label{fig:ccode}
+    \end{minipage}}
+        %\vspace{-.5em}
+    \caption{Compiling a Matcha program to C++ code. The IR of each ASG node contains an output (out), some auxiliary data (aux), and instructions (inst) for computing the output.}
+      %  \vspace{-.5em}
+    \label{fig:pipeline}
+\end{figure*}
+
+Fig.~\ref{fig:pipeline} shows an example of the compilation pipeline. The program in Listing~\ref{fig:rapidmatch} is depicted as an ASG in Fig.~\ref{fig:pipeline}(a). The \texttt{apply} operator on the top (\texttt{apply0}) has $f1$ as the computation function and $L01$ as the input \texttt{List}. The items in $L01$ are referenced by $f1$ through an operand $e$ attached to the \texttt{apply} operator. 
+Within the subtree of the function $f1$, the inner apply operator (\texttt{apply1}) has $f2$ as the computation function and $C2$ as the input \texttt{List}. 
+The function $f2$ accesses items in $C2$ through an operand $v2$ attached to \texttt{apply1}. For a simple illustration, we omit the subtree for computing $C2$ in the figure. 
+
+\subsection{Generating IR on ASG}
+\label{sec:gen_ir}
+
+The compiler traverses the ASG in a depth-first order to generate the IR on each node. This ensures that the IR on any node is generated after the IR on all its input nodes has been generated. Upon visiting a node, the compiler determines the output of the operator as well as instructions for computing the output. 
+
+The IR has two data types: \texttt{Scalar} and \texttt{Array}. A \texttt{Scalar} can be integer, floating-point, or boolean. An \texttt{Array} can be one-dimensional or multi-dimensional and is defined by its data type and the size of each dimension. 
+Each element in an \texttt{Array} is a \texttt{Scalar} and can be accessed through array \texttt{Index}ing. To represent arithmetic, comparison, and logical expressions, the IR has an \texttt{Expr(op, lhs, rhs)} construct where the $op$ is the operation type, and the $lhs/rhs$ can be a \texttt{Scalar}, an \texttt{Expr}, or a constant literal. The IR also has an \texttt{Assign(dest, src)} construct for representing assignments. 
+%The dest of an assignment must be a Scalar or an \texttt{Array} indexing, and the src must be a \texttt{Scalar}, an \texttt{Array} indexing, or an \texttt{Expr}. 
+Due to space limit, we only describe the generation rules for the \texttt{Graph} operators in this section. 
+The rules for other operators are straightforward as illustrated in Fig.~\ref{fig:pipeline}.
+%, and we leave a more comprehensive description in the Appendix 10.2%~\ref{apx:irrule}. 
+
+% \noindent
+% \textbf{\textit{A General Representation of Graphs.}}
+ When creating a \texttt{Graph} object, we construct an auxiliary data structure based on the input $edges$, $vlabel$, and $einfo$. The data structure helps achieve efficient access to neighboring information in the graph. 
+Specifically, upon visiting a \texttt{mk\_graph} node on the ASG, the compiler generates four auxiliary \texttt{Array}s ($vLabel$, $nbr$, $eInfo$, $indPtr$). The $vLabel$ is a copy of the input $vlabel$ (if the information is provided); it is a 2-D array that pairs unique vertex IDs with their labels. 
+The $nbr$ is a 1-D array that holds the neighbors of vertices corresponding to the vertex IDs in $vLabel$. The neighbors of each vertex are stored contiguously in $nbr$. The $eInfo$ Array has the same size as $nbr$, and it contains information on the neighboring edges corresponding to vertices in $nbr$. 
+{Fig.~\ref{fig:gaux_eg} shows an example of the data structure for the graph $G$ in Fig.~\ref{fig:graph}(a). }
+
+
+%First, obtain the entry of vertex 0 in indPtr using a hashing function. Then, retrieve the neighbor region of vertex 0 in nbr from the start and end positions recorded in the entry. Finally, get the label of vertex 0 by indexing the vlabel array using the vlabel index in the entry.%
+
+Depending on whether the vertex IDs are dense, we build different indirection arrays to achieve an efficient lookup of vertices' neighbors. If the vertex IDs are contiguous natural numbers, we use a 1-D Array ($indPtr$) to store the boundaries of their neighbors in $nbr$. The starting position of $v$’s neighbors in $nbr$ is $indPtr[v]$. 
+This data structure is exactly the Compressed Sparse Row (CSR) format commonly used for storing graph data. 
+
+
+However, for edges stored as relational tables, which are commonly used in join-based algorithms~\cite{sun2020rapidmatch}, the vertex IDs are non-contiguous and sparse. 
+To efficiently locate neighbors for the vertices, we store the neighbor boundaries in a hash table. 
+Specifically, the $indPtr$ is a 2-D Array of size ($H\times 4$) where $H$ is the number of slots in the hash table. 
+For a vertex $v$, its neighbor boundaries are stored in $indPtr[\_hash[v]][1]$ and $indPtr[\_hash[v]][2]$, and its position in $vLabel$ is stored in $indPtr[\_hash[v]][3]$. 
+In Fig.~\ref{fig:gaux_eg}, the neighbors of vertex-0 are stored from position-0 ($indPtr[\_hash(0)][1]$) to position-3 ($indPtr[\_hash(0)][2]$) in $nbr$. 
+The initialization of the data structure is performed by a built-in function ($\_init\_graph$), which is invoked on the \texttt{mk\_graph} node. 
+
+
+\begin{figure}[t]
+   \centering
+    \includegraphics[scale=0.33, page=1]{fig/example1-crop.pdf}
+    \caption{Graph $G$ from Fig.~\ref{fig:graph}(a) stored in four \texttt{Arrays}.}
+        \vspace{-.5em}
+    %The vertices, such as $v_{0}$ and $v_{6}$, and the timestamps, such as $t_{5}$ and $t_{10}$, are represented by numbers. The neighbors of vertex 0 are from the position $indPtr[\_hash(0)][1]$ to $indPtr[\_hash(0)][2]-1$ in $nbr$. The label of vertex 0 is $vlabel[indPtr[\_hash(0)][3]][1]$.} \textcolor{green}{add arrow to vLabel..}}
+    \label{fig:gaux_eg}
+\end{figure}
+
+
+The \texttt{neighbor}, \texttt{edge\_info}, and \texttt{vertex\_label} operators can be implemented efficiently with $indPtr$. The output of \texttt{neighbor/edge\_info} is a slice of the graph’s $nbr$/$eInfo$ Array. The output of \texttt{vertex\_label} operator is a \texttt{Scalar} read from $vLabel$. If the graph is stored in CSR format, the slicing boundaries for vertex $v$ are $indPtr[v]$ and $indPtr[v+1]$; otherwise, the slicing boundaries are obtained from the hash table. 
+
+
+
+
+% \noindent
+% \textbf{\textit{Example.}} \textcolor{blue}{In Figure~\ref{fig:pipeline}(a), the bounds of the Loop IR in apply1 are 0 and the size of C2's output, and the Loop's body is a list of all the IRs generated on the right subtree. The output IR of diff node in ASG is a slice of the output Array from 0 to pos, where pos is declared as an auxiliary Scalar. }
+
+\subsection{Translating IR to C++ Code}
+
+The IR needs to undergo several optimization passes before being translated to the target code. We leave the details of code optimizations/parallelization in the next section and focus on generating sequential CPU code in this section. 
+
+After the IR is generated, the compiler takes another depth-first traversal on the ASG and generates a C++ function based on the IR. The leaf nodes (i.e., nodes without any input) are input data (e.g., $L01$, $L03$ in Fig.~\ref{fig:pipeline}(a)). 
+These data are initialized by the host code and are passed as arguments to the C++ function. 
+In our implementation, the input data are initialized in Python, and the generated C++ code is compiled just-in-time into a pybind11~\cite{pybind11} module, which is invoked by the Python program. 
+
+\noindent
+\textbf{\textit{Memory Pre-allocation.}} If an internal node on the ASG contains an \texttt{Array}, we need to allocate memory for the data. A straightforward approach is to allocate memory on the node. However, this involves dynamic memory allocation and may incur a large overhead, especially when it is in a loop. For example, the \texttt{intersect} operator in Listing~\ref{fig:rapidmatch} needs to allocate memory for the intersection results every time $f1$ is executed (i.e., for every item in $L01$). 
+To avoid repeated memory allocation, we pre-allocate memory for \texttt{Array}s on all ASG nodes at the beginning of the generated code. Specifically, the compiler checks the size of every \texttt{Array} in the internal nodes. If the size is constant or can be determined based on the data in the leaf nodes, we can pre-allocate the memory before execution of the internal nodes. If the size is unknown, the compiler reports an error and asks the user to provide a size. 
+
+% For the \texttt{intersect} operator in Figure~\ref{fig:rapidmatch}, the size of $C2$ is determined by the size of $S0$, according to the generation rule in Table~\ref{tab:irrule}. 
+% The size of $S0$ however is unknown as it depends on the number of neighbors a vertex has. 
+% Therefore, the compiler asks the user to specify the size of $C2$. A reasonable configuration is the maximum degree of vertices in $L02$. 
+% Simiarly, the size of $C3$ is unknown and should be set to the maximum degree of vertices in $L03$. 
+% We also move all the declaration of scalars to the top of the generated C++ function. 
+
+Once memory is allocated, generating computing instructions is straightforward.  The \texttt{Expr}, \texttt{Loop}, and \texttt{Assign} constructs in the IR can be directly translated to expressions, for-loops, and assignments in C++. If a node is not a descendant of an \texttt{apply} operator, its $inst$  is immediately translated when the node is visited. However, if it is a descendant of an \texttt{apply} operator, the node is skipped since its instructions should be included in the loop body of the \texttt{apply} operator. 
+Fig.~\ref{fig:pipeline}(b) shows the generated C++ code corresponding to the IR in Fig.~\ref{fig:pipeline}(a). 
+
+% \noindent
+% \textbf{\textit{Example.}} \textcolor{blue}{In Figure~\ref{fig:pipeline}(a), sum0 is not a descendant of any apply node, so its IRs will be translated immediately. All the nodes in the right subtree of apply0 are the descendants of apply0, so they will be skipped, and their IR will be translated when traversal reaches apply0.}

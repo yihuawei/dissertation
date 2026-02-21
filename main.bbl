@@ -6,11 +6,21 @@ Christopher~R Aberger, Andrew Lamb, Susan Tu, Andres N{\"o}tzli, Kunle
 \newblock Emptyheaded: A relational engine for graph processing.
 \newblock {\em ACM Transactions on Database Systems (TODS)}, 42(4):1--44, 2017.
 
+\bibitem{akoglu2015graph}
+Leman Akoglu, Hanghang Tong, and Danai Koutra.
+\newblock Graph based anomaly detection and description: a survey.
+\newblock {\em Data mining and knowledge discovery}, 29:626--688, 2015.
+
 \bibitem{atserias2008size}
 Albert Atserias, Martin Grohe, and D{\'a}niel Marx.
 \newblock Size bounds and query plans for relational joins.
 \newblock In {\em 2008 49th Annual IEEE Symposium on Foundations of Computer
   Science}, pages 739--748. IEEE, 2008.
+
+\bibitem{bhattacharya2006entity}
+Indrajit Bhattacharya and Lise Getoor.
+\newblock Entity resolution in graphs.
+\newblock {\em Mining graph data}, 311, 2006.
 
 \bibitem{bi2016efficient}
 Fei Bi, Lijun Chang, Xuemin Lin, Lu~Qin, and Wenjie Zhang.
@@ -18,28 +28,44 @@ Fei Bi, Lijun Chang, Xuemin Lin, Lu~Qin, and Wenjie Zhang.
 \newblock In {\em Proceedings of the 2016 International Conference on
   Management of Data}, pages 1199--1214, 2016.
 
-\bibitem{choudhury2015selectivity}
-Sutanay Choudhury, Lawrence Holder, George Chin, Khushbu Agarwal, and John Feo.
-\newblock A selectivity based approach to continuous pattern detection in
-  streaming graphs.
-\newblock {\em arXiv preprint arXiv:1503.00849}, 2015.
+\bibitem{bonnici2013subgraph}
+Vincenzo Bonnici, Rosalba Giugno, Alfredo Pulvirenti, Dennis Shasha, and
+  Alfredo Ferro.
+\newblock A subgraph isomorphism algorithm and its application to biochemical
+  data.
+\newblock {\em BMC bioinformatics}, 14:1--13, 2013.
+
+\bibitem{chen2018g}
+Hongzhi Chen, Miao Liu, Yunjian Zhao, Xiao Yan, Da~Yan, and James Cheng.
+\newblock G-miner: an efficient task-oriented graph mining system.
+\newblock In {\em Proceedings of the Thirteenth EuroSys Conference}, pages
+  1--12, 2018.
+
+\bibitem{chen2022decomine}
+Jingji Chen and Xuehai Qian.
+\newblock Decomine: A compilation-based graph pattern mining system with
+  pattern decomposition.
+\newblock In {\em Proceedings of the 28th ACM International Conference on
+  Architectural Support for Programming Languages and Operating Systems, Volume
+  1}, pages 47--61, 2022.
+
+\bibitem{10.14778/3389133.3389137}
+Xuhao Chen, Roshan Dathathri, Gurbinder Gill, and Keshav Pingali.
+\newblock Pangolin: An efficient and flexible graph mining system on cpu and
+  gpu.
+\newblock {\em Proc. VLDB Endow.}, 13(8):1190–1205, April 2020.
+
+\bibitem{chen2022efficient}
+Xuhao Chen et~al.
+\newblock Efficient and scalable graph pattern mining on $\{$GPUs$\}$.
+\newblock In {\em 16th USENIX Symposium on Operating Systems Design and
+  Implementation (OSDI 22)}, pages 857--877, 2022.
 
 \bibitem{cordella2001improved}
 Luigi~Pietro Cordella, Pasquale Foggia, Carlo Sansone, and Mario Vento.
 \newblock An improved algorithm for matching large graphs.
 \newblock In {\em 3rd IAPR-TC15 workshop on graph-based representations in
   pattern recognition}, pages 149--159. Citeseer, 2001.
-
-\bibitem{fan2013incremental}
-Wenfei Fan, Xin Wang, and Yinghui Wu.
-\newblock Incremental graph pattern matching.
-\newblock {\em ACM Transactions on Database Systems (TODS)}, 38(3):1--47, 2013.
-
-\bibitem{griffin1995incremental}
-Timothy Griffin and Leonid Libkin.
-\newblock Incremental maintenance of views with duplicates.
-\newblock In {\em Proceedings of the 1995 ACM SIGMOD international conference
-  on Management of data}, pages 328--339, 1995.
 
 \bibitem{10.1145/3299869.3319880}
 Myoungji Han, Hyunjoon Kim, Geonmo Gu, Kunsoo Park, and Wook-Shin Han.
@@ -49,13 +75,10 @@ Myoungji Han, Hyunjoon Kim, Geonmo Gu, Kunsoo Park, and Wook-Shin Han.
   Management of Data}, SIGMOD ’19, page 1429–1446, New York, NY, USA, 2019.
   Association for Computing Machinery.
 
-\bibitem{10.5555/3571885.3571954}
-Guanxian Jiang, Qihui Zhou, Tatiana Jin, Boyang Li, Yunjian Zhao, Yichao Li,
-  and James Cheng.
-\newblock Vsgm: View-based gpu-accelerated subgraph matching on large graphs.
-\newblock In {\em Proceedings of the International Conference on High
-  Performance Computing, Networking, Storage and Analysis}, SC '22. IEEE Press,
-  2022.
+\bibitem{pybind11}
+Wenzel Jakob, Jason Rhinelander, and Dean Moldovan.
+\newblock pybind11 — seamless operability between c++11 and python.
+\newblock \url{https://github.com/pybind/pybind11}, 2016.
 
 \bibitem{kankanamge2017graphflow}
 Chathura Kankanamge, Siddhartha Sahu, Amine Mhedbhi, Jeremy Chen, and Semih
@@ -64,13 +87,31 @@ Chathura Kankanamge, Siddhartha Sahu, Amine Mhedbhi, Jeremy Chen, and Semih
 \newblock In {\em Proceedings of the 2017 ACM International Conference on
   Management of Data}, pages 1695--1698, 2017.
 
-\bibitem{kim2018turboflux}
-Kyoungmin Kim, In~Seo, Wook-Shin Han, Jeong-Hoon Lee, Sungpack Hong, Hassan
-  Chafi, Hyungyu Shin, and Geonhwa Jeong.
-\newblock Turboflux: A fast continuous subgraph matching system for streaming
-  graph data.
-\newblock In {\em Proceedings of the 2018 international conference on
-  management of data}, pages 411--426, 2018.
+\bibitem{li2019graph}
+Yujia Li, Chenjie Gu, Thomas Dullien, Oriol Vinyals, and Pushmeet Kohli.
+\newblock Graph matching networks for learning the similarity of graph
+  structured objects.
+\newblock In {\em International conference on machine learning}, pages
+  3835--3845. PMLR, 2019.
+
+\bibitem{lou2020neural}
+Zhaoyu Lou, Jiaxuan You, Chengtao Wen, Arquimedes Canedo, Jure Leskovec, et~al.
+\newblock Neural subgraph matching.
+\newblock {\em arXiv preprint arXiv:2007.03092}, 2020.
+
+\bibitem{mawhirter2021dryadic}
+Daniel Mawhirter, Samuel Reinehr, Wei Han, Noah Fields, Miles Claver, Connor
+  Holmes, Jedidiah McClurg, Tongping Liu, and Bo~Wu.
+\newblock Dryadic: Flexible and fast graph pattern matching at scale.
+\newblock In {\em 2021 30th International Conference on Parallel Architectures
+  and Compilation Techniques (PACT)}, pages 289--303. IEEE, 2021.
+
+\bibitem{mawhirter2019automine}
+Daniel Mawhirter and Bo~Wu.
+\newblock Automine: harmonizing high-level abstraction and high performance for
+  graph mining.
+\newblock In {\em Proceedings of the 27th ACM Symposium on Operating Systems
+  Principles}, pages 509--523, 2019.
 
 \bibitem{mhedhbi2019optimizing}
 Amine Mhedhbi and Semih Salihoglu.
@@ -84,30 +125,27 @@ Ron Milo, Shai Shen-Orr, Shalev Itzkovitz, Nadav Kashtan, Dmitri Chklovskii,
 \newblock Network motifs: simple building blocks of complex networks.
 \newblock {\em Science}, 298(5594):824--827, 2002.
 
-\bibitem{ngo2018worst}
-Hung~Q Ngo, Ely Porat, Christopher R{\'e}, and Atri Rudra.
-\newblock Worst-case optimal join algorithms.
-\newblock {\em Journal of the ACM (JACM)}, 65(3):1--40, 2018.
+\bibitem{noble2003graph}
+Caleb~C Noble and Diane~J Cook.
+\newblock Graph-based anomaly detection.
+\newblock In {\em Proceedings of the ninth ACM SIGKDD international conference
+  on Knowledge discovery and data mining}, pages 631--636, 2003.
 
 \bibitem{noel2018review}
 Steven Noel.
 \newblock A review of graph approaches to network security analytics.
 \newblock {\em From Database to Cyber Security}, pages 300--323, 2018.
 
-\bibitem{cuda}
-NVIDIA, Péter Vingelmann, and Frank~H.P. Fitzek.
-\newblock Cuda, release: 10.2.89, 2020.
+\bibitem{pinar2017escape}
+Ali Pinar, C~Seshadhri, and Vaidyanathan Vishal.
+\newblock Escape: Efficiently counting all 5-vertex subgraphs.
+\newblock In {\em Proceedings of the 26th international conference on world
+  wide web}, pages 1431--1440, 2017.
 
-\bibitem{qiu2018real}
-Xiafei Qiu, Wubin Cen, Zhengping Qian, You Peng, Ying Zhang, Xuemin Lin, and
-  Jingren Zhou.
-\newblock Real-time constrained cycle detection in large dynamic graphs.
-\newblock {\em Proceedings of the VLDB Endowment}, 11(12):1876--1888, 2018.
-
-\bibitem{ramakrishnan2003database}
-Raghu Ramakrishnan, Johannes Gehrke, and Johannes Gehrke.
-\newblock {\em Database management systems}, volume~3.
-\newblock McGraw-Hill New York, 2003.
+\bibitem{schaeffer2007graph}
+Satu~Elisa Schaeffer.
+\newblock Graph clustering.
+\newblock {\em Computer science review}, 1(1):27--64, 2007.
 
 \bibitem{10.14778/1453856.1453899}
 Haichuan Shang, Ying Zhang, Xuemin Lin, and Jeffrey~Xu Yu.
@@ -115,39 +153,30 @@ Haichuan Shang, Ying Zhang, Xuemin Lin, and Jeffrey~Xu Yu.
   subgraph isomorphism.
 \newblock {\em Proc. VLDB Endow.}, 1(1):364–375, August 2008.
 
-\bibitem{6968748}
-Koichi Shirahata, Hitoshi Sato, and Satoshi Matsuoka.
-\newblock Out-of-core gpu memory management for mapreduce-based large-scale
-  graph processing.
-\newblock In {\em 2014 IEEE International Conference on Cluster Computing
-  (CLUSTER)}, pages 221--229, 2014.
+\bibitem{sun2020rapidmatch}
+Shixuan Sun, Xibo Sun, Yulin Che, Qiong Luo, and Bingsheng He.
+\newblock Rapidmatch: A holistic approach to subgraph query processing.
+\newblock {\em Proceedings of the VLDB Endowment}, 14(2):176--188, 2020.
 
-\bibitem{sun2022rapidflow}
-Shixuan Sun, Xibo Sun, Bingsheng He, and Qiong Luo.
-\newblock Rapidflow: an efficient approach to continuous subgraph matching.
-\newblock {\em Proceedings of the VLDB Endowment}, 15(11):2415--2427, 2022.
-
-\bibitem{tran2015fast}
-Ha-Nguyen Tran, Jung-jae Kim, and Bingsheng He.
-\newblock Fast subgraph matching on large graphs using graphics processors.
-\newblock In {\em International Conference on Database Systems for Advanced
-  Applications}, pages 299--315. Springer, 2015.
+\bibitem{10.1145/2488388.2488502}
+Johan Ugander, Lars Backstrom, and Jon Kleinberg.
+\newblock Subgraph frequencies: Mapping the empirical and extremal geography of
+  large graph collections.
+\newblock In {\em Proceedings of the 22nd International Conference on World
+  Wide Web}, WWW ’13, page 1307–1318, New York, NY, USA, 2013. Association
+  for Computing Machinery.
 
 \bibitem{ullmann1976algorithm}
 Julian~R Ullmann.
 \newblock An algorithm for subgraph isomorphism.
 \newblock {\em Journal of the ACM (JACM)}, 23(1):31--42, 1976.
 
-\bibitem{veldhuizen2014leapfrog}
-Todd~L Veldhuizen.
-\newblock Leapfrog triejoin: A simple, worst-case optimal join algorithm.
-\newblock In {\em Proc. International Conference on Database Theory}, 2014.
-
-\bibitem{wang2015detecting}
-Shihan Wang and Takao Terano.
-\newblock Detecting rumor patterns in streaming social media.
-\newblock In {\em 2015 IEEE international conference on big data (big data)},
-  pages 2709--2715. IEEE, 2015.
+\bibitem{wang2022reinforcement}
+Hanchen Wang, Ying Zhang, Lu~Qin, Wei Wang, Wenjie Zhang, and Xuemin Lin.
+\newblock Reinforcement learning based query vertex ordering model for subgraph
+  matching.
+\newblock In {\em 2022 IEEE 38th International Conference on Data Engineering
+  (ICDE)}, pages 245--258. IEEE, 2022.
 
 \bibitem{wei2022stmatch}
 Yihua Wei and Peng Jiang.
@@ -163,6 +192,11 @@ Lizhi Xiang, Arif Khan, Edoardo Serra, Mahantesh Halappanavar, and Aravind
   using trie based data structure.
 \newblock In {\em Proceedings of the International Conference for High
   Performance Computing, Networking, Storage and Analysis}, pages 1--14, 2021.
+
+\bibitem{yuan2023everest}
+Yichao Yuan, Haojie Ye, Sanketh Vedula~Wynn Kaza, and Nishil Talati.
+\newblock Everest: Gpu-accelerated system for mining temporal motifs.
+\newblock {\em arXiv preprint arXiv:2310.02800}, 2023.
 
 \bibitem{zeng2020gsi}
 Li~Zeng, Lei Zou, M~Tamer {\"O}zsu, Lin Hu, and Fan Zhang.

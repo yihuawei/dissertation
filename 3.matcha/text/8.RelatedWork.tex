@@ -1,0 +1,31 @@
+\section{Related Work}
+%\textcolor{red}{move some of the less important ones..}
+%Since the seminal work of Ullmann \cite{ullmann1976algorithm}, many algorithms have been proposed for subgraph matching, with a focus on techniques for pruning the search space. These include VF algorithm series~\cite{cordella2001improved, carletti2015vf2, juttner2018vf2++, carletti2017challenging}, RI \cite{bonnici2013subgraph}, LAD \cite{solnon2010alldifferent}, QuickSI \cite{10.14778/1453856.1453899}, GADDI \cite{zhang2009gaddi}, SPath \cite{zhao2010graph}, GraphQL \cite{he2010query}, Turboiso \cite{han2013turboiso}, BoostIso \cite{ren2015exploiting}, CFLMatch \cite{bi2016efficient}, SGMatch \cite{rivero2017efficient}, CECI \cite{bhattarai2019ceci}, DP-iso \cite{10.1145/3299869.3319880}, Rapidmatch \cite{sun2020rapidmatch}, LogicBlox \cite{aref2015design}, Emptyheaded \cite{aberger2017emptyheaded}, Graphflow \cite{kankanamge2017graphflow}, PGX \cite{raman2014pgx} and STwig \cite{sun2012efficient}. Most of them are only available on CPU. 
+%Besides general subgraph listing, many techniques have also been proposed for specific query patterns, such as triangle-counting \cite{green2018logarithmic, pearce2019one, wolf2017fast, shun2015multicore, hoang2019disttc, koohi2022lotus, yacsar2018fast}, $k$-clique counting \cite{almasri2022parallel, jain2017fast, tsourakakis2015k, ye2023efficient, li2020ordering, zhou2024counting}, and $k$-motif counting \cite{ma2019linc, bressan2019motivo, marschall2009efficient}. 
+
+% Subgraph counting has been studied for a long time. The algorithms designed for them can be classified into matrix-based, encapsulation, and pattern-decomposition \cite{ribeiro2021survey}. Jesse \cite{melckenbeeck2018efficiently} is the representative matrix-based algorithm, Escape \cite{pinar2017escape} and PGD \cite{ahmed2015efficient} incorporate pattern-decomposition, and Patcomp \cite{himanshu2017impact} is an encapsulation algorithm. Some other works focus on optimizing the pattern decomposition strategy \cite{ahmed2017graphlet, milo2002network}.
+% \textcolor{red}{problem is do we support these algorithms?}
+
+%There also many works focusing on subgraph listing on temporal graphs \cite{yuan2023everest, mackey2018chronological, kumar20182scent, liu2018sampling, paranjape2017motifs, pashanasangi2021faster, wang2020efficient}. These systems are hand-optimized to achieve the best efficiency for a special target tasks.
+
+There have been many efforts from the HPC community to design efficient systems for subgraph matching. 
+These include CPU systems, such as Dryadic \cite{mawhirter2021dryadic}, GraphZero \cite{mawhirter2019graphzero}, and GraphPi\cite{shi2020graphpi}, as well as GPU systems, such as GPSM \cite{tran2015fast}, Gunrock \cite{wang2020fast}, GSI \cite{zeng2020gsi}, cuTS \cite{xiang2021cuts}, and STMatch \cite{wei2022stmatch}.  These systems introduce various optimizations to improve hardware utilization and reduce redundant computation. 
+
+Subgraph matching is also implemented in many graph mining systems, such as Peregrine \cite{jamshidi2020peregrine}, Automine \cite{mawhirter2019automine}, G2Miner \cite{chen2022efficient},  Sandslash \cite{chen2021sandslash}, and DecoMine \cite{chen2022decomine}. These systems either use subgraph matching as a subroutine or have a similar computation pattern to subgraph matching. 
+
+Previous work has designed DSLs for graph processing. GraphIt \cite{zhang2018graphit} and Green-Marl \cite{hong2012green} are DSLs that support traditional graph processing algorithms such as PageRank, BFS, and SSSP.  OMRGx \cite{kaur2023omrgx} is a programmable framework for graph partitioning. To our knowledge, Matcha is the first DSL designed for subgraph matching. 
+
+% \textbf{Graph Pattern Mining Systems}:There are many graph pattern mining systems,  They are capable of doing subgraph matching by exploring a search space with BFS or DFS strategy. Some of them are patter-aware, and the others are pattern-oblivious.
+
+
+\section{Conclusion}
+This paper introduces Matcha, a domain-specific language designed for implementing subgraph matching algorithms. Matcha supports a wider variety of algorithms than previous systems, and comes with a compiler that translates Matcha programs into efficient C++/CUDA code. The compiler also includes optimization passes to improve performance. The paper demonstrates that Matcha can re-implement existing subgraph systems with comparable performance, incorporate additional optimizations, simplify algorithm comparisons, and facilitate the development of new algorithms. 
+
+
+
+ 
+
+
+
+% \noindent
+% \textbf{DSL Compiler.} There are many DSL compilers for various applications. TVM\cite{chen2018tvm}, XLA\cite{sabne2020xla}, and TorchScript are the most representative deep learning compilers. GraphIt\cite{zhang2018graphit} and Fregel\cite{iwasaki2022fregel} are DSLs designed for graph analytics problems like BFS, DFS, and PageRank. Halide\cite{ragan2013halide} is a DSL for image processing. TACO\cite{kjolstad2017taco}, TensorIR\cite{feng2023tensorir}, and SparseTIR\cite{ye2023sparsetir} are tensor algebra compilers. MLIR is a software infrastructure used for the construction of DSL compilers. Matchs is the first DSL compiler for graph mining problems.

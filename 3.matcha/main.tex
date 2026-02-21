@@ -1,0 +1,151 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+%Template version as of 6/27/2024
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+% enable page numbers
+% \settopmatter{printfolios=true
+% make references clickable 
+\usepackage[]{hyperref}
+\usepackage{amsmath, amsfonts}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{url}
+\usepackage{ragged2e}
+\usepackage{booktabs,makecell, multirow, tabularx}
+\usepackage{bigstrut}
+\usepackage{multirow}
+\usepackage{amsthm}
+\usepackage{enumitem}
+\usepackage{circledsteps}
+\usepackage{caption}
+\usepackage{tabularx}
+\usepackage{rotating}
+\usepackage[10pt]{moresize}
+\usepackage{lipsum}
+
+\usepackage{listings}
+\usepackage{color}
+\usepackage{booktabs}
+\usepackage{soul}
+\usepackage[ruled, linesnumbered]{algorithm2e} 
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\definecolor{pakistangreen}{rgb}{0.0, 0.4, 0.0}
+
+\usepackage{setspace}
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\lst@frameInit}
+  {\vrule\@width\lst@framerulewidth}
+  {\smash{\vrule\@width\lst@framerulewidth\@height1.2\ht\strutbox\@depth1.2\dp\strutbox}}
+  {}{}
+\makeatother
+
+\lstset{
+frame=single,
+  framexleftmargin=0pt,
+  xleftmargin=1em, 
+  xrightmargin=1em,
+  rulecolor=\color{black},
+  numberstyle=\scriptsize\color{black},
+  commentstyle=\color{pakistangreen},
+  basicstyle=\ttfamily\footnotesize,
+  breaklines=true,
+  showstringspaces=false,
+  escapeinside=@@,
+  morecomment=[l]{//},
+  keywordstyle=\color{blue},
+}
+
+\let\origthelstnumber\thelstnumber
+\makeatletter
+\newcommand*\Suppressnumber{%
+  \lst@AddToHook{OnNewLine}{%
+    \let\thelstnumber\relax%
+     \advance\c@lstnumber-\@ne\relax%
+    }%
+}
+
+\newcommand*\Reactivatenumber{%
+  \lst@AddToHook{OnNewLine}{%
+   \let\thelstnumber\origthelstnumber%
+   \advance\c@lstnumber\@ne\relax}%
+}
+
+\definecolor{myblue}{RGB}{166, 193, 231}
+\definecolor{myorange}{RGB}{241, 211,193}
+\definecolor{mygrey}{RGB}{203, 203, 203}
+\definecolor{mygreen}{RGB}{197, 219, 183}
+\definecolor{mypurple}{RGB}{249, 226, 165}
+\definecolor{myyellow}{RGB}{219, 190, 218}
+
+\DeclareRobustCommand{\hlmyblue}[1]{{\sethlcolor{myblue}\hl{#1}}}
+\DeclareRobustCommand{\hlmyorange}[1]{{\sethlcolor{myorange}\hl{#1}}}
+\DeclareRobustCommand{\hlmygrey}[1]{{\sethlcolor{mygrey}\hl{#1}}}
+\DeclareRobustCommand{\hlmygreen}[1]{{\sethlcolor{mygreen}\hl{#1}}}
+\DeclareRobustCommand{\hlmypurple}[1]{{\sethlcolor{mypurple}\hl{#1}}}
+\DeclareRobustCommand{\hlmyyellow}[1]{{\sethlcolor{myyellow}\hl{#1}}}
+
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+
+\begin{document}
+
+\title{Matcha: A Language and Compiler for Backtracking-based Subgraph Matching\\
+\thanks{This work was supported by NSF award CCF-2338144.}}
+
+\author{
+\IEEEauthorblockN{Yihua Wei}
+\IEEEauthorblockA{
+\textit{University of Iowa}\\
+yihua-wei@uiowa.edu}
+\and
+\IEEEauthorblockN{Lihan Hu}
+\IEEEauthorblockA{
+\textit{University of Iowa}\\
+lihan-hu@uiowa.edu}
+\and
+\IEEEauthorblockN{Peng Jiang}
+\IEEEauthorblockA{
+\textit{University of Iowa}\\
+peng-jiang@uiowa.edu}}
+
+\maketitle
+
+\thispagestyle{plain}
+\pagestyle{plain}
+
+\input{text/0.Abstract}
+\input{text/1.Introduction}
+\input{text/2.Background}
+\input{text/3.Limitations}
+\input{text/4.The Matcha DSL}
+\input{text/5.Pipeline}
+\input{text/6.Optimizations}
+\input{text/7.Evaluation}
+\input{text/8.RelatedWork}
+
+
+\bibliographystyle{plain}
+\bibliography{references}
+% \begin{IEEEkeywords}
+% component, formatting, style, styling, insert.
+% \end{IEEEkeywords}
+
+
+\end{document}

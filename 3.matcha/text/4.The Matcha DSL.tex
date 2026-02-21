@@ -1,0 +1,126 @@
+\section{The Matcha DSL}
+
+We propose a domain-specific language (DSL) called Matcha to express backtracking-based subgraph matching algorithms. The language supports four basic data types: \texttt{Var}, \texttt{Tuple}, \texttt{List}, and \texttt{Graph}. 
+A \texttt{Var} represents a scalar variable, which can be an integer, floating-point, or boolean. A \texttt{Tuple} comprises one or multiple \texttt{Var}s of the same data type. 
+A \texttt{List} is an iterable set of \texttt{Var}s or \texttt{Tuple}s. 
+A \texttt{Graph} is a list of edges with additional information associated with vertices and/or edges. 
+Matcha provides an API that allows users to perform various operations on the four data types. In this section, we describe the API using a Python-like syntax. 
+
+
+
+
+
+
+\subsection{Programming Interface}
+%To define a \texttt{Var}, the user needs to specify its data type with the operator: \texttt{\textbf{mk\_var}(dtype, val: int|float|bool|Var)}, where \texttt{dtype} can be int, float, or bool, and \texttt{val} is an optional argument for initializing the value of the \texttt{Var}. In the following text, we use \texttt{Var<int>} to represent the data type of an integer \texttt{Var} object, likewise for float and boolean \texttt{Var}s. 
+
+Matcha supports basic arithmetic ($+,-,*,/$) and comparison operations on integer and floating-point \texttt{Var}s, as well as logical operations ($and, or, not$) on boolean \texttt{Var}s. 
+To create a \texttt{Tuple}, users specify the \texttt{Var}s in it with the $\textbf{mk\_tuple}(nvars, dtype, val)$ operator. Here, $nvars$ is the size of the \texttt{Tuple}, $dtype$ is the data type of the \texttt{Var}s, and $val$ is an optional argument for initializing the \texttt{Tuple}. The user can obtain a \texttt{Var} from a specific position in a \texttt{Tuple} $t$ with the $\textbf{get}(t, pos)$ operator. 
+
+% 
+
+% \textcolor{blue}{Users can define a Var with $\textbf{mk\_var}(dtype, val)$. Matcha supports arithmetic (+, -, *, /), logic ($\&$, $\vert$, $!$), and comparison operations ($>$, $<$, =) on Vars.}
+
+Users can create a \texttt{List} in Matcha with the operator: $\textbf{mk\_list}(nitems, type, val)$. 
+Here, the $nitems$ is an integer indicating the maximum number of items that can be stored in the \texttt{List}. 
+The $type$ argument specifies the type of the items, which can be \texttt{Var} or \texttt{Tuple}. 
+The $val$ argument is for initializing the \texttt{List}. 
+%Unlike \texttt{Tuple}, a \texttt{List} cannot be directly indexed. 
+
+To define a \texttt{Graph}, users need to specify its edge list with the
+$\textbf{mk\_graph}(edges, label, einfo)$ operator. 
+Here, the \textit{edges} must be a \texttt{List} of two-integer \texttt{Tuple}s representing the edges' source and destination. Optionally, the user can specify vertex and edge information on the graph. The  \textit{vlabel} argument is also a \texttt{List} of two-integer \texttt{Tuple}s, where the first number is the vertex ID and the second number is the label of that vertex. The argument \textit{einfo} is a \texttt{List} of the same length as \textit{edges}; it associates a \texttt{Var} to each edge in the edge list. 
+
+
+Matcha supports a variety of operations on \texttt{List} and \texttt{Graph}, which are essential for implementing subgraph matching algorithms:
+
+\begin{itemize}[leftmargin=*]
+    \setlength\itemsep{0.25em}
+
+    \item $\textbf{neighbor}$(\textit{g}: \texttt{Graph}, \textit{v}: \texttt{Var<int>}).
+ This operator returns the neighboring vertices of a vertex $v$ in a Graph $g$. The returned neighbors are stored as a \texttt{List<Var<int>{}>}. 
+    \item $\textbf{edge\_info}$(g: Graph, v: \texttt{Var<int>}) returns the information on the neighboring edges of a vertex $v$ as a \texttt{List<Var>}. 
+    \item $\textbf{vertex\_label}$(\textit{g}: Graph, \textit{v}: \texttt{Var<int>}) returns the label of a vertex $v$ as a  \texttt{Var<int>}. 
+    \item \textbf{apply}(\textit{func}: \texttt{Func(T1,$...$)$\to$Tout}, \textit{cond}: \texttt{Func(T1,$...$) $\to$Var<bool>}, \textit{l1}:\texttt{ List<T1>}, $...$)\texttt{$\to$List<Tout>}. 
+    This is the most important operator in Matcha. 
+    It accepts one or multiple \texttt{List}s as the input and iterates over items in all the \texttt{List}s at the same time. It performs computation on each item with a function $func$, and returns a new \texttt{List} that contains the computed results. If the $cond$ function is provided, the operator evaluates the $cond$ function first and only computes $func$ on items where the condition is \texttt{True}. 
+    %Note that the Matcha language does not inherently support functions. We implemented Matcha as an embedded language in Python. The `\texttt{Func}' type here represents a Python function. This function takes in and returns Matcha objects, and the function body is written in Matcha. 
+    \item \textbf{intersect}(\textit{l1}: \texttt{List<Var<T>{}>}, \textit{l2}: \texttt{List<Var<T>{}>}) $\to$ \texttt{List<Var<T>{}>} computes the intersection of two \texttt{List}s of \texttt{Var}s. An item $t$ is in the resulting \texttt{List} if and only if it is in both $l1$ and $l2$. This operator is commonly used in subgraph matching algorithms to obtain nodes connected to two previously matched nodes. 
+    \item \textbf{diff}(\textit{l1}: \texttt{List<Var<T>{}>}, \textit{l2}: \texttt{List<Var<T>{}>}) $\to$ \texttt{List}
+
+\texttt{<Var<T>{}>}. Similar to \texttt{intersect}, this operator processes two \texttt{List}s of \texttt{Var}s, but it computes the difference between the two \texttt{List}s. An item $t$ is in the result if it is in $l1$ but not in $l2$. 
+
+\item \textbf{sum}(\textit{l}: \texttt{List<Var<T>{}>)} $\to$ \texttt{Var<T>} sums up the \texttt{Var} items in a \texttt{List}. The operator is convenient for subgraph counting tasks. 
+
+\item \textbf{size}(\textit{l}: \texttt{List|Tuple}) $\to$ \texttt{Var<int>} returns the number of items in a \texttt{List} or \texttt{Tuple}.
+
+% \item \texttt{\textbf{size}(l: List|Tuple)—>Var<int>} returns the number of items in a \texttt{List} or \texttt{Tuple}.
+\end{itemize}
+
+\begin{figure}[t]
+    \centering
+% \setcounter{lstlisting}{0}
+\lstinputlisting[language=Python, keywordstyle=\color{blue}, stringstyle=\color{red},  breaklines=true,     numbers=left, showspaces=false, showstringspaces=false, tabsize=4]{codelistings/rapidmatch.py}
+\vspace{-.5em}
+\captionof{lstlisting}{Join-based algorithm implemented in Matcha for the query in Fig.~\ref{fig:graph}(b).}
+\label{fig:rapidmatch}
+\vspace{-.5em}
+\end{figure}
+
+
+\noindent
+\textit{\textbf{Examples:}}
+Listing~\ref{fig:rapidmatch} shows a Matcha implementation of a join-based algorithm~\cite{sun2020rapidmatch} for the query in Fig.~\ref{fig:graph}(b). 
+The algorithm takes as input the filtered edge \texttt{List}s ($L01$, $L02$, $L03$, $L12$) that match the four edges of the query pattern. 
+The \texttt{mk\_graph} operations in line 2-4 build the index data structures for the edge lists corresponding to ($u_0,u_2$),  ($u_0,u_3$) and ($u_1,u_2$).  
+We will explain how the index data structure is constructed in Section~\ref{sec:gen_ir}.  
+In line 13, the algorithm starts by iterating over the edges in $L01$. For each edge, it computes the set of vertices $C2$ that match $u_2$ by intersecting neighbors of $v_0$ and $v_1$ (line 8). Next, for each vertex in $C2$, it counts the vertices that match $u_3$ (line 9-11). The counts are summed up to obtain the final result. 
+
+Listing~\ref{fig:decomine_code} shows another example of Matcha implementing a decomposition-based algorithm~\cite{pinar2017escape, chen2022decomine} for the query in Fig~\ref{fig:graph}(b). 
+Since the algorithm takes the entire graph as input, it needs to first filter out the edges that do not match the labels of ($u_0,u_1$). 
+This can be achieved by an \texttt{apply} operator with a filtering condition (line 15). 
+For each matching edge, it computes the vertices that match $u_2$ by intersecting neighbors of $v_0$ and $v_1$ and filtering out the vertices with labels different from $u_2$ (line 10). 
+The vertices that match $u_3$ are the neighbors of $v_0$ with the label of $u_3$ (line 11). 
+Next,  since $u_2$ and $u_3$ are isolated by ($u_{0}, u_{1}$) in the query pattern, we can directly calculate the number of matching subgraphs on an edge as $\texttt{size}(\texttt{C2}) * \texttt{size}(\texttt{S3})$ (line 12). 
+The counts from different edges are summed to obtain the final result. 
+
+\begin{figure}[t]
+    \centering
+\lstinputlisting[language=Python, keywordstyle=\color{blue}, stringstyle=\color{red},  breaklines=true, showspaces=false, showstringspaces=false, 
+numbers=left,
+tabsize=4]{codelistings/decomine2.py}
+    \vspace{-.5em}
+\captionof{lstlisting}{Decomposition-based algorithm implemented in Matcha for the query in Fig.~\ref{fig:graph}(b).}
+    \vspace{-.5em}
+\label{fig:decomine_code}
+\end{figure}
+%More examples can be found in the Appendix 10.1%~\ref{apx:examples}. 
+
+% The array $C2$ and $C3$ are the candidate set of $u_2$ and $u_3$. The apply function on $L01$ returns an array that records the matching result of each edge, and the sum function accumulates these results to get the final result. RapidMatch is based on relations $L01$ to $L12$. The core $u_{0}u_{1}u_{2}$ of the pattern is matched by set operation, and the dangling edge $u_{0}u_{u}$ is matched by binary join. 
+
+
+\iffalse
+\subsection{Scope of Matcha}
+The Matcha language is designed based on the observation that most subgraph matching algorithms explore subgraphs of desired patterns incrementally, from small to larger sizes. Different algorithms may use different strategies to minimize the exploration space, but they all need to 1) store the intermediate subgraphs with certain data structure, and 2) extend the intermediate subgraphs by querying the data graph. With Matcha, a subgraph can be easily represented as a group of vertices or edges using the \texttt{Var} and \texttt{Tuple} structures. A set of intermediate subgraphs can be conveniently stored in a \texttt{List} for iterating and filtering using the \texttt{apply} operator. 
+By composing \texttt{apply}s in different ways, one can implement different subgraph exploration strategies. 
+
+% For a breadth-first exploration, we use consecutive \texttt{apply}s — the first \texttt{apply} explores all intermediate subgraphs before the next \texttt{apply}  starts exploration. 
+% For a depth-first exploration, we use nested \texttt{apply}s, as shown in the example in Listing~\ref{fig:rapidmatch}. The inner \texttt{apply} operator extends an intermediate subgraph as soon as the outer \texttt{apply} explores it. 
+% By placing consecutive \texttt{apply}s within nested \texttt{apply}, we can easily express the decomposition-based algorithm of Decomine\cite{chen2022decomine}. 
+% We can also express various exploration space pruning techniques by using the \texttt{apply} operator with user-defined conditions. 
+
+An important assumption of our design is that the neighboring information of the graph can be accessed efficiently. With a proper indirection data structure, the \texttt{neighbor} operator can return all the neighbors of a vertex in constant time. We will explain the implementation of the graph operators in more detail in Section~\ref{sec:pipeline}. 
+Due to the assumption, Matcha is not best suited for expressing algorithms with restricted access to neighboring information, such as approximate subgraph counting algorithms~\cite{bar2002reductions, eden2017approximately}.
+\fi
+
+
+
+
+
+
+
+
+
+
+
+

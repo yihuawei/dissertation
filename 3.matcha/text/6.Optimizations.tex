@@ -1,0 +1,177 @@
+\section{Optimization and Parallelization}
+
+
+Matcha decouples the definition of subgraph matching algorithm from its execution strategy. This section explains how various optimization and parallelization strategies can be applied automatically to Matcha programs through IR transformations.
+
+\subsection{Operator Fusion}
+
+% | First operator | Second operator |
+% | --- | --- |
+% | apply | sum |
+% | intersect/diff | size |
+% | neighbor | apply 
+% (with boundary cond) |
+% |  intersect/diff | apply 
+% (with boundary cond) |
+
+Our compiler fuses four types of operator pairs: 
+\begin{itemize}[leftmargin=*]
+    \item \texttt{apply}+\texttt{sum}. Consider the loop of \texttt{apply1} (colored in grey) and the loop of \texttt{sum1} (colored in purple) in Fig.~\ref{fig:pipeline}(b). 
+The two loops share the same iteration space. The \texttt{apply1} loop writes data to $apl1\_out$, which is read by the \texttt{sum1} loop. We can fuse the two loops to avoid the storage of $apl1\_out$. 
+\item \texttt{intersect/diff}+\texttt{sum}. In Fig.~\ref{fig:pipeline}(a), we can also see that the output array of \texttt{diff} operator is never used; the algorithm is only interested in the number of items in the array. In this case, we can remove the allocation of $df\_out$ and invoke a more efficient version of $\_diff$ without storing the output data. 
+\item \texttt{neighbor}+\texttt{apply} with boundary conditions. This pair of operators often appear in labeled subgraph matching algorithms, as they need to select neighboring vertices with a specific label (e.g., line 11 in Listing~\ref{fig:decomine_code}). 
+%This is implemented in Matcha with a \texttt{neighbor} operator followed by a conditional \texttt{apply} where the $cond$ checks if the input item has a certain label. 
+%If the vertices of the same label are stored contiguously in the neighbor list, the output is a slice of the neighbor list. 
+By fusing the two operators, we can avoid the allocation of a new \texttt{Array} for the output of \texttt{apply} and replace it with a slice of the neighbor list. 
+\item \texttt{intersect/diff}+\texttt{apply}  with boundary conditions. An \texttt{intersect/diff} operator can also be fused with a conditional \texttt{apply} if the condition only affects the slicing boundaries of the output. 
+This fusion enables the efficient implementation of the symmetry-breaking technique that eliminates redundant subgraphs~\cite{mawhirter2021dryadic}. 
+\end{itemize}
+
+%Note that a pair of operators can be fused only if the output of the first operator is exclusively used by the second operator. It improves performance by eliminating the need to store intermediate data. If other operators use the first operator's output, the two operators cannot be fused. 
+
+The fusion is applied to the ASG nodes in a depth-first order. For each pair of child-parent nodes, we check if they match any fusible types and perform fusion on the IR accordingly. 
+%As an example, the code from Fig.~\ref{fig:pipeline}(b) is converted to Figure 11(a) in the Appendix after operator fusion. 
+%~\ref{fig:opt_code}(a)
+\subsection{Loop-Invariant Code Motion}
+
+Consider the $\_init\_graph$ function in the \texttt{apply1} loop in Fig.~\ref{fig:pipeline}(b). 
+The function's execution does not depend on the loop iterate $i1$, which means that it can be moved outside of the loop. In fact, the function does not depend on the loop iterate $i0$ either and can be moved outside of the \texttt{apply0} loop. 
+% If we look at the algorithm definition in Listing 1. The \texttt{mk\_graph} operator for G03 does appear outside the two apply operators. The reason the \texttt{\_init\_graph} function ends up in the nested loop is because Matcha does not support functions and thus does not have the concept of function scope. The func we pass to the apply operator is a Python function, and the Matcha program is represented by the ASG as straight-line code. Therefore, to avoid redundant computation in the generated code, it is critical to move all the instructions independent from the loop iterate outside of the loop. 
+This optimization is often referred to as loop-invariant code motion in compiler optimization literature. 
+%The implementation is straightforward. 
+%We need to slightly change the generation rule for the \texttt{apply} operator in Table~\ref{tab:irrule}. 
+%Instead of putting the $inst$s on all descendant nodes of the \texttt{apply} operator in its loop body, we only include the $inst$s on those nodes that reference the input \texttt{List} items.  
+%The $inst$s on nodes that do not reference the input \texttt{List}  will be generated before the loop. 
+%On the ASG in Fig.~\ref{fig:pipeline}(a), we find that the \texttt{neighbor} operator does not reference the items of $C2$, so its $inst$ should not be included in the loop of \texttt{apply1}. This corresponds to moving the three orange instructions in Fig.~\ref{fig:pipeline}(b) outside of the $i1$ loop. 
+
+Besides code motion at the ASG level, there might also be loop-invariant instructions at the IR level. For example, the \texttt{mk\_list} node in Fig.~\ref{fig:pipeline}(a) contains two \texttt{Assign}s, and the second \texttt{Assign} does not reference the items of $C2$. In such cases, we only include the first \texttt{Assign} in the loop body of \texttt{apply1} and leave the second \texttt{Assign} within the \texttt{mk\_list}. 
+%This corresponds to moving the assignment of $lst[1$] outside of the $i1$ loop while keeping the assignment of $lst[0]$ in the loop. 
+
+This optimization also achieves the code motion of set operations proposed in previous work~\cite{mawhirter2019automine}. For any \texttt{intersect} or \texttt{diff} operators independent from the input of the \texttt{apply} operator, the compiler automatically moves the code outside the loop. 
+Listing ~\ref{fig:ccode2} shows the optimized code after operator fusion and code motion for the example in Fig.~\ref{fig:pipeline}.  
+%~\ref{fig:opt_code}(b)
+
+
+\begin{figure}[t]
+\centering
+\lstinputlisting[language=C++, keywordstyle=\color{blue}, stringstyle=\color{red},  breaklines=true, showspaces=false, showstringspaces=false, tabsize=4]{codelistings/cpu2.cpp}
+    \vspace{-.4em}
+\captionof{lstlisting}{Optimized code after operator fusion and code motion for the example in Fig~\ref{fig:pipeline}.}
+    \vspace{-.5em}
+\label{fig:ccode2}
+\end{figure}
+
+\subsection{Automatic Parallelization}
+Following previous work~\cite{chen2022efficient, wei2022stmatch}, we apply two-level parallelization to the subgraph exploration procedure. 
+The first parallelization is applied to the outermost loop that iterates over the initial vertices/edges. On a CPU, this corresponds to using multiple threads to explore subgraphs from different vertices/edges simultaneously. The second parallelization is applied to the computation of intermediate subgraphs at each exploration step. It exploits fine-grained parallelism (i.e., SIMD) to accelerate the \texttt{intersect/diff} operations. %We adopt the implementation from previous work~\cite{han2018speeding} for this purpose. %There exist many efficient SIMD implementations of the two operations. We adopt the existing implementations for the second-level parallelization. 
+
+%For the first-level parallelization, since different threads explore the subgraphs independently, we need to replicate the data structure to maintain the intermediate subgraphs in each thread. %The parallelization is achieved in three steps. First, we identify data for replication by obtaining all assignments and built-in function calls in the outermost loop. The data to be replicated includes the left-hand side of the assignments and the data updated by the functions, except for those indexed by the loop iterator. Next, we replicate scalar variables by replacing them with an array of length equal to the number of threads. For array variables, we add a dimension of the same size as the number of threads. Last, within the loop body, we replace all references to the original variables with the new replicated variables. 
+
+GPU parallelization is similar. Unlike previous work that uses either a warp~\cite{chen2022efficient, wei2022stmatch} or a single thread~\cite{yuan2023everest} as the execution unit, we use cooperative thread groups~\cite{threadgroup} on Nvidia GPU to execute iterations of the outermost loop in parallel. 
+This implementation allows us to configure the thread-group size and achieve better GPU utilization.
+For \texttt{intersect/diff}, we adapt the code from G2Miner~\cite{chen2022efficient} to use threads in each group for parallel execution. 
+
+% \noindent
+% \textbf{\textit{Memory Optimization. }}
+% In our discussion above, we assume that all data in the generated code are stored in the main memory. 
+% This works well for the sequential CPU code in Fig.~\ref{fig:pipeline}(b) because the C++ compiler can put the scalar variables in CPU registers, and the hardware automatically caches data for efficient data access. 
+% However, when we parallelize the code, some scalar variables are replaced by arrays, which disables this optimization by the C++ compiler. 
+% To avoid the problem, we convert the arrays back to scalars but declare them within the parallelized loop. This ensures that separate registers are allocated for the scalar variables in different threads. The same optimization can be applied to GPU code. 
+
+\noindent
+\textbf{\textit{Work Stealing.}}
+Subgraph matching on a GPU usually suffers from severe load imbalance~\cite{wei2022stmatch}. Work-stealing is an effective technique that can mitigate this issue and significantly improve performance. 
+%However, the memory optimization mentioned earlier disables work-stealing since one GPU thread cannot access the register data of another thread. To overcome the problem, 
+We implement the work-stealing strategy from ~\cite{wei2022stmatch} in our compiler. Specifically, we place the $aux$ in the IR of \texttt{neighbor}, \texttt{intersect} and \texttt{diff} operators, as well as the iterators of all \texttt{apply} loops in GPU shared memory. 
+This allows an idle thread-group to check the amount of remaining work in another thread-group and steal work from it. %Readers are referred to~\cite{wei2022stmatch} for more details of the work-stealing algorithm. 
+
+%The optimized and parallelized CPU and GPU code for Fig.~\ref{fig:pipeline}(b) can be found in Appendix~\ref{apx:opt}. 
+
+
+% \begin{algorithm}
+%     \caption{Automatic parallelization algorithm.}\label{alg:parallel}
+%     \KwIn{$IR$}
+%     \KwOut{$IR_{parallel}$}
+%     Find out-most loop $l$ to be parallelized\;
+%     Traversal get all assignments $Assigns$ and all variables $Vars$\;
+%     % \tcc{traverse all lhs and check all variables to be parallelized}
+%     \For{$a \in Assigns$ \textbf{and} $v \in Vars$}{
+%         $lhs \gets a.lhs$\;
+%         $indices \gets get\_ref\_idx(lhs, v)$\;
+%         \For{$idx \in indices$}{
+%             \If{$idx \in l.output\_axis$}{
+%                 $flag \gets True$\;
+%                 break\;
+%             }
+%         }
+%         \If{$not flag$}{
+%             Add extend size for $v$\;
+%             Add loop info for $v$\;
+%         }
+%     }
+%     % \tcc{Reconstruct and replace lhs based on extend size and loop info\;}
+%     \For{$v \in Vars$}{
+%         Reconstruct definition based on $v$\;
+%         Replace all declarations based on $v$\;
+%         Replace all references based on $v$\;
+%     }
+%     \Return $IR_{parallel}$
+    
+% \end{algorithm}
+
+
+
+
+
+% \textbf{1. Move global array to register for CPU}
+
+
+% \textbf{2. Move global array to register and smem for GPU.}
+% Compared to memory optimization on the CPU, the shared memory in the GPU allows for further optimization of data caching. Due to the limitation of shared memory size on GPU, the data we store in shared memory should not be too large. In our implementation, we store the data that can be shared among threads in the shared memory like xxxxxx. This approach reduces the amount of data that each thread needs to read from global memory and increases the parallelism of the program, effectively enhancing GPU utilization. 
+% We learn the information whether the data is parallelized from automatic parallelization. For those parallelized data, we first consider if it is suitable for storing in shared memory. As the information is stored on ASG node, we only need to check the size of data. We get the indices of data from Indexing and check the corresponding loop to analyze the size of current dimension. If the data size can be stored in shared memory, similar to the parallelization, we replace both declaration and all the access of the corresponding data.
+
+% Furthermore, we can modify the data that has been stored in shared memory into register, which also enhances the performance.
+
+
+
+
+
+
+% \textbf{3. The size of intermediate results are dynamic and we can use the information to some optimization. }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% \begin{figure}[t]
+%  \centering
+% \lstinputlisting[language=C++, keywordstyle=\color{blue}, stringstyle=\color{red},  breaklines=true, showspaces=false, showstringspaces=false, tabsize=4]{codelistings/work_steal.cpp}
+% \label{fig:work_steal}
+% \end{figure}
+
+% Lastly, we incorporate work stealing into the parallelized loops to alleviate workload imbalance. Work stealing is based on the data exchange between threads; a heavy thread can transfer its unfinished data to an idle thread. For example, in Fig.~\ref{fig:pipeline}(b), the $i0$ loop can be divided and executed in parallel by two threads. Thread A responds for iterations from $0$ to $len1/2$, and thread B responds for $(len1/2)+1$ to $len1-1$. If thread B has finished the outermost loop and thread A is still busy, we will transfer half of the remaining iterations of thread A to thread B and let thread B continue working on the transferred iterations. This strategy can reduce the overall execution time. To implement automatic work stealing, two steps are required: 
+
+% 1. Move the data to be exchanged among threads to a shared memory location. The data exchanged during work stealing includes only three variables that record the loop state: \textit{start}, \textit{end} and \textit{iterator}. For example, in Fig.~\ref{fig:pipeline}(b), the start, end, and iterator of the $i0$ loop are $0$, $len1$, and $i0$, respectively. At first, We need to declare the arrays that record the loop state outside the parallel region. For instance, a two-dimensional array $iter[num\_threads][num\_loops]$ will be declared for storing the loop iterator. Next, we need to replace the loop state values inside the loop with the new variables. For example, $i0$ will be replaced by $iter[tid][0]$, $i1$ will be replaced by $iter[tid][1]$, $len1$ will be replaced by $end[tid][0]$, and the start value $0$ of the $i0$ loop will be replaced by $start[tid][0]$, where $tid$ is the current thread id. We also need to replace the old state variables appearing in the loop body with the new ones. 
+
+
+% 2. Declare mutex arrays and add lock statements. Since the data exchange involves update operations, lock statements are necessary to ensure the correctness of the program. Each thread has its own mutex. We add the statement $lock(mutex[tid])$ at the beginning of the outermost loop and $unlock(mutex[tid])$ at the end of the outermost loop. The iterator expression $iter[tid][0]+1$ will be moved just before the unlock statement. After this, the data exchange during work stealing will not conflict with the operations inside the loop, ensuring the correctness of the program.
+
+% 3. Embed the generated code into a code template that supports work stealing. The work stealing is active instead of passive, so an idle thread will actively steal data from other busy threads. We put the entire nested for-loop code chunk into a $while(true)$ loop and call $steal\_work$ just before the end of the $while(true)$ loop body. If a thread successfully steals work from other threads, it will re-execute the nested for-loop with the stolen loop state values; otherwise, the $while(true)$ loop will be broken, and the thread will exit. 
+
+
+% STMatch also implemented work stealing but our version is a little different from STMatch. STMatch employs a stack data structure to simulate the nested for loop, and its work stealing is also executed on the stack. STMatch requires some intermediate data to be coppied, not only loop state values, but our implementation re-compute the intermediate data. They have almost the same overhead.
+
+% \begin{figure}[t]
+%  \centering
+% \lstinputlisting[language=C++, keywordstyle=\color{blue}, stringstyle=\color{red},  breaklines=true, showspaces=false, showstringspaces=false, tabsize=4]{codelistings/steal_work.cpp}
+% \label{fig:work_steal}
+% \end{figure}

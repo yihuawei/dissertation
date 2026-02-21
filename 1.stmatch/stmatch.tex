@@ -350,10 +350,10 @@ This can be achieved by adjusting the $StopLevel$ at line 4 of Algorithm~\ref{al
     \label{fig:steal_across_block}
 \end{figure}
 
-\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
-            \node[shape=circle,draw,inner sep=.4pt] (char) {#1};}}
-\newcommand*\squared[1]{\tikz[baseline=(char.base)]{
-            \node[shape=rectangle,draw,inner sep=1pt] (char) {#1};}}
+% \newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+%             \node[shape=circle,draw,inner sep=.4pt] (char) {#1};}}
+% \newcommand*\squared[1]{\tikz[baseline=(char.base)]{
+%             \node[shape=rectangle,draw,inner sep=1pt] (char) {#1};}}
 
 If a warp cannot find a target to steal in the same threadblock, it goes to   other threadblocks. 
 However, this cannot be done in the same way as stealing within a threadblock. 

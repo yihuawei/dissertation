@@ -1,0 +1,7 @@
+\begin{abstract}
+Subgraph matching is one of the most fundamental tasks in graph analytics. Numerous algorithms and systems have been proposed for the task. However, due to the diverse optimizations proposed in previous work and their targeting of different hardware, comparing and integrating existing techniques has become increasingly challenging. 
+
+In this work, we propose Matcha, a domain-specific language for implementing subgraph matching algorithms. Compared to previous systems, Matcha provides a lower-level programming interface that allows users to express a wider variety of subgraph matching algorithms. 
+This simplifies the comparisons of existing techniques and facilitates the development of new algorithms. 
+We implement a compiler that translates and optimizes Matcha programs into C++/CUDA code for CPU and GPU execution. Our experiments show that Matcha can readily reproduce the performance of state-of-the-art subgraph matching systems. By incorporating additional optimizations, Matcha can achieve speedups up to 60x against the existing systems. 
+\end{abstract}

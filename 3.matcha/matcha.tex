@@ -1,0 +1,885 @@
+\newpage
+
+\section{Matcha: A Language and Compiler for Backtracking-based Subgraph Matching}
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------------$
+
+\subsection{Introduction}
+
+Subgraph matching is the key building block of many graph analytics and learning applications. It aims to find subgraphs in a data graph conforming to the structural constraints of a query pattern. A subgraph matching algorithm can be used to extract information from graph-structured data in many domains, including bioinformatics~\cite{Milo824}, social network analysis~\cite{10.1145/2488388.2488502}, and cybersecurity~\cite{noel2018review}. Recently, subgraph matching also finds increasing use in graph-based machine learning applications, such as anomaly detection \cite{akoglu2015graph, noble2003graph}, entity resolution \cite{bhattacharya2006entity}, and community detection \cite{schaeffer2007graph}. 
+
+
+Fig.~\ref{fig:graph} shows an example of the most basic subgraph matching problem. Given a data graph $G$ and a query pattern $Q$, the task is to find all subgraphs in $G$ that match the pattern $Q$. 
+Both $G$ and $Q$ here have labeled vertices. 
+There are two subgraphs in  
+$G$ with the same structure as $Q$. One subgraph ($v_{10,}v_{15},v_{0},v_{7}$) is a valid match, while the other  ($v_{0},v_{10},v_{15},v_{6}$) is not due to mismatched labels. 
+
+As an NP-hard problem, subgraph matching can be time-consuming on large graphs. Following the basic idea of backtracking \cite{ullmann1976algorithm}, many advanced algorithms have been developed~\cite{cordella2001improved, bonnici2013subgraph, 10.1145/3299869.3319880, aberger2017emptyheaded, kankanamge2017graphflow}. Most of these algorithms are implemented on CPU, while some recent systems utilize GPU to accelerate computation~\cite{sun2020rapidmatch,10.14778/1453856.1453899,10.1145/3299869.3319880,mawhirter2019automine,mawhirter2021dryadic,chen2022decomine}. 
+
+
+Table~\ref{tab:intro} compares the state-of-the-art subgraph matching systems regarding their supported tasks, algorithms, and optimizations. 
+Since each system features unique algorithms and optimizations, it has been increasingly difficult to compare and combine different solutions, thus hindering progress in this research area. For example, RapidMatch~\cite{sun2020rapidmatch} proposes a relation-filtering technique with join plan optimization. Its join-based algorithm performs better than many other subgraph matching systems on CPU. However, migrating the algorithm to GPU is nontrivial. It is unclear whether the algorithm can outperform an efficient implementation of more basic algorithms on a GPU (e.g., G2Miner~\cite{chen2022efficient}). 
+
+\begin{figure}[t]
+    \centering
+    \subfloat[Data Graph $G$]{
+        \includegraphics[scale=0.6, page=3]{3.matcha/fig/example1-crop.pdf}
+        \label{fig:g0}
+    } \hfil
+    \subfloat[Query $Q$]{
+        \includegraphics[scale=0.6, page=2]{3.matcha/fig/example1-crop.pdf}
+        \label{fig:query}
+    } 
+    \caption{Example data graph and query pattern. }
+    \vspace{-.5em}
+    \label{fig:graph}
+\end{figure}
+
+Although some previous systems aim to be general-purpose \cite{chen2018g, chen2022efficient, 10.14778/3389133.3389137}, they hard-code algorithms for different tasks and support limited computation patterns. For example, G2Miner~\cite{chen2022efficient} assumes the subgraph is always extended vertex by vertex using set operations. Users cannot express the join-based algorithm of RapidMatch~\cite{sun2020rapidmatch} with its programming interface. It also does not support backtracking with edge extension as adopted by Everest~\cite{yuan2023everest}. 
+
+To overcome the limitations of existing systems, we propose a domain-specific language called Matcha for implementing subgraph matching algorithms. The key language constructs in Matcha include a \texttt{List} data type and an \texttt{apply} operation that applies a user-defined function to items in the \texttt{List}s. Our design is based on the observation that the backtracking procedure in subgraph matching algorithms can be modeled as nested data stream processing. A Matcha program stores intermediate subgraphs in a \texttt{List} and applies a function to each subgraph to generate a new \texttt{List} of larger subgraphs until the desired pattern size is reached. 
+By allowing programmers to specify different exploration strategies with the \texttt{apply} operator, Matcha supports a broader range of subgraph matching algorithms than previous systems. 
+
+
+We implement a domain-specific compiler that generates efficient C++/CUDA code based on Matcha programs. 
+Unlike previous systems that hard-code the optimizations, we decouple the optimizations from algorithm specification by implementing optimizations as transformations on the IR. The advantage of such a design is that it allows us to compose and configure optimizations for different subgraph matching tasks, achieving better performance and portability than previous systems. Finally, the optimized IR is translated into C++/CUDA code with a code generator. 
+
+
+In summary, the paper makes the following contributions:
+\begin{itemize}[leftmargin=1.5em]
+    \item We propose a DSL called Matcha for expressing various backtracking-based subgraph matching algorithms. 
+    \item We implement a compiler that translates Matcha programs into C++/CUDA code that runs on CPU and GPU.
+    \item We implement a number of optimization passes including operator fusion, code motion, and work stealing in our compiler to improve the performance of generated code. 
+    \item Our system provides a unified framework for developing and comparing subgraph matching algorithms. 
+\end{itemize}
+
+
+% \begin{wrapfigure}{r}{0.2\textwidth}
+%      \centering
+%       %   \vspace{-.5em}
+%     \includegraphics[scale=0.56]{fig/overview-crop.pdf}
+%     \vspace{-.5em}
+%     \caption{\textcolor{red}{ Workflow of Matcha compiler.}}
+%     \vspace{-.5em}
+%     \label{fig:overview}
+% \end{wrapfigure}
+The experiments show that 1) Matcha can be used to easily reimplement state-of-the-art subgraph systems, and the reimplementations perform comparably to the original systems when the same optimizations are applied; 2) Additional optimizations can be easily incorporated into Matcha programs, and the optimized re-implementations outperform the original systems by 23.7x on average; 3) Matcha simplifies the comparison of algorithms originally implemented on different platforms. For example, we find that the join-based algorithm proposed in RapidMatch does not have an obvious performance advantage over the basic vertex-extension backtracking algorithm on the GPU; 4) Developing new algorithms using Matcha is convenient. As an example, we combine a decomposition-based algorithm with the join-based algorithm of RapidMatch, which results in better performance than either algorithm alone.
+
+
+
+\begin{table}[t]
+  \centering
+  \footnotesize
+  \caption{Comparison of state-of-the-art subgraph matching systems: G2Miner (GM) \cite{chen2022efficient}, STMatch (STM) \cite{wei2022stmatch}, DecoMine (DM) \cite{chen2022decomine}, RapidMatch (RM) \cite{sun2020rapidmatch}, Everest (EV) \cite{yuan2023everest}, and our system Matcha (Mt), in terms of support for algorithms, performance optimizations, and matching tasks.}
+    \begin{tabular}{c|c||c|c|c|c|c|c}
+    \multicolumn{2}{c||}{} & \textbf{GM} & \textbf{STM} & \textbf{DM} & \textbf{RM} & \textbf{EV} & \textbf{Mt} \bigstrut\\
+    \hline  \hline
+     \multirow{4}[2]{*}{\begin{sideways}\textbf{Algorithms}\end{sideways}} 
+          & Vertex Ext. & \checkmark & \checkmark & \checkmark & \checkmark & x & \checkmark \bigstrut[t]\\
+          & Edge Ext. & x     & x     & x     & \checkmark & \checkmark & \checkmark \\
+          & Pattern Decomp. & \checkmark     & x     & \checkmark & x     & x  & \checkmark\\
+          & Hash Join & x     & x     & x     & \checkmark & x & \checkmark \\
+    \hline
+    \multirow{6}[2]{*}{\begin{sideways}\textbf{Optimizations}\end{sideways}} 
+          & Multi-threading& x     & x     & \checkmark & x & x & \checkmark\bigstrut[t] \\
+          & GPU & \checkmark & \checkmark & x     & x     & \checkmark & \checkmark \\
+          & Code Motion & \checkmark & \checkmark & \checkmark & x     & x & \checkmark \\
+          & Work Stealing & x     & \checkmark & x     & x     & \checkmark & \checkmark \\
+          & Dyn. Scheduling & \checkmark & x     & \checkmark & x     & x & \checkmark \\
+          & Thread Group & x     & x & x     & x     & x & \checkmark \bigstrut[b]\\
+    \hline
+    \multirow{4}[2]{*}{\begin{sideways}\textbf{Tasks}\end{sideways}} 
+          & Edge-Induced & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \bigstrut[t]\\
+          & Vertex-Induced & \checkmark     & \checkmark & \checkmark & x     & \checkmark & \checkmark\\
+          & Labeled & \checkmark     & \checkmark & \checkmark     & \checkmark & \checkmark & \checkmark\\
+          & Temporal & x     & x     & x     & x     & \checkmark & \checkmark \bigstrut[b]\\
+    \hline
+    \end{tabular}%
+  \label{tab:intro}%
+\end{table}%
+
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------------$
+\subsection{Background}
+\label{sec:background}
+
+\subsubsection{Subgraph Matching Problems}
+\label{sec:background_problem}
+
+The data graph in many real applications can be abstracted as a 4-tuple $G = (V, E, L, T)$, where $V$ represents a set of vertices, $E=\{(v_i, v_j)|v_i, v_j \in V\}$ is a set of edges, $L$ is a labeling function that assigns labels to the vertices, and $T$ is a function that assigns (label or timing) information to the edges. 
+A graph $G' = (V', E', L', T')$ is a {\em subgraph} of $G = (V, E, L, T)$ if $V'\subseteq V$, $E'\subseteq E$, $L'(v)=L(v), \forall v\in V'$, and $T'(e)=T(e), \forall e\in E'$. 
+A subgraph $G'$ is {\em vertex-induced} if all the edges in $E$ that connect the vertices in $V'$ are included $E'$. 
+For example, ($v_{10,}v_{15},v_{0},v_{7}$) is a vertex-induced subgraph of $G$ in Fig.~\ref{fig:graph}(a).
+A connected subgraph $G'$ is {\em edge-induced} if it is not vertex-induced. 
+All subgraph matching problems are defined based on the concept of graph isomorphism:
+\begin{definition}[Graph Isomorphism]
+  Two graphs $G_a=(V_a, E_a, L_a, T_a)$ and $G_b=(V_b, E_b, L_b, T_b)$ are isomorphic if there is a bijective function $f: V_a\Rightarrow V_b$ such that $(v_i, v_j)\in E_a$ if and only if $(f(v_i), f(v_j))\in E_b$. 
+\end{definition}
+\noindent
+Depending on the usage of the label and edge information, there are various subgraph matching tasks in real applications. Some of the most common ones are:
+\begin{itemize}[leftmargin=*]
+\item {\em k-motif counting}, which counts the number of all size-$k$ unlabeled subgraphs in a data graph $G$.
+\item {\em Subgraph listing}, which lists all the subgraphs in a data graph $G$ that are isomorphic to a given query graph $Q$. The query can be either labeled or unlabeled. 
+For labeled queries, the subgraphs must match the labels of vertices in $Q$. 
+%The subgraphs can be either vertex-induced or edge-induced. 
+%It is an example of a multi-query problem because we need to find all the subgraphs in $G$ that are isomorphic to any query in a set of all possible size-k query graphs. 
+\item {\em k-clique listing}, which lists all the fully-connected unlabeled subgraphs of size-$k$ in a graph $G$. 
+\item {\em Temporal subgraph listing}, which lists all the subgraphs in a graph $G=(V_g,E_g,L_g,T_g)$  that match a temporal query $Q=(V_q, E_q, L_q)$.
+Given an ordering of connected edges in $E_q$ (i.e., $E_q=\{e_i\}_{i=1}^l$), $T_g(f(e_i))$ must not exceed $T_g(f(e_{i+1}))$. 
+A subgraph in $G$ matches $Q$ iff it is an isomorphism $f$ with $T_g(f(e_{l}))-T_g(f(e_1))\leq \delta$, and $T_g(f(e_{i+1}))-T_g(f(e_i))\leq \delta_{i},\forall i\in [1,l)$, where $\delta$ is the time constraint set for $Q$, and $\delta_i$ is the  time constraint set for each edge in $Q$.
+\end{itemize}
+
+
+
+\subsubsection{Subgraph Matching Algorithms}
+
+
+We focus on backtracking-based algorithms for subgraph matching. While some ML-based algorithms have emerged in recent years \cite{li2019graph, lou2020neural, wang2022reinforcement}, they are not as accurate as traditional combinatorial algorithms and are beyond the scope of this paper. 
+
+The combinatorial algorithms considered in this work follow a backtracking idea~\cite{ullmann1976algorithm} -- starting from an empty subgraph, the algorithm gradually extends the subgraph to the size of the query pattern. The most basic backtracking algorithm extends the subgraph by a vertex at each step. 
+Take the query pattern in Fig.~\ref{fig:graph}(b) as an example. The algorithm first finds all the vertices in the data graph that have the same label as $u_0$. If the query is unlabeled, it will be all vertices in the data graph. Next, starting from the size-1 subgraphs, the algorithm finds all vertices that match $u_1$. Since $u_1$ is connected to $u_0$, the matching vertices must be neighbors of the first vertex. This gives us a set of size-2 subgraphs that match $(u_0, u_1)$. The algorithm continues to find vertices that match $u_2$. Since $u_2$ is connected to both $u_0$ and $u_1$, the vertices that match $u_2$ should be neighbors of both the first two matching vertices, and they can be computed with a set intersection operation. Last, the algorithm finds all matching vertices for $u_3$ based on its connectivity with $u_0, u_1, u_2$. 
+
+Based on the basic backtracking algorithm, many algorithm variants and optimizations have been proposed to improve the performance of specific subgraph matching tasks. For example, backtracking can be executed with edge extensions, where an intermediate subgraph is extended by an edge instead of vertex at each step. Such edge-extension algorithms are most naturally used for querying graph databases where the graph edges are stored as relations and the subgraph extension is achieved by joining the relations~\cite{mhedhbi2019optimizing, aberger2017emptyheaded, kankanamge2017graphflow, atserias2008size}. More generally, an intermediate subgraph can be extended with another adjacent subgraph. This corresponds to algorithms that join two connecting subgraphs into a bigger subgraph~\cite{mhedhbi2019optimizing, kankanamge2017graphflow}. The pattern-decomposition algorithm~\cite{pinar2017escape, chen2022decomine} can also be considered as extending a subgraph with one or more overlapping subgraphs. These algorithms also incorporate various optimizations to prune the subgraph exploration space as much as possible \cite{10.1145/3299869.3319880, bi2016efficient, cordella2001improved}.
+
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------------$
+
+\subsection{Limitations with Existing Subgraph Matching Systems}
+
+
+While numerous systems for subgraph matching have been proposed~\cite{mawhirter2019automine, mawhirter2021dryadic,wei2022stmatch,yuan2023everest,chen2022decomine,pinar2017escape,sun2020rapidmatch,aberger2017emptyheaded}, each of these systems features unique algorithms and optimizations. This makes it challenging to compare and combine  existing techniques, and to develop new techniques based on prior work. 
+
+\noindent
+\textbf{\textit{Restricted Algorithm Support.}} Previous subgraph matching systems implement algorithms that are best suited for specific tasks. For instance, DecoMine~\cite{chen2022decomine} employs a pattern-decomposition-based algorithm~\cite{pinar2017escape}; it is most efficient for counting subgraphs that can be divided into independent sub-patterns. RapidMatch~\cite{sun2020rapidmatch} implements a join-based algorithm; it works best for labeled queries. AutoMine~\cite{mawhirter2019automine} supports both labeled and unlabeled queries, but it only runs the basic backtracking algorithm that matches the pattern vertices one by one. 
+We summarize the algorithm support of state-of-the-art subgraph matching systems in Table~\ref{tab:intro}.
+
+\noindent
+\textbf{\textit{Inconsistent Optimizations.}} The existing subgraph matching systems are inconsistent in performance optimizations.  First, they are implemented on different platforms. Most of the systems are CPU-based~\cite{sun2020rapidmatch,10.14778/1453856.1453899,10.1145/3299869.3319880,mawhirter2019automine,mawhirter2021dryadic,chen2022decomine}, while some recent systems utilize accelerators such as GPUs to speed up computation~\cite{zeng2020gsi,xiang2021cuts,wei2022stmatch,chen2022efficient}. This variety makes it difficult to compare and combine optimization techniques across different platforms. For instance, RapidMatch~\cite{sun2020rapidmatch} is a CPU-only system. It is unclear whether its join-based algorithm can run efficiently on GPU and whether it can outperform the optimized GPU systems such as STMatch~\cite{wei2022stmatch} and G2Miner~\cite{chen2022efficient} that use more basic vertex-extension algorithms. 
+Even on the same hardware, different systems feature different optimizations, as summarized in Table~\ref{tab:intro}. 
+
+Given the limitations of the existing systems, a unified framework that allows the development and integration of subgraph matching algorithms and optimization techniques across different platforms is desirable.
+
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------------$
+\subsection{The Matcha DSL}
+
+We propose a domain-specific language (DSL) called Matcha to express backtracking-based subgraph matching algorithms. The language supports four basic data types: \texttt{Var}, \texttt{Tuple}, \texttt{List}, and \texttt{Graph}. 
+A \texttt{Var} represents a scalar variable, which can be an integer, floating-point, or boolean. A \texttt{Tuple} comprises one or multiple \texttt{Var}s of the same data type. 
+A \texttt{List} is an iterable set of \texttt{Var}s or \texttt{Tuple}s. 
+A \texttt{Graph} is a list of edges with additional information associated with vertices and/or edges. 
+Matcha provides an API that allows users to perform various operations on the four data types. In this section, we describe the API using a Python-like syntax. 
+
+
+
+
+\subsubsection{Programming Interface}
+
+Matcha supports basic arithmetic ($+,-,*,/$) and comparison operations on integer and floating-point \texttt{Var}s, as well as logical operations ($and, or, not$) on boolean \texttt{Var}s. 
+To create a \texttt{Tuple}, users specify the \texttt{Var}s in it with the $\textbf{mk\_tuple}(nvars, dtype, val)$ operator. Here, $nvars$ is the size of the \texttt{Tuple}, $dtype$ is the data type of the \texttt{Var}s, and $val$ is an optional argument for initializing the \texttt{Tuple}. The user can obtain a \texttt{Var} from a specific position in a \texttt{Tuple} $t$ with the $\textbf{get}(t, pos)$ operator. 
+
+Users can create a \texttt{List} in Matcha with the operator: $\textbf{mk\_list}(nitems, type, val)$. 
+Here, the $nitems$ is an integer indicating the maximum number of items that can be stored in the \texttt{List}. 
+The $type$ argument specifies the type of the items, which can be \texttt{Var} or \texttt{Tuple}. 
+The $val$ argument is for initializing the \texttt{List}. 
+
+
+To define a \texttt{Graph}, users need to specify its edge list with the
+$\textbf{mk\_graph}(edges, label, einfo)$ operator. 
+Here, the \textit{edges} must be a \texttt{List} of two-integer \texttt{Tuple}s representing the edges' source and destination. Optionally, the user can specify vertex and edge information on the graph. The  \textit{vlabel} argument is also a \texttt{List} of two-integer \texttt{Tuple}s, where the first number is the vertex ID and the second number is the label of that vertex. The argument \textit{einfo} is a \texttt{List} of the same length as \textit{edges}; it associates a \texttt{Var} to each edge in the edge list. 
+
+
+Matcha supports a variety of operations on \texttt{List} and \texttt{Graph}, which are essential for implementing subgraph matching algorithms:
+
+\begin{itemize}[leftmargin=*]
+    \setlength\itemsep{0.25em}
+
+    \item $\textbf{neighbor}$(\textit{g}: \texttt{Graph}, \textit{v}: \texttt{Var<int>}).
+ This operator returns the neighboring vertices of a vertex $v$ in a Graph $g$. The returned neighbors are stored as a \texttt{List<Var<int>{}>}. 
+    \item $\textbf{edge\_info}$(g: Graph, v: \texttt{Var<int>}) returns the information on the neighboring edges of a vertex $v$ as a \texttt{List<Var>}. 
+    \item $\textbf{vertex\_label}$(\textit{g}: Graph, \textit{v}: \texttt{Var<int>}) returns the label of a vertex $v$ as a  \texttt{Var<int>}. 
+    \item \textbf{apply}(\textit{func}: \texttt{Func(T1,$...$)$\to$Tout}, \textit{cond}: \texttt{Func(T1,$...$) $\to$Var<bool>}, \textit{l1}:\texttt{ List<T1>}, $...$)\texttt{$\to$List<Tout>}. 
+    This is the most important operator in Matcha. 
+    It accepts one or multiple \texttt{List}s as the input and iterates over items in all the \texttt{List}s at the same time. It performs computation on each item with a function $func$, and returns a new \texttt{List} that contains the computed results. If the $cond$ function is provided, the operator evaluates the $cond$ function first and only computes $func$ on items where the condition is \texttt{True}. 
+    %Note that the Matcha language does not inherently support functions. We implemented Matcha as an embedded language in Python. The `\texttt{Func}' type here represents a Python function. This function takes in and returns Matcha objects, and the function body is written in Matcha. 
+    \item \textbf{intersect}(\textit{l1}: \texttt{List<Var<T>{}>}, \textit{l2}: \texttt{List<Var<T>{}>}) $\to$ \texttt{List<Var<T>{}>} computes the intersection of two \texttt{List}s of \texttt{Var}s. An item $t$ is in the resulting \texttt{List} if and only if it is in both $l1$ and $l2$. This operator is commonly used in subgraph matching algorithms to obtain nodes connected to two previously matched nodes. 
+    \item \textbf{diff}(\textit{l1}: \texttt{List<Var<T>{}>}, \textit{l2}: \texttt{List<Var<T>{}>}) $\to$ \texttt{List}
+
+\texttt{<Var<T>{}>}. Similar to \texttt{intersect}, this operator processes two \texttt{List}s of \texttt{Var}s, but it computes the difference between the two \texttt{List}s. An item $t$ is in the result if it is in $l1$ but not in $l2$. 
+
+\item \textbf{sum}(\textit{l}: \texttt{List<Var<T>{}>)} $\to$ \texttt{Var<T>} sums up the \texttt{Var} items in a \texttt{List}. The operator is convenient for subgraph counting tasks. 
+
+\item \textbf{size}(\textit{l}: \texttt{List|Tuple}) $\to$ \texttt{Var<int>} returns the number of items in a \texttt{List} or \texttt{Tuple}.
+
+\end{itemize}
+
+\begin{figure}[t]
+    \centering
+% \setcounter{lstlisting}{0}
+\lstinputlisting[language=Python, keywordstyle=\color{blue}, stringstyle=\color{red},  breaklines=true,     numbers=left, showspaces=false, showstringspaces=false, tabsize=4]{3.matcha/codelistings/rapidmatch.py}
+\vspace{-.5em}
+\captionof{lstlisting}{Join-based algorithm implemented in Matcha for the query in Fig.~\ref{fig:graph}(b).}
+\label{fig:rapidmatch}
+\vspace{-.5em}
+\end{figure}
+
+
+\noindent
+\textit{\textbf{Examples:}}
+Listing~\ref{fig:rapidmatch} shows a Matcha implementation of a join-based algorithm~\cite{sun2020rapidmatch} for the query in Fig.~\ref{fig:graph}(b). 
+The algorithm takes as input the filtered edge \texttt{List}s ($L01$, $L02$, $L03$, $L12$) that match the four edges of the query pattern. 
+The \texttt{mk\_graph} operations in line 2-4 build the index data structures for the edge lists corresponding to ($u_0,u_2$),  ($u_0,u_3$) and ($u_1,u_2$).  
+We will explain how the index data structure is constructed in Section~\ref{sec:gen_ir}.  
+In line 13, the algorithm starts by iterating over the edges in $L01$. For each edge, it computes the set of vertices $C2$ that match $u_2$ by intersecting neighbors of $v_0$ and $v_1$ (line 8). Next, for each vertex in $C2$, it counts the vertices that match $u_3$ (line 9-11). The counts are summed up to obtain the final result. 
+
+Listing~\ref{fig:decomine_code} shows another example of Matcha implementing a decomposition-based algorithm~\cite{pinar2017escape, chen2022decomine} for the query in Fig~\ref{fig:graph}(b). 
+Since the algorithm takes the entire graph as input, it needs to first filter out the edges that do not match the labels of ($u_0,u_1$). 
+This can be achieved by an \texttt{apply} operator with a filtering condition (line 15). 
+For each matching edge, it computes the vertices that match $u_2$ by intersecting neighbors of $v_0$ and $v_1$ and filtering out the vertices with labels different from $u_2$ (line 10). 
+The vertices that match $u_3$ are the neighbors of $v_0$ with the label of $u_3$ (line 11). 
+Next,  since $u_2$ and $u_3$ are isolated by ($u_{0}, u_{1}$) in the query pattern, we can directly calculate the number of matching subgraphs on an edge as $\texttt{size}(\texttt{C2}) * \texttt{size}(\texttt{S3})$ (line 12). 
+The counts from different edges are summed to obtain the final result. 
+
+\begin{figure}[t]
+    \centering
+\lstinputlisting[language=Python, keywordstyle=\color{blue}, stringstyle=\color{red},  breaklines=true, showspaces=false, showstringspaces=false, 
+numbers=left,
+tabsize=4]{3.matcha/codelistings/decomine2.py}
+    \vspace{-.5em}
+\captionof{lstlisting}{Decomposition-based algorithm implemented in Matcha for the query in Fig.~\ref{fig:graph}(b).}
+    \vspace{-.5em}
+\label{fig:decomine_code}
+\end{figure}
+
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------------$
+
+\subsection{Matcha Compilation Pipeline}
+\label{sec:pipeline}
+
+
+A Matcha program can be depicted as an Abstract Syntax Graph (ASG). In this graph, nodes represent data objects and operators, while edges connect each operator to its inputs. The Matcha compiler generates an intermediate representation (IR) from the ASG. The IR may go through several optimization stages before converting into C++/CUDA code. 
+
+
+\begin{figure*}[t]
+\centering
+\vspace{50pt}
+\subfloat[ASG to IR]{
+\includegraphics[scale=.4]{3.matcha/fig/asg.pdf}
+}\hfil 
+\subfloat[Generated C++ code]{
+    \begin{minipage}{7.2cm}
+    \vspace{-250pt}
+    \lstinputlisting[language=C++, keywordstyle=\color{blue},  basicstyle=\ttfamily\scriptsize, stringstyle=\color{red},  breaklines=true, showspaces=false, showstringspaces=false, tabsize=4, aboveskip=0pt, belowskip=0pt]{3.matcha/codelistings/cpu3.cpp}
+    \label{fig:ccode}
+    \end{minipage}}
+    \caption{Compiling a Matcha program to C++ code. The IR of each ASG node contains an output (out), some auxiliary data (aux), and instructions (inst) for computing the output.}
+    \label{fig:pipeline}
+\end{figure*}
+
+Fig.~\ref{fig:pipeline} shows an example of the compilation pipeline. The program in Listing~\ref{fig:rapidmatch} is depicted as an ASG in Fig.~\ref{fig:pipeline}(a). The \texttt{apply} operator on the top (\texttt{apply0}) has $f1$ as the computation function and $L01$ as the input \texttt{List}. The items in $L01$ are referenced by $f1$ through an operand $e$ attached to the \texttt{apply} operator. 
+Within the subtree of the function $f1$, the inner apply operator (\texttt{apply1}) has $f2$ as the computation function and $C2$ as the input \texttt{List}. 
+The function $f2$ accesses items in $C2$ through an operand $v2$ attached to \texttt{apply1}. For a simple illustration, we omit the subtree for computing $C2$ in the figure. 
+
+\subsubsection{Generating IR on ASG}
+\label{sec:gen_ir}
+
+The compiler traverses the ASG in a depth-first order to generate the IR on each node. This ensures that the IR on any node is generated after the IR on all its input nodes has been generated. Upon visiting a node, the compiler determines the output of the operator as well as instructions for computing the output. 
+
+The IR has two data types: \texttt{Scalar} and \texttt{Array}. A \texttt{Scalar} can be integer, floating-point, or boolean. An \texttt{Array} can be one-dimensional or multi-dimensional and is defined by its data type and the size of each dimension. 
+Each element in an \texttt{Array} is a \texttt{Scalar} and can be accessed through array \texttt{Index}ing. To represent arithmetic, comparison, and logical expressions, the IR has an \texttt{Expr(op, lhs, rhs)} construct where the $op$ is the operation type, and the $lhs/rhs$ can be a \texttt{Scalar}, an \texttt{Expr}, or a constant literal. The IR also has an \texttt{Assign(dest, src)} construct for representing assignments. 
+Due to space limit, we only describe the generation rules for the \texttt{Graph} operators in this section. 
+The rules for other operators are straightforward as illustrated in Fig.~\ref{fig:pipeline}.
+
+
+When creating a \texttt{Graph} object, we construct an auxiliary data structure based on the input $edges$, $vlabel$, and $einfo$. The data structure helps achieve efficient access to neighboring information in the graph. 
+Specifically, upon visiting a \texttt{mk\_graph} node on the ASG, the compiler generates four auxiliary \texttt{Array}s ($vLabel$, $nbr$, $eInfo$, $indPtr$). The $vLabel$ is a copy of the input $vlabel$ (if the information is provided); it is a 2-D array that pairs unique vertex IDs with their labels. 
+The $nbr$ is a 1-D array that holds the neighbors of vertices corresponding to the vertex IDs in $vLabel$. The neighbors of each vertex are stored contiguously in $nbr$. The $eInfo$ Array has the same size as $nbr$, and it contains information on the neighboring edges corresponding to vertices in $nbr$. 
+{Fig.~\ref{fig:gaux_eg} shows an example of the data structure for the graph $G$ in Fig.~\ref{fig:graph}(a). }
+
+
+Depending on whether the vertex IDs are dense, we build different indirection arrays to achieve an efficient lookup of vertices' neighbors. If the vertex IDs are contiguous natural numbers, we use a 1-D Array ($indPtr$) to store the boundaries of their neighbors in $nbr$. The starting position of $v$’s neighbors in $nbr$ is $indPtr[v]$. 
+This data structure is exactly the Compressed Sparse Row (CSR) format commonly used for storing graph data. 
+
+
+However, for edges stored as relational tables, which are commonly used in join-based algorithms~\cite{sun2020rapidmatch}, the vertex IDs are non-contiguous and sparse. 
+To efficiently locate neighbors for the vertices, we store the neighbor boundaries in a hash table. 
+Specifically, the $indPtr$ is a 2-D Array of size ($H\times 4$) where $H$ is the number of slots in the hash table. 
+For a vertex $v$, its neighbor boundaries are stored in $indPtr[\_hash[v]][1]$ and $indPtr[\_hash[v]][2]$, and its position in $vLabel$ is stored in $indPtr[\_hash[v]][3]$. 
+In Fig.~\ref{fig:gaux_eg}, the neighbors of vertex-0 are stored from position-0 ($indPtr[\_hash(0)][1]$) to position-3 ($indPtr[\_hash(0)][2]$) in $nbr$. 
+The initialization of the data structure is performed by a built-in function ($\_init\_graph$), which is invoked on the \texttt{mk\_graph} node. 
+
+
+\begin{figure}[t]
+   \centering
+    \includegraphics[scale=0.45, page=1]{3.matcha/fig/example1-crop.pdf}
+    \caption{Graph $G$ from Fig.~\ref{fig:graph}(a) stored in four \texttt{Arrays}.}
+        \vspace{-.5em}
+    \label{fig:gaux_eg}
+\end{figure}
+
+
+The \texttt{neighbor}, \texttt{edge\_info}, and \texttt{vertex\_label} operators can be implemented efficiently with $indPtr$. The output of \texttt{neighbor/edge\_info} is a slice of the graph’s $nbr$/$eInfo$ Array. The output of \texttt{vertex\_label} operator is a \texttt{Scalar} read from $vLabel$. If the graph is stored in CSR format, the slicing boundaries for vertex $v$ are $indPtr[v]$ and $indPtr[v+1]$; otherwise, the slicing boundaries are obtained from the hash table. 
+
+
+\subsubsection{Translating IR to C++ Code}
+
+The IR needs to undergo several optimization passes before being translated to the target code. We leave the details of code optimizations/parallelization in the next section and focus on generating sequential CPU code in this section. 
+
+After the IR is generated, the compiler takes another depth-first traversal on the ASG and generates a C++ function based on the IR. The leaf nodes (i.e., nodes without any input) are input data (e.g., $L01$, $L03$ in Fig.~\ref{fig:pipeline}(a)). 
+These data are initialized by the host code and are passed as arguments to the C++ function. 
+In our implementation, the input data are initialized in Python, and the generated C++ code is compiled just-in-time into a pybind11~\cite{pybind11} module, which is invoked by the Python program. 
+
+\noindent
+\textbf{\textit{Memory Pre-allocation.}} If an internal node on the ASG contains an \texttt{Array}, we need to allocate memory for the data. A straightforward approach is to allocate memory on the node. However, this involves dynamic memory allocation and may incur a large overhead, especially when it is in a loop. For example, the \texttt{intersect} operator in Listing~\ref{fig:rapidmatch} needs to allocate memory for the intersection results every time $f1$ is executed (i.e., for every item in $L01$). 
+To avoid repeated memory allocation, we pre-allocate memory for \texttt{Array}s on all ASG nodes at the beginning of the generated code. Specifically, the compiler checks the size of every \texttt{Array} in the internal nodes. If the size is constant or can be determined based on the data in the leaf nodes, we can pre-allocate the memory before execution of the internal nodes. If the size is unknown, the compiler reports an error and asks the user to provide a size. 
+
+Once memory is allocated, generating computing instructions is straightforward.  The \texttt{Expr}, \texttt{Loop}, and \texttt{Assign} constructs in the IR can be directly translated to expressions, for-loops, and assignments in C++. If a node is not a descendant of an \texttt{apply} operator, its $inst$  is immediately translated when the node is visited. However, if it is a descendant of an \texttt{apply} operator, the node is skipped since its instructions should be included in the loop body of the \texttt{apply} operator. 
+Fig.~\ref{fig:pipeline}(b) shows the generated C++ code corresponding to the IR in Fig.~\ref{fig:pipeline}(a). 
+
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------------$
+
+\subsection{Optimization and Parallelization}
+
+
+Matcha decouples the definition of subgraph matching algorithm from its execution strategy. This section explains how various optimization and parallelization strategies can be applied automatically to Matcha programs through IR transformations.
+
+\subsubsection{Operator Fusion}
+
+Our compiler fuses four types of operator pairs: 
+\begin{itemize}[leftmargin=*]
+    \item \texttt{apply}+\texttt{sum}. Consider the loop of \texttt{apply1} (colored in grey) and the loop of \texttt{sum1} (colored in purple) in Fig.~\ref{fig:pipeline}(b). 
+The two loops share the same iteration space. The \texttt{apply1} loop writes data to $apl1\_out$, which is read by the \texttt{sum1} loop. We can fuse the two loops to avoid the storage of $apl1\_out$. 
+\item \texttt{intersect/diff}+\texttt{sum}. In Fig.~\ref{fig:pipeline}(a), we can also see that the output array of \texttt{diff} operator is never used; the algorithm is only interested in the number of items in the array. In this case, we can remove the allocation of $df\_out$ and invoke a more efficient version of $\_diff$ without storing the output data. 
+\item \texttt{neighbor}+\texttt{apply} with boundary conditions. This pair of operators often appear in labeled subgraph matching algorithms, as they need to select neighboring vertices with a specific label (e.g., line 11 in Listing~\ref{fig:decomine_code}). 
+By fusing the two operators, we can avoid the allocation of a new \texttt{Array} for the output of \texttt{apply} and replace it with a slice of the neighbor list. 
+\item \texttt{intersect/diff}+\texttt{apply}  with boundary conditions. An \texttt{intersect/diff} operator can also be fused with a conditional \texttt{apply} if the condition only affects the slicing boundaries of the output. 
+This fusion enables the efficient implementation of the symmetry-breaking technique that eliminates redundant subgraphs~\cite{mawhirter2021dryadic}. 
+\end{itemize}
+
+
+The fusion is applied to the ASG nodes in a depth-first order. For each pair of child-parent nodes, we check if they match any fusible types and perform fusion on the IR accordingly. 
+
+
+\subsubsection{Loop-Invariant Code Motion}
+
+Consider the $\_init\_graph$ function in the \texttt{apply1} loop in Fig.~\ref{fig:pipeline}(b). 
+The function's execution does not depend on the loop iterate $i1$, which means that it can be moved outside of the loop. In fact, the function does not depend on the loop iterate $i0$ either and can be moved outside of the \texttt{apply0} loop. 
+This optimization is often referred to as loop-invariant code motion in compiler optimization literature. 
+
+Besides code motion at the ASG level, there might also be loop-invariant instructions at the IR level. For example, the \texttt{mk\_list} node in Fig.~\ref{fig:pipeline}(a) contains two \texttt{Assign}s, and the second \texttt{Assign} does not reference the items of $C2$. In such cases, we only include the first \texttt{Assign} in the loop body of \texttt{apply1} and leave the second \texttt{Assign} within the \texttt{mk\_list}. 
+
+
+This optimization also achieves the code motion of set operations proposed in previous work~\cite{mawhirter2019automine}. For any \texttt{intersect} or \texttt{diff} operators independent from the input of the \texttt{apply} operator, the compiler automatically moves the code outside the loop. 
+Listing ~\ref{fig:ccode2} shows the optimized code after operator fusion and code motion for the example in Fig.~\ref{fig:pipeline}.  
+
+
+
+\begin{figure}[t]
+\centering
+\lstinputlisting[language=C++, keywordstyle=\color{blue}, stringstyle=\color{red},  breaklines=true, showspaces=false, showstringspaces=false, tabsize=4]{3.matcha/codelistings/cpu2.cpp}
+    \vspace{-.4em}
+\captionof{lstlisting}{Optimized code after operator fusion and code motion for the example in Fig~\ref{fig:pipeline}.}
+    \vspace{-.5em}
+\label{fig:ccode2}
+\end{figure}
+
+\subsubsection{Automatic Parallelization}
+Following previous work~\cite{chen2022efficient, wei2022stmatch}, we apply two-level parallelization to the subgraph exploration procedure. 
+The first parallelization is applied to the outermost loop that iterates over the initial vertices/edges. On a CPU, this corresponds to using multiple threads to explore subgraphs from different vertices/edges simultaneously. The second parallelization is applied to the computation of intermediate subgraphs at each exploration step. It exploits fine-grained parallelism (i.e., SIMD) to accelerate the \texttt{intersect/diff} operations.
+
+GPU parallelization is similar. Unlike previous work that uses either a warp~\cite{chen2022efficient, wei2022stmatch} or a single thread~\cite{yuan2023everest} as the execution unit, we use cooperative thread groups~\cite{threadgroup} on Nvidia GPU to execute iterations of the outermost loop in parallel. 
+This implementation allows us to configure the thread-group size and achieve better GPU utilization.
+For \texttt{intersect/diff}, we adapt the code from G2Miner~\cite{chen2022efficient} to use threads in each group for parallel execution. 
+
+\noindent
+\textbf{\textit{Work Stealing.}}
+Subgraph matching on a GPU usually suffers from severe load imbalance~\cite{wei2022stmatch}. Work-stealing is an effective technique that can mitigate this issue and significantly improve performance. 
+We implement the work-stealing strategy from ~\cite{wei2022stmatch} in our compiler. Specifically, we place the $aux$ in the IR of \texttt{neighbor}, \texttt{intersect} and \texttt{diff} operators, as well as the iterators of all \texttt{apply} loops in GPU shared memory. 
+This allows an idle thread-group to check the amount of remaining work in another thread-group and steal work from it. %Readers are referred to~\cite
+
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------------$
+
+
+\subsection{Evaluation}
+
+
+\subsubsection{Experimental Setup}
+\noindent
+\textbf{\textit{Platform.}} Our experiments are conducted on a dual-socket machine with Intel Xeon Gold 6226R 2.9GHz CPUs (32 cores in total), 512GB RAM, and an Nvidia A100 GPU. 
+The generated CPU code was compiled using GCC 9.4.0, and the generated GPU code was compiled using NVCC 11.2. 
+
+\noindent
+\textbf{\textit{Subgraph Matching Tasks.}} We evaluate the performance of four representative subgraph matching tasks: $k$-motif counting ($k$-MC), subgraph listing (SL), $k$-clique counting ($k$-CL), and temporal subgraph listing (TSL). A more detailed description of the tasks can be found in Section~\ref{sec:background_problem}. 
+
+\noindent
+\textbf{\textit{Datasets.}}
+Table~\ref{tab:datasets} lists the data graphs used in our experiments. 
+Six static graphs are used for $k$-MC, SL, and $k$-CL, and three temporal graphs are used for TSL. 
+These graphs are commonly used to evaluate subgraph matching systems in previous work~\cite{chen2018g, chen2022decomine}. 
+For labeled SL, we randomly assign five labels to the vertices in the graphs. 
+\begin{table}[H]
+  \centering
+  \footnotesize
+  \caption{Graph datasets.}
+    \begin{tabular}{c|c|c|c}
+     \textbf{Graph} & \textbf{\# nodes} & \textbf{\# edges} & \textbf{Max degree}\\
+    \hline\hline
+    MiCo (mc)   & 96K   & 1.1M  & 1359 \\
+    DBLP  (db)    & 317K  & 1.0M  & 343 \\
+    Amazon (az)   & 334K  & 0.9M  & 549 \\
+    YouTube (yo)    & 1.1M  & 3.0M  & 28754 \\
+    Patent (pt)    & 3.8M  & 16.5M & 793 \\
+    LiveJournal (lj)    & 4.0M  & 34.7M & 14815 \\
+    \hline
+    \hline
+    EmailEuCore (ee)    & 1K    & 332K  & 9782 \\
+    wikitalk (wt)  & 1.1M  & 7.8M  & 264905 \\
+    StackOverflow (st)   & 2.6M  & 63.5M & 101663 \\
+    \hline
+    \end{tabular}%
+\label{tab:datasets}
+\end{table}%
+
+\noindent
+\textbf{\textit{Compared Systems.}} We compare our system against five state-of-the-art systems: STMatch (\textbf{STM})~\cite{wei2022stmatch}, RapidMatch (\textbf{RM})~\cite{sun2020rapidmatch}, DecoMine (\textbf{DM})~\cite{chen2022decomine}, G2Miner (\textbf{GM})~\cite{chen2022efficient},  and Everest (\textbf{EV})~\cite{yuan2023everest}. 
+These systems were chosen for their diverse algorithm and optimization supports. 
+GM and STM implement the vertex-extension backtracking algorithm for general subgraph listing and motif counting tasks.
+DM employs a pattern-decomposition-based algorithm for subgraph counting. 
+EV implements an edge-extension backtracking algorithm for temporal subgraph listing. 
+RM employs a join-based algorithm for labeled subgraph listing. 
+GM, STM, and EV are GPU-based systems, while DM and RM only run on CPU. 
+
+To demonstrate Matcha's flexibility and efficiency, we reimplement the five systems in Matcha and compare performance with their original implementations. 
+These reimplementations (referred to as \textbf{mGM}, \textbf{mDM}, \textbf{mSTM}, \textbf{mRM}, and \textbf{mEV}) use the same optimizations as original systems. 
+Then, we improve the performance of the reimplementations by enabling various optimizations in our compiler. 
+For the two CPU-only systems (DM and RM), we also parallelize the code for GPU execution. 
+
+
+
+\subsubsection{Results for Motif Counting}
+We use DC and GM for motif counting as they reportedly achieve the best performance among existing systems for the task on CPU and GPU, respectively. 
+
+\begin{table}[t]
+  \centering
+  \footnotesize
+  \caption{Execution time of motif counting with vertex-extension algorithm. `ms', `s', and `m' stand for milliseconds, seconds, and minutes.}
+    \centering
+    \begin{tabular}{c|c||c|c|c|c|c|c}
+   & & \textbf{mc} & \textbf{db} & \textbf{az} & \textbf{yo} & \textbf{pt} & \textbf{lj} \bigstrut\\
+    \hline\hline
+    \multirow{2}[7]{*}{\rotatebox{90}{3-MC}} 
+          & \textbf{GM}    & 2.6ms & 1.2ms & 1.0ms & 18ms & 23ms & 142ms \bigstrut[t]\\
+          & \textbf{mGM}   & 2.7ms & 1.2ms & 1.1ms & 18ms & 23ms & 141ms       \bigstrut[t]\\
+          & \textbf{mGM-o} & 1.7ms & 0.6ms & 0.4ms & 13ms & 16ms & 136ms \bigstrut[b]\\
+    \hline
+    \multirow{2}[7]{*}{\rotatebox{90}{4-MC}} 
+          & \textbf{GM}          & 1.58s & 0.11s & 0.04s & 227s & 1.93s  & 415s \bigstrut[t]\\
+           & \textbf{mGM}        & 1.57s & 0.13s & 0.05s & 227s & 1.93s  &  415s \bigstrut[t]\\
+          & \textbf{mGM-o}      & 1.02s  & 0.06s & 0.02s & 192s & 1.78s  & 407s \bigstrut[b]\\
+    \hline
+    \end{tabular}%
+  \label{tab:motif1}
+  \end{table}
+  
+\begin{table}[t]
+  \centering
+  \footnotesize
+  \caption{Execution time of motif counting with a decomposition-based algorithm. } 
+    \begin{tabular}{c|c||c|c|c|c|c|c}
+
+ &  & \textbf{mc} & \textbf{db} & \textbf{az} & \textbf{yo} & \textbf{pt} & \textbf{lj} \bigstrut\\
+    \hline\hline
+    % \multirow{2}[2]{*}{\textit{3-MC}} 
+    %       & \textbf{M-DC-CPU}  & 47 & 15 & 19 & 93 & 332 & 2708 \bigstrut[t]\\
+    %       & \textbf{M-DC-GPU} & 0.9 & 0.2 & 0.3 & 2 & 11 & 43 \bigstrut[b]\\
+    % \hline
+    \multirow{2}[2]{*}{\rotatebox{90}{4-MC}}
+          & \textbf{mDM-cpu} & 0.39s & 64ms & 43ms & 0.74s & 1.6s  & 33s \bigstrut[t]\\
+          & \textbf{mDM-gpu} & 0.03s   & 3ms & 2ms & 0.06s & 0.09s & 2.3s \bigstrut[b]\\
+    \hline
+    \multirow{2}[2]{*}{\rotatebox{90}{5-MC}}
+          & \textbf{mDM-cpu} & 128s & 1.3s & 0.17s & 576s  & 21s   & 212m \bigstrut[t]\\
+          & \textbf{mDM-gpu} & 22s & 0.3s & 0.04s & 17s & 3.3s & 26m \bigstrut[b]\\
+    \hline
+    \end{tabular}%
+  \label{tab:motif2}
+\end{table}%
+
+
+Table~\ref{tab:motif1} lists the execution time of 3-MC and 4-MC with the vertex-extension algorithm of GM running on GPU. 
+The results show that our reimplementation achieves almost the same performance as the original GM system, validating the efficiency of our generated code. 
+We further optimize the baseline reimplementation by using a group of 8 threads to execute each iteration of the outermost loop. 
+We also enable work-stealing among the thread groups. (The original GM system uses warps for parallel execution without any work-stealing.)
+With the optimizations, our generated code (mGM-o) achieves 1.1x to 2.6x speedups ({with an average of 1.5x}) against the original GM.  
+
+
+
+
+Table~\ref{tab:motif2} lists the execution time of 4-MC and 5-MC with the pattern-decomposition algorithm of DM. 
+Since DM is not open-sourced, we cannot directly compare performance with their original implementation. 
+The execution time of our re-implementation on CPU is close to the numbers reported in their paper, affirming the efficiency of our generated code. 
+While the original DM is CPU-only, our system automatically generates GPU code for the algorithm, easily accelerating the execution by 4x to 53x ({with an average of 27x}).  
+
+
+\begin{figure}[t]
+   \centering
+    \includegraphics[scale=0.45, page=1]{3.matcha/fig/fig_motif1-crop.pdf}
+        \vspace{-.5em}
+    \caption{Effect of thread-grouping (TG) and work-stealing (WS) on mGM for 3-MC. `ocp', `ut' stand for SM occupancy and thread utilization.}
+    \label{fig:motif_ablation}
+\end{figure}
+
+\begin{figure}[t]
+   \centering
+    \subfloat[4-MC]{
+        \includegraphics[scale=0.5, page=1]{3.matcha/fig/fig_motif21-crop.pdf}
+    }\hfil 
+    \subfloat[5-MC]{
+        \includegraphics[scale=0.5, page=1]{3.matcha/fig/fig_motif22-crop.pdf}
+    }
+            \vspace{-.5em}
+    \caption{Scalability of multi-threaded mDM on CPU. } 
+    \label{fig:motif_ablation2}
+\end{figure}
+
+
+By activating different optimization passes during Matcha compilation, we study the effectiveness of each optimization technique. 
+Fig.~\ref{fig:motif_ablation} shows how the performance of mGM is affected by thread-grouping and work-stealing. 
+We profile the execution with Nvidia NSight~\cite{nsight} and mark the SM occupancy and thread utilization data in the figure. 
+Occupancy is defined as the ratio of active warps on an SM to the maximum number of active warps supported. 
+Thread utilization is defined as the ratio of active threads in a warp to the total number of threads in the warp. 
+As we can see from the figure, thread-grouping effectively improves thread utilization, bringing 1.1x to 2.5x speedups against the baseline mGM. 
+On the other hand, work-stealing has little effect on thread utilization and SM occupancy. 
+This is because the nested loop has only two levels for 3-MC, and the baseline mGM already achieves good load balance with dynamic scheduling of the outermost loop. 
+
+For DM, we study how the algorithm scales on a CPU with different numbers of threads.  
+Fig.~\ref{fig:motif_ablation2} shows that our generated code achieves near-linear speedups up to 32 threads. When the thread count increases to 64, performance still improves due to the CPU's hyper-threading. 
+
+
+\subsubsection{Results for Subgraph Listing}
+
+\begin{figure}[h]
+    \centering
+            \vspace{-1em}
+    \subfloat[Q1]{
+            \includegraphics[scale=0.2, page=1]{3.matcha/fig/pattern-crop.pdf}
+    }\hfil
+    \subfloat[Q2]{
+            \includegraphics[scale=0.2, page=2]{3.matcha/fig/pattern-crop.pdf}
+    }\hfil
+    \subfloat[Q3]{
+        \includegraphics[scale=0.2, page=3]{3.matcha/fig/pattern-crop.pdf}
+    }\hfil
+    \subfloat[Q4]{
+        \includegraphics[scale=0.2, page=4]{3.matcha/fig/pattern-crop.pdf}
+    }\hfil
+    \subfloat[Q5]{
+        \includegraphics[scale=0.2, page=5]{3.matcha/fig/pattern-crop.pdf}
+    }\hfil
+    \subfloat[Q6]{
+        \includegraphics[scale=0.2, page=6]{3.matcha/fig/pattern-crop.pdf}
+    }
+        \vspace{-.5em}
+    \caption{Query patterns for subgraph listing.}
+    \label{fig:static_query}
+        \vspace{-.5em}
+\end{figure}
+
+GM, STM, and RM all support general subgraph listing. 
+We test and compare their performance with our Matcha implementation using the query patterns in Fig.~\ref{fig:static_query}. 
+
+\begin{table}[t]
+  \centering
+  \footnotesize 
+  \caption{Execution time of unlabeled subgraph listing with vertex extension. `s' stands for seconds. All other numbers are in milliseconds. `$-$' indicates timeout after 4 hours. }
+    \begin{tabular}{c|c||c|c|c|c|c|c}
+    \textbf{Graph} & & \textbf{Q1} & \textbf{Q2} & \textbf{Q3} & \textbf{Q4} & \textbf{Q5} & \textbf{Q6} \bigstrut\\
+    \hline\hline
+    \multirow{3}[7]{*}{{az}} 
+              & \textbf{STM}         & 12    & 14    & 71    & 80    & 138    & 132  \bigstrut[t]\\
+          & \textbf{mSTM}       & 10    & 5.4  & 71    & 16    & 131    & 131 \\
+          & \textbf{GM}          & 2.6   & 2.7  & 41    & 8.4  & 132    & 164\\
+          & \textbf{mGM}         & 2.5   & 2.7  & 41    & 8.4   &  132    & 164 \\
+          & \textbf{mGM-o} & 1.3  & 1.0  & 18 & 3.7  & 131    & 76 \bigstrut[b]\\
+    \hline
+    \multirow{3}[7]{*}{{db}} 
+              & \textbf{STM}         & 312   & 147   & 903   & 368   & 14.6s & 29.4s \bigstrut[t]\\
+          & \textbf{mSTM}       & 110   & 39    & 901   & 367   & 14.6s & 28.7s \\
+          & \textbf{GM}          & 26    & 12    & 1220  & 388   & 67.0s & 95.6s \\
+              & \textbf{mGM}     & 26    & 14    & 1232  & 386   & 67.0s  & 95.6s \\
+          & \textbf{mGM-o} & 15 & 5.3  & 457   & 138   & 12.7s & 20.5s \bigstrut[b]\\
+    \hline
+    \multirow{3}[7]{*}{{mc}} 
+              & \textbf{STM}         & 445   & 235   & 122s & 30.3s & $-$     & $-$ \bigstrut[t]\\
+          & \textbf{M-STM}       & 449   & 229   & 121s & 30.0s & $-$     & $-$ \\
+          & \textbf{GM}          & 769   & 315   & 178s & 35.6s & $-$     & $-$ \\
+           & \textbf{mGM}         & 774  & 317   & 178s & 36.6s  & $-$     & $-$ \\
+          & \textbf{mGM-o} & 407   & 227   & 121s & 29.3s & $-$     & $-$ \bigstrut[b]\\
+    \hline
+    \end{tabular}%
+  \label{tab:unlabeled_ssl1}%
+\end{table}%
+
+
+\noindent
+\textbf{\textit{Performance of Unlabeled Queries.}}
+Table~\ref{tab:unlabeled_ssl1} shows the execution time of different systems for listing unlabeled subgraphs of the query patterns. 
+In all test cases, our re-implementation of STM (mSTM) either matches or surpasses the performance of the original STM system. 
+This is because the original STM needs to maintain a stack data structure to simulate the recursive execution of the backtracking algorithm, while Matcha directly translates the algorithm into a nested loop. 
+The performance advantage of mSTM diminishes with large query patterns because the overhead of maintaining the stack data structure becomes small compared to the computation itself. 
+
+GM performs especially well on small queries but is slower than STM for larger queries. 
+This is because GM launches many more thread-blocks (7000+) than STM (82) and achieves better GPU occupancy for small tasks, while STM achieves better load balance for larger tasks due to its work-stealing technique. 
+Our re-implementation of GM (mGM) achieves almost the same performance as the original GM. 
+
+
+\begin{figure}[t]
+   \centering
+        \includegraphics[scale=0.45, page=1]{3.matcha/fig/fig_ssl1-crop.pdf}
+                \vspace{-.5em}
+    \caption{Effect of thread-grouping (TG) and work-stealing (WS) on mGM for subgraph listing on DBLP graph.}
+    \label{fig:ssl_ablation}
+            \vspace{-.5em}
+\end{figure}
+
+
+
+To further improve the performance, we apply thread-grouping and work-stealing to mGM. 
+The optimized code (mGM-o) brings the best of both STM and GM, achieving up to 7.7x speedups against the original STM and 4.6x speedups against GM. 
+Fig.~\ref{fig:ssl_ablation} shows the effectiveness of each optimization. 
+As expected, thread-grouping increases thread utilization, leading to 1.5x to 2.8x speedups against mGM. 
+The benefit of work-stealing is small for the size-4 queries (Q1 and Q2), which is similar to the results for 3-MC in Fig.~\ref{fig:motif_ablation}. 
+However,  as the pattern size grows (Q3$\sim$Q6), the benefit becomes more noticeable. 
+This performance is reflected by the SM occupancy. 
+For Q1 and Q2, occupancy is already high without work-stealing. But for Q3$\sim$Q6, work-stealing significantly increases occupancy. 
+
+
+\begin{table}[t]
+  \centering
+  \footnotesize
+  \caption{Execution time (in milliseconds) of labeled subgraph listing with vertex extension. }
+    \begin{tabular}{c|c||c|c|c|c|c|c}
+    \textbf{Graph} & & \textbf{Q1} & \textbf{Q2} & \textbf{Q3} & \textbf{Q4} & \textbf{Q5} & \textbf{Q6} \bigstrut\\
+    \hline\hline
+    \multirow{2}[2]{*}{az} 
+          & \textbf{STM} & 12    & 12    & 12    & 10    & 9.5  & 6.9 \bigstrut[t]\\
+          & \textbf{mGM-o} & 0.4  & 0.4  & 0.9  & 3.3  & 1.0  & 0.6 \bigstrut[b]\\
+    \hline
+    \multirow{2}[2]{*}{db} 
+          & \textbf{STM} & 12    & 12    & 14    & 19    & 61    & 83 \bigstrut[t]\\
+          & \textbf{mGM-o} & 1.4  & 1.5  & 7.9  & 8.2  & 59    & 58 \bigstrut[b]\\
+    \hline
+    \multirow{2}[2]{*}{mc} 
+          & \textbf{STM} & 8.5  & 8.4  & 366   & 612   & 1371  & 1197 \bigstrut[t]\\
+          & \textbf{mGM-o} & 5.3  & 5.1  & 272   & 383   & 1277  & 1183 \bigstrut[b]\\
+    \hline
+    \end{tabular}%
+  \label{tab:labeled_ssl2}%
+\end{table}%
+
+
+\begin{table}[t]
+  \centering
+  \footnotesize
+      \vspace{-.5em}
+  \caption{Execution time of labeled subgraph listing with a join-based algorithm. `s' stands for seconds. All other numbers are in milliseconds.}
+    \begin{tabular}{c|c||c|c|c|c|c|c}
+    \textbf{Graph} && \textbf{Q1} & \textbf{Q2} & \textbf{Q3} & \textbf{Q4} & \textbf{Q5} & \textbf{Q6} \bigstrut\\
+    \hline\hline
+    \multirow{2}[7]{*}{az} 
+          & \textbf{RM}           & 60    & 67    & 75    & 95    & 90    & 96 \bigstrut[t]\\
+          & \textbf{mRM}  & 12     & 14    & 12    & 18    & 18    & 17 \\
+          & \textbf{mRMo-cpu} & 1.3   & 1.6   & 1.6   & 2.9   & 1.6   & 1.6 \\
+          & \textbf{mRMo-gpu} & 0.1  & 0.1  & 0.3  & 1.2  & 0.2 & 0.2 \bigstrut[b]\\
+    \hline
+    \multirow{2}[7]{*}{db} 
+          & \textbf{RM}           & 71    & 78    & 205   & 360   & 2262  & 1863 \bigstrut[t]\\
+          & \textbf{mRM}  & 13    & 17    & 66    & 130   & 971  & 1388 \\
+          & \textbf{mRMo-cpu} & 1.8    & 1.0    & 14    & 16   & 260  & 292 \\
+          & \textbf{mRMo-gpu } & 0.6  & 0.5  & 7.8  & 8.3  & 56    & 59 \bigstrut[b]\\
+    \hline
+    \multirow{2}[7]{*}{mc} 
+          & \textbf{RM}           & 165   & 223   & 9688  & 18.1s  & 257s  & 207s \bigstrut[t]\\
+          & \textbf{mRM} & 62   & 136   & 7983  & 16.7s  & 239s  & 198s \\
+          & \textbf{mRMo-cpu} & 8.5   & 18   & 797  & 1.1s  & 28s  & 28s \\
+          & \textbf{mRMo-gpu}      & 5.4  & 4.8   & 267   & 0.33s    & 1.25s    & 1.10s \bigstrut[b]\\
+    \hline
+    \end{tabular}%
+  \label{tab:labeled_ssl1}%
+\end{table}%
+
+
+\begin{figure}[t]
+   \centering
+   \subfloat[Multi-threading]{
+        \includegraphics[scale=0.5, page=1]{3.matcha/fig/fig_ssl3-crop.pdf}
+    }\hfil 
+    \subfloat[Code motion on DBLP graph]{
+        \includegraphics[scale=0.5, page=1]{3.matcha/fig/fig_ssl4-crop.pdf}
+    }
+    \caption{Effect of code motion and multi-threading on RM for labeled subgraph listing. }
+    \label{fig:ssl_ablation2}
+\end{figure}
+
+\noindent
+\textbf{\textit{Performance of Labeled Queries.}}
+Table~\ref{tab:labeled_ssl2} shows the performance of the backtracking algorithm for labeled subgraph listing. 
+The queries are generated by randomly assigning four labels to the pattern vertices. 
+%The original GM implementation does not support labeled queries, so we only test the performance of our optimized re-implementation (mGM-o). 
+Compared to STM, our code (mGM-o) is consistently faster for all queries, achieving an average speedup of 7.1x. 
+
+
+
+We also test the performance of the join-based algorithm of RM for the same set of labeled queries. 
+The results are listed in Table~\ref{tab:labeled_ssl1}. 
+The original RM is a single-threaded CPU implementation. 
+We reimplement it in Matcha and apply two optimizations, code motion and multi-threading, to it. 
+The generated CPU code (mRMo-cpu) is {on average 29.4x} (up to 60x) faster than the original RM. 
+Fig.~\ref{fig:ssl_ablation2} shows how each of the two optimizations affects the performance. 
+For Q2, Q5, and Q6, code motion significantly reduces the redundant set operations, achieving up to 6.9x speedup. 
+It is not effective for Q1, Q3, and Q4 because the three queries do not have redundant set operations. 
+As more threads are used for execution, the program runs faster, but the speedups are small. 
+This is because the total workloads in these labeled queries are small. 
+
+We further generate GPU code for RM (with code motion activated). 
+The GPU code (mRMo-gpu) runs 1.6x to 16x faster than mRMo-cpu. 
+Interestingly, when comparing data from Table~\ref{tab:labeled_ssl2} and Table~\ref{tab:labeled_ssl1}, we note that the performance of mRMo-gpu closely matches that of mGM-o for most tasks. 
+This observation casts doubt on the practical advantage of the join-based algorithm over the basic vertex-extension on GPU.
+
+
+\begin{table}[t]
+  \centering
+  \footnotesize
+  \caption{Execution time (in milliseconds) of labeled subgraph counting with decomposition-based and join-based algorithms.}
+    \begin{tabular}{c|c||c|c|c|c|c|c}
+    \textbf{Graph} &  & \textbf{Q1} & \textbf{Q2} & \textbf{Q3} & \textbf{Q4} & \textbf{Q5} & \textbf{Q6} \bigstrut\\
+    \hline\hline
+    \multirow{2}[2]{*}{az} 
+          & \textbf{mDM-cpu} & 11    & 11    & 1    & 11    & 11    & 11 \bigstrut[t]\\
+          & \textbf{mDM-gpu} & 0.3  & 0.3  & 0.5  & 3.2  & 0.4  & 0.3 \\
+          & \textbf{mDM-RM} & 0.1  & 0.1 & 0.1  & 2.9  & 0.3  & 0.4 \\
+          
+    \hline
+    \multirow{2}[2]{*}{db} 
+          & \textbf{mDM-cpu} & 16    & 16    & 16    & 18  & 15    & 16 \bigstrut[t]\\
+          & \textbf{mDM-gpu} & 0.3  & 0.3  & 1.0    & 8.2   & 0.6  & 0.7 \bigstrut[b]\\
+           & \textbf{mDM-RM} & 0.1   & 0.1   & 0.3   & 8.2   & 0.5   & 0.7 \\
+    \hline
+    \multirow{2}[2]{*}{mc} 
+          &\textbf{mDM-cpu} & 12    & 13    & 30  & 1056 & 57   & 14 \bigstrut[t]\\
+          & \textbf{mDM-gpu} & 0.4  & 0.3  & 8.4   & 263 & 2.7   & 4.5 \bigstrut[b]\\
+           & \textbf{mDM-RM} & 0.1  & 0.1 & 3.3  & 259  & 2.4  & 4.3 \\
+    \hline
+    \end{tabular}%
+  \label{fig:ssl_mix}%
+\end{table}%
+
+
+\noindent
+\textbf{\textit{Performance of Subgraph Counting.}}
+In some cases, the user might be only interested in the count of subgraphs without listing them. 
+The decomposition-based algorithm in DM is most suitable for this task. 
+For each sub-pattern, DM simply uses the basic vertex-extension backtracking algorithm to count the matching subgraphs. 
+One potential way to improve the performance is to adopt RM to match the sub-patterns. 
+While the idea is hard to implement in the original DM or RM system, the implementation is easy in Matcha. 
+Table~\ref{fig:ssl_mix} shows the execution time of labeled subgraph counting with our re-implementation of DM on both CPU and GPU, and the combined algorithm (mDM-RM).  
+We can see that Matcha easily accelerates DM by 2.2x to 53x with GPU parallelization. 
+The combined algorithm further improves the performance on GPU by 1.8x on average.
+
+
+
+\subsubsection{Results for Clique Counting}
+
+Next, we compare GM and Matcha for 4, 5, 6-CL. 
+We select GM as baseline because it accelerates the algorithm with an edge-pruning technique and reportedly achieves the best performance for the task among existing systems. 
+
+\begin{table}[H]
+  \centering
+  \footnotesize
+  \caption{Execution time of clique counting with the backtracking algorithm accelerated by edge pruning. `s' stands for seconds. All other numbers are in milliseconds.}
+    \begin{tabular}{c|c||c|c|c|c|c|c}
+ &  & \multicolumn{1}{c|}{\textbf{mc}} & \multicolumn{1}{c|}{\textbf{db}} & \multicolumn{1}{c|}{\textbf{az}} & \multicolumn{1}{c|}{\textbf{yo}} & \multicolumn{1}{c|}{\textbf{pt}} & \multicolumn{1}{c}{\textbf{lj}} \bigstrut\\
+    \hline\hline
+    \multirow{3}[1]{*}{4-CL}
+          & \textbf{GM} & 15    & 1.5  & 0.6  & 2.8  & 11    & 271 \bigstrut[t]\\
+          & \textbf{mGM-o} & 11    & 0.8  & 0.2  & 1.4  & 8.9  & 271 \bigstrut[b]\\
+    \hline
+    \multirow{3}[1]{*}{5-CL}
+          & \textbf{GM} & 592   & 11    & 0.7  & 5.5  & 13    & 9341 \bigstrut[t]\\
+          & \textbf{mGM-o} & 551   & 11    & 0.3  & 4.5  & 10    & 9338 \bigstrut[b]\\
+    \hline
+    \multirow{3}[1]{*}{6-CL}
+          & \textbf{GM} & 22.6s & 235   & 0.7  & 10    & 17    & 466s \bigstrut[t]\\
+          & \textbf{mGM-o} & 20.3s & 171   & 0.4  & 8.7  & 14    & 466s \bigstrut[b]\\
+    \hline
+    \end{tabular}%
+  \label{tab:cl}%
+\end{table}%
+
+
+Table~\ref{tab:cl} shows the execution time of the original GM system and our generated code. 
+Our code (mGM-o) is optimized with thread-grouping and work-stealing, achieving {1.1x to 2.6x} speedups {with an average of 1.4x} against the original GM. 
+According to our profiling, the speedups are mainly attributed to the improved thread utilization by thread grouping. We omit the profiling data here due to the space limit. 
+
+
+\subsubsection{Results for Temporal Subgraph Listing}
+
+
+We use Matcha to re-implement the edge-extension backtracking algorithm of EV and compare the performance with the original EV system. 
+
+\begin{figure}[H]
+    \vspace{-1em}
+    \centering
+    \subfloat[Q7]{
+      \includegraphics[scale=0.2, page=7]{3.matcha/fig/pattern-crop.pdf}
+    }\hfil
+    \subfloat[Q8]{
+      \includegraphics[scale=0.2, page=8]{3.matcha/fig/pattern-crop.pdf}
+    }\hfil
+    \subfloat[Q9]{
+      \includegraphics[scale=0.2, page=9]{3.matcha/fig/pattern-crop.pdf}
+    }\hfil
+    \subfloat[Q10]{
+      \includegraphics[scale=0.2, page=10]{3.matcha/fig/pattern-crop.pdf}
+    }
+    \vspace{-.5em}
+    \caption{Temporal Queries.}
+    \label{fig:temporal_query}
+\end{figure}
+
+
+We use the four temporal queries in Fig.~\ref{fig:temporal_query} for performance evaluation. 
+The numbers on the edges indicate the matching order. 
+We adopt the same setting as in the EV paper~\cite{yuan2023everest} and set the time constraint $\delta$ to one day (86400 seconds). 
+
+
+Table~\ref{tab:tsl} shows the execution time of different queries with the original EV system and our generated code (mEV). 
+Our code achieves almost the same performance as the original EV.  
+This is because the original EV implementation already incorporates all the applicable optimizations listed in Table~\ref{tab:intro}. Code motion is not helpful in this case because the edge-extension algorithm does not have any set operation, and symmetry breaking cannot be applied to temporal graphs. 
+The results confirm the efficiency of our automatically generated code in comparison to the hand-optimized code. 
+
+\begin{table}[H]
+  \centering
+  \footnotesize
+  \caption{Execution time (in milliseconds) of temporal subgraph listing with edge-extension based backtracking.}
+    \begin{tabular}{c|c||c|c|c|c}
+   & & \multicolumn{1}{c|}{\textbf{Q7}} & \multicolumn{1}{c|}{\textbf{Q8}} & \multicolumn{1}{c|}{\textbf{Q9}} & \multicolumn{1}{c}{\textbf{Q10}} \bigstrut\\
+    \hline\hline
+    \multirow{2}[2]{*}{eu} 
+          & \textbf{EV} & 1.8   & 4.8   & 4.6   & 3.8 \bigstrut[t]\\
+          & \textbf{mEV} & 1.9   & 5.2   & 4.5   & 4 \bigstrut[b]\\
+    \hline
+    \multirow{2}[2]{*}{wk} 
+          & \textbf{EV} & 11  & 21 & 22  & 20 \bigstrut[t]\\
+          & \textbf{mEV} & 11  & 22  & 23  & 19 \bigstrut[b]\\
+    \hline
+    \multirow{2}[2]{*}{st} 
+          & \textbf{EV} & 97  & 190 & 217 & 185 \bigstrut[t]\\
+          & \textbf{mEV} & 97  & 185 & 193 & 188 \bigstrut[b]\\
+    \hline
+    \end{tabular}%
+  \label{tab:tsl}%
+\end{table}%
+

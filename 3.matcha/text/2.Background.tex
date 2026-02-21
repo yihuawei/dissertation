@@ -1,0 +1,55 @@
+\section{Background}
+\label{sec:background}
+
+\subsection{Subgraph Matching Problems}
+\label{sec:background_problem}
+
+The data graph in many real applications can be abstracted as a 4-tuple $G = (V, E, L, T)$, where $V$ represents a set of vertices, $E=\{(v_i, v_j)|v_i, v_j \in V\}$ is a set of edges, $L$ is a labeling function that assigns labels to the vertices, and $T$ is a function that assigns (label or timing) information to the edges. 
+A graph $G' = (V', E', L', T')$ is a {\em subgraph} of $G = (V, E, L, T)$ if $V'\subseteq V$, $E'\subseteq E$, $L'(v)=L(v), \forall v\in V'$, and $T'(e)=T(e), \forall e\in E'$. 
+A subgraph $G'$ is {\em vertex-induced} if all the edges in $E$ that connect the vertices in $V'$ are included $E'$. 
+For example, ($v_{10,}v_{15},v_{0},v_{7}$) is a vertex-induced subgraph of $G$ in Fig.~\ref{fig:graph}(a).
+A connected subgraph $G'$ is {\em edge-induced} if it is not vertex-induced. 
+All subgraph matching problems are defined based on the concept of graph isomorphism:
+\begin{definition}[Graph Isomorphism]
+  Two graphs $G_a=(V_a, E_a, L_a, T_a)$ and $G_b=(V_b, E_b, L_b, T_b)$ are isomorphic if there is a bijective function $f: V_a\Rightarrow V_b$ such that $(v_i, v_j)\in E_a$ if and only if $(f(v_i), f(v_j))\in E_b$. 
+\end{definition}
+\noindent
+Depending on the usage of the label and edge information, there are various subgraph matching tasks in real applications. Some of the most common ones are:
+\begin{itemize}[leftmargin=*]
+\item {\em k-motif counting}, which counts the number of all size-$k$ unlabeled subgraphs in a data graph $G$.
+\item {\em Subgraph listing}, which lists all the subgraphs in a data graph $G$ that are isomorphic to a given query graph $Q$. The query can be either labeled or unlabeled. 
+For labeled queries, the subgraphs must match the labels of vertices in $Q$. 
+%The subgraphs can be either vertex-induced or edge-induced. 
+%It is an example of a multi-query problem because we need to find all the subgraphs in $G$ that are isomorphic to any query in a set of all possible size-k query graphs. 
+\item {\em k-clique listing}, which lists all the fully-connected unlabeled subgraphs of size-$k$ in a graph $G$. 
+\item {\em Temporal subgraph listing}, which lists all the subgraphs in a graph $G=(V_g,E_g,L_g,T_g)$  that match a temporal query $Q=(V_q, E_q, L_q)$.
+Given an ordering of connected edges in $E_q$ (i.e., $E_q=\{e_i\}_{i=1}^l$), $T_g(f(e_i))$ must not exceed $T_g(f(e_{i+1}))$. 
+A subgraph in $G$ matches $Q$ iff it is an isomorphism $f$ with $T_g(f(e_{l}))-T_g(f(e_1))\leq \delta$, and $T_g(f(e_{i+1}))-T_g(f(e_i))\leq \delta_{i},\forall i\in [1,l)$, where $\delta$ is the time constraint set for $Q$, and $\delta_i$ is the  time constraint set for each edge in $Q$.
+\end{itemize}
+
+
+
+% \begin{figure}[t]
+%     \centering
+% % \setcounter{lstlisting}{0}
+% \lstinputlisting[mathescape, language=Python, keywordstyle=\color{blue}, stringstyle=\color{red},  breaklines=true, showspaces=false, showstringspaces=false, tabsize=4]{codelistings/backtracking.py}
+% \captionof{lstlisting}{A nested for-loop for matching the query graph shown in Figure~\ref{fig:example_query}. $V$ is an array of all the vertices in the data graph G. $\cap$ is set intersection and $-$ is set difference.}
+% \label{list:backtrack}
+% \end{figure}
+
+
+\subsection{Subgraph Matching Algorithms}
+% \begin{figure}[t]
+%    \centering
+%     \includegraphics[scale=0.33, page=3]{fig/example1-crop.pdf}
+%     \caption{}
+%     \label{fig:gaux_eg}
+% \end{figure}
+
+
+We focus on backtracking-based algorithms for subgraph matching. While some ML-based algorithms have emerged in recent years \cite{li2019graph, lou2020neural, wang2022reinforcement}, they are not as accurate as traditional combinatorial algorithms and are beyond the scope of this paper. 
+
+The combinatorial algorithms considered in this work follow a backtracking idea~\cite{ullmann1976algorithm} -- starting from an empty subgraph, the algorithm gradually extends the subgraph to the size of the query pattern. The most basic backtracking algorithm extends the subgraph by a vertex at each step. 
+Take the query pattern in Fig.~\ref{fig:graph}(b) as an example. The algorithm first finds all the vertices in the data graph that have the same label as $u_0$. If the query is unlabeled, it will be all vertices in the data graph. Next, starting from the size-1 subgraphs, the algorithm finds all vertices that match $u_1$. Since $u_1$ is connected to $u_0$, the matching vertices must be neighbors of the first vertex. This gives us a set of size-2 subgraphs that match $(u_0, u_1)$. The algorithm continues to find vertices that match $u_2$. Since $u_2$ is connected to both $u_0$ and $u_1$, the vertices that match $u_2$ should be neighbors of both the first two matching vertices, and they can be computed with a set intersection operation. Last, the algorithm finds all matching vertices for $u_3$ based on its connectivity with $u_0, u_1, u_2$. 
+
+Based on the basic backtracking algorithm, many algorithm variants and optimizations have been proposed to improve the performance of specific subgraph matching tasks. For example, backtracking can be executed with edge extensions, where an intermediate subgraph is extended by an edge instead of vertex at each step. Such edge-extension algorithms are most naturally used for querying graph databases where the graph edges are stored as relations and the subgraph extension is achieved by joining the relations~\cite{mhedhbi2019optimizing, aberger2017emptyheaded, kankanamge2017graphflow, atserias2008size}. More generally, an intermediate subgraph can be extended with another adjacent subgraph. This corresponds to algorithms that join two connecting subgraphs into a bigger subgraph~\cite{mhedhbi2019optimizing, kankanamge2017graphflow}. The pattern-decomposition algorithm~\cite{pinar2017escape, chen2022decomine} can also be considered as extending a subgraph with one or more overlapping subgraphs. These algorithms also incorporate various optimizations to prune the subgraph exploration space as much as possible \cite{10.1145/3299869.3319880, bi2016efficient, cordella2001improved}.
