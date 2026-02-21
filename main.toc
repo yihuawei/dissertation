@@ -1,20 +1,90 @@
-\contentsline {section}{List of Tables}{iii}{section*.1}%
-\contentsline {section}{List of Figures}{iv}{section*.2}%
-\contentsline {section}{\numberline {1}DCSM: Enabling Inter-Batch Parallelism for Continuous Subgraph Matching on GPU}{1}{section.1}%
+\contentsline {section}{List of Tables}{vi}{section*.1}%
+\contentsline {section}{List of Figures}{viii}{section*.2}%
+\contentsline {section}{\numberline {1}STMatch: Accelerating Graph Pattern Matching on GPU with Stack-Based Loop Optimizations}{1}{section.1}%
 \contentsline {subsection}{\numberline {1.1}Introduction}{1}{subsection.1.1}%
-\contentsline {subsection}{\numberline {1.2}Background}{3}{subsection.1.2}%
-\contentsline {subsubsection}{\numberline {1.2.1}A Formal Definition of CSM}{3}{subsubsection.1.2.1}%
-\contentsline {subsubsection}{\numberline {1.2.2}Existing GPU-based CSM systems}{4}{subsubsection.1.2.2}%
-\contentsline {subsection}{\numberline {1.3}Overview of DCSM}{5}{subsection.1.3}%
-\contentsline {subsection}{\numberline {1.4}Graph Updater and Multi-Version Graph}{6}{subsection.1.4}%
-\contentsline {subsubsection}{\numberline {1.4.1}Multi-Version Graph (MVG) Data Structure}{7}{subsubsection.1.4.1}%
-\contentsline {subsubsection}{\numberline {1.4.2}Update Procedure}{8}{subsubsection.1.4.2}%
-\contentsline {subsubsection}{\numberline {1.4.3}Parallel Graph Updater}{9}{subsubsection.1.4.3}%
-\contentsline {subsection}{\numberline {1.5}Executor}{10}{subsection.1.5}%
-\contentsline {subsubsection}{\numberline {1.5.1}Correctness Guarantee}{10}{subsubsection.1.5.1}%
-\contentsline {subsubsection}{\numberline {1.5.2}Continuous Subgraph Matching-Specific Optimizations}{12}{subsubsection.1.5.2}%
-\contentsline {subsection}{\numberline {1.6}Garbage Collector}{13}{subsection.1.6}%
-\contentsline {subsubsection}{\numberline {1.6.1}Release Conditions}{13}{subsubsection.1.6.1}%
-\contentsline {subsubsection}{\numberline {1.6.2}Garbage Collection Graph (GCG)}{14}{subsubsection.1.6.2}%
-\contentsline {subsubsection}{\numberline {1.6.3}Implementation}{15}{subsubsection.1.6.3}%
-\contentsline {section}{References}{17}{figure.caption.11}%
+\contentsline {subsection}{\numberline {1.2}Preliminaries}{3}{subsection.1.2}%
+\contentsline {subsubsection}{\numberline {1.2.1}Problem Definition}{3}{subsubsection.1.2.1}%
+\contentsline {subsubsection}{\numberline {1.2.2}Backtracking for Graph Pattern Matching}{4}{subsubsection.1.2.2}%
+\contentsline {subsubsection}{\numberline {1.2.3}GPU Architecture}{6}{subsubsection.1.2.3}%
+\contentsline {subsection}{\numberline {1.3}Challenges for Parallelizing Backtracking}{6}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}Overview of STMatch}{8}{subsection.1.4}%
+\contentsline {subsection}{\numberline {1.5}Load Balancing with Two-Level Work Stealing}{10}{subsection.1.5}%
+\contentsline {subsubsection}{\numberline {1.5.1}Stealing Within a Threadblock}{11}{subsubsection.1.5.1}%
+\contentsline {subsubsection}{\numberline {1.5.2}Stealing Across ThreadBlocks}{12}{subsubsection.1.5.2}%
+\contentsline {subsection}{\numberline {1.6}Improving Thread Utilization with Loop Unrolling}{13}{subsection.1.6}%
+\contentsline {subsection}{\numberline {1.7}Reducing Redundancy With Loop-Invariant Code Motion}{16}{subsection.1.7}%
+\contentsline {subsection}{\numberline {1.8}Experimental Results}{19}{subsection.1.8}%
+\contentsline {subsubsection}{\numberline {1.8.1}Experimental Setup}{19}{subsubsection.1.8.1}%
+\contentsline {subsubsection}{\numberline {1.8.2}Overall Performance}{20}{subsubsection.1.8.2}%
+\contentsline {subsubsection}{\numberline {1.8.3}Benefits of Proposed Techniques}{22}{subsubsection.1.8.3}%
+\contentsline {subsection}{\numberline {1.9}Related Work}{24}{subsection.1.9}%
+\contentsline {subsection}{\numberline {1.10}Conclusion}{25}{subsection.1.10}%
+\contentsline {section}{\numberline {2}GCSM: GPU-Accelerated Continuous Subgraph Matching for Large Graphs}{27}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Introduction}{27}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Background}{30}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}Problem Definition}{30}{subsubsection.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.2}Worst-Case Optimal Join for CSM}{31}{subsubsection.2.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.3}CPU-GPU Communication}{33}{subsubsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.3}Overview of GCSM}{34}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Obtaining Frequent Vertices}{36}{subsection.2.4}%
+\contentsline {subsubsection}{\numberline {2.4.1}Estimating Access Frequency with Random Walk}{36}{subsubsection.2.4.1}%
+\contentsline {subsubsection}{\numberline {2.4.2}Multiple Random Walks with One Single Execution}{40}{subsubsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.5}Exact Incremental Matching with Cached Data on GPU}{41}{subsection.2.5}%
+\contentsline {subsubsection}{\numberline {2.5.1}Graph Data Structure on CPU}{42}{subsubsection.2.5.1}%
+\contentsline {subsubsection}{\numberline {2.5.2}Data Preparation for GPU}{43}{subsubsection.2.5.2}%
+\contentsline {subsubsection}{\numberline {2.5.3}Parallel Incremental Matching on GPU}{44}{subsubsection.2.5.3}%
+\contentsline {subsection}{\numberline {2.6}Experimental Results}{45}{subsection.2.6}%
+\contentsline {subsubsection}{\numberline {2.6.1}Experimental Setup}{45}{subsubsection.2.6.1}%
+\contentsline {subsubsection}{\numberline {2.6.2}Comparison with Naive GPU Implementations}{47}{subsubsection.2.6.2}%
+\contentsline {subsubsection}{\numberline {2.6.3}Comparison with CPU Implementations}{50}{subsubsection.2.6.3}%
+\contentsline {subsubsection}{\numberline {2.6.4}Effectiveness of Frequency Estimation}{52}{subsubsection.2.6.4}%
+\contentsline {subsubsection}{\numberline {2.6.5}Graph Reorganization Overhead}{53}{subsubsection.2.6.5}%
+\contentsline {subsection}{\numberline {2.7}Related Works}{54}{subsection.2.7}%
+\contentsline {subsection}{\numberline {2.8}Conclusion}{56}{subsection.2.8}%
+\contentsline {section}{\numberline {3}Matcha: A Language and Compiler for Backtracking-based Subgraph Matching}{57}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Introduction}{57}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Background}{59}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}Subgraph Matching Problems}{59}{subsubsection.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2}Subgraph Matching Algorithms}{61}{subsubsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.3}Limitations with Existing Subgraph Matching Systems}{62}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}The Matcha DSL}{63}{subsection.3.4}%
+\contentsline {subsubsection}{\numberline {3.4.1}Programming Interface}{63}{subsubsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.5}Matcha Compilation Pipeline}{66}{subsection.3.5}%
+\contentsline {subsubsection}{\numberline {3.5.1}Generating IR on ASG}{66}{subsubsection.3.5.1}%
+\contentsline {subsubsection}{\numberline {3.5.2}Translating IR to C++ Code}{69}{subsubsection.3.5.2}%
+\contentsline {subsection}{\numberline {3.6}Optimization and Parallelization}{70}{subsection.3.6}%
+\contentsline {subsubsection}{\numberline {3.6.1}Operator Fusion}{70}{subsubsection.3.6.1}%
+\contentsline {subsubsection}{\numberline {3.6.2}Loop-Invariant Code Motion}{71}{subsubsection.3.6.2}%
+\contentsline {subsubsection}{\numberline {3.6.3}Automatic Parallelization}{71}{subsubsection.3.6.3}%
+\contentsline {subsection}{\numberline {3.7}Evaluation}{73}{subsection.3.7}%
+\contentsline {subsubsection}{\numberline {3.7.1}Experimental Setup}{73}{subsubsection.3.7.1}%
+\contentsline {subsubsection}{\numberline {3.7.2}Results for Motif Counting}{74}{subsubsection.3.7.2}%
+\contentsline {subsubsection}{\numberline {3.7.3}Results for Subgraph Listing}{76}{subsubsection.3.7.3}%
+\contentsline {subsubsection}{\numberline {3.7.4}Results for Clique Counting}{80}{subsubsection.3.7.4}%
+\contentsline {subsubsection}{\numberline {3.7.5}Results for Temporal Subgraph Listing}{81}{subsubsection.3.7.5}%
+\contentsline {section}{\numberline {4}DCSM: Enabling Inter-Batch Parallelism for Continuous Subgraph Matching on GPU}{82}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Introduction}{82}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Background}{84}{subsection.4.2}%
+\contentsline {subsubsection}{\numberline {4.2.1}A Formal Definition of CSM}{84}{subsubsection.4.2.1}%
+\contentsline {subsubsection}{\numberline {4.2.2}Existing GPU-based CSM systems}{85}{subsubsection.4.2.2}%
+\contentsline {subsection}{\numberline {4.3}Overview of DCSM}{86}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Graph Updater and Multi-Version Graph}{87}{subsection.4.4}%
+\contentsline {subsubsection}{\numberline {4.4.1}Multi-Version Graph (MVG) Data Structure}{88}{subsubsection.4.4.1}%
+\contentsline {subsubsection}{\numberline {4.4.2}Update Procedure}{89}{subsubsection.4.4.2}%
+\contentsline {subsubsection}{\numberline {4.4.3}Parallel Graph Updater}{90}{subsubsection.4.4.3}%
+\contentsline {subsection}{\numberline {4.5}Executor}{91}{subsection.4.5}%
+\contentsline {subsubsection}{\numberline {4.5.1}Correctness Guarantee}{91}{subsubsection.4.5.1}%
+\contentsline {subsubsection}{\numberline {4.5.2}Continuous Subgraph Matching-Specific Optimizations}{93}{subsubsection.4.5.2}%
+\contentsline {subsection}{\numberline {4.6}Garbage Collector}{94}{subsection.4.6}%
+\contentsline {subsubsection}{\numberline {4.6.1}Release Conditions}{94}{subsubsection.4.6.1}%
+\contentsline {subsubsection}{\numberline {4.6.2}Garbage Collection Graph (GCG)}{95}{subsubsection.4.6.2}%
+\contentsline {subsubsection}{\numberline {4.6.3}Implementation}{96}{subsubsection.4.6.3}%
+\contentsline {subsection}{\numberline {4.7}Experimental Results}{97}{subsection.4.7}%
+\contentsline {subsubsection}{\numberline {4.7.1}Experimental Setup}{97}{subsubsection.4.7.1}%
+\contentsline {subsubsection}{\numberline {4.7.2}Throughput}{100}{subsubsection.4.7.2}%
+\contentsline {subsubsection}{\numberline {4.7.3}Response Time}{103}{subsubsection.4.7.3}%
+\contentsline {subsubsection}{\numberline {4.7.4}Overhead Analysis}{106}{subsubsection.4.7.4}%
+\contentsline {subsubsection}{\numberline {4.7.5}Ablation Study}{107}{subsubsection.4.7.5}%
+\contentsline {subsection}{\numberline {4.8}Related Works}{108}{subsection.4.8}%
+\contentsline {subsection}{\numberline {4.9}Conclusion}{109}{subsection.4.9}%
+\contentsline {section}{References}{111}{subsection.4.9}%

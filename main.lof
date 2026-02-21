@@ -1,22 +1,159 @@
-\contentsline {figure}{\numberline {1}{\ignorespaces An example of continuous subgraph matching. $G_{k+1}$ is the data graph after applyting update on $G_{k}$. $Q_{d}$ is the query of "diamond" structure. $abcd$ next to the vertices are the vertex labels.\relax }}{1}{figure.caption.3}%
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Query $Q_{d}$}}}{1}{subfigure.1.1}%
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {$t$=$0$: Data graph $G_0$}}}{1}{subfigure.1.2}%
-\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {$t$=$3$: Data graph $G_1$}}}{1}{subfigure.1.3}%
-\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {$t$=$5$: Data graph $G_2$}}}{1}{subfigure.1.4}%
-\contentsline {figure}{\numberline {2}{\ignorespaces Average response time and GPU utilization of GCSM. GCSM-x denotes GCSM processing with batch size x. \textbf {Query:} Q4 (Figure\nobreakspace {}\ref {fig:queries}). \textbf {Graph:} Unlabeled Netflow\nobreakspace {}\cite {netflow}.\relax }}{2}{figure.caption.4}%
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Response Time}}}{2}{subfigure.2.1}%
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {GPU Utilization}}}{2}{subfigure.2.2}%
-\contentsline {figure}{\numberline {3}{\ignorespaces Overview of DCSM. DCSM consists of three functional modules: Graph Updater (GU), Executor (EX), and Garbage Collector (GC). The edge updates $\Delta e_{k}$ flows through these modules sequentially.\relax }}{6}{figure.caption.5}%
-\contentsline {figure}{\numberline {4}{\ignorespaces Comparison between GCSM and DCSM. Eight updates $\Delta e_{1}$ - $\Delta e_{8}$ arrive sequentially. The bar in the figure denotes warp activity along the time axis. Each bar is associated with an update $\Delta e_{k}$, labeled inside the bar. In practice, DCSM uses 5,000-10,000 warps for incremental matching, while only 1-4 warps are assigned for graph updates.\relax }}{7}{figure.caption.6}%
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {GCSM with batch size $1$.}}}{7}{subfigure.4.1}%
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {GCSM with batch size $2$.}}}{7}{subfigure.4.2}%
-\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {DCSM with inter-batch parallelism.}}}{7}{subfigure.4.3}%
-\contentsline {figure}{\numberline {5}{\ignorespaces The multi-version graph (MVG) data structure and the procedure for updating it with a batch. The MVG before update represents $G_0$ in Figure\nobreakspace {}\ref {fig:csm}. The vertex ID indexes the $pSlab$, pointing to a $Slab$. Each row of the $Slab$ corresponds to a neighbor array version, storing its creation time ($ct_{min}$), deletion time ($dt_{max}$), and address ($pNb$). Each column of the neighbor array stores the ID, creation time ($ct$), and deletion time ($dt$) of an edge. We use \textbf {$v_x$: ($ct$, $dt$]} to denote a neighbor array version of $v_x$. For example, $v_1$ has two neighbor array versions: $v_1$: ($0$, $3$] and $v_1$: ($3$, $m$] where $m$ means infinity.\relax }}{8}{figure.caption.7}%
-\contentsline {figure}{\numberline {6}{\ignorespaces The process of copying three different-sized arrays in parallel using $8$ threads of a warp. $*v_i$ represents the address of $v_i$'s latest neighbor array version in the MVG.\relax }}{9}{figure.caption.8}%
-\contentsline {figure}{\numberline {7}{\ignorespaces Visualization of edge $e_k$'s lifetime and visibility across other updates.\relax }}{11}{figure.caption.9}%
-\contentsline {figure}{\numberline {8}{\ignorespaces A garbage collection graph (GCG) built from the 3 updates $\Delta e_0$, $\Delta e_1$, $\Delta e_2$ in Figure\nobreakspace {}\ref {fig:adjlist}.\relax }}{14}{figure.caption.10}%
-\contentsline {figure}{\numberline {9}{\ignorespaces (a)–(d) illustrate how GC releases neighbor arrays on the GCG in Figure\nobreakspace {}\ref {fig:aux}. This GCG is stored in an adjacency-list format.\relax }}{15}{figure.caption.11}%
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {The incremental matching of $\Delta e_0$ is finished, $v_1$:$(0, 3 ]$ and $v_3$:$(0, 3 ]$ can be released.}}}{15}{subfigure.9.1}%
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {The incremental matching of $\Delta e_2$ is finished.}}}{15}{subfigure.9.2}%
-\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {The incremental matching of $\Delta e_1$ is finished, $v_5$:$(0, 7 ]$ can be released.}}}{15}{subfigure.9.3}%
-\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {A new $\Delta e_3$ = $(v_1, v_4, +)$ is appended to the end of GCG.}}}{15}{subfigure.9.4}%
+\contentsline {figure}{\numberline {1}{\ignorespaces Graph pattern matching implemented as a nested loop. $N(v)$ means the neighbors of node $v$ in the data graph. \relax }}{5}{figure.caption.4}%
+\contentsline {figure}{\numberline {2}{\ignorespaces A query graph.\relax }}{5}{figure.caption.5}%
+\contentsline {figure}{\numberline {3}{\ignorespaces Graph pattern matching implemented as a stack-based while loop. \relax }}{8}{figure.caption.6}%
+\contentsline {figure}{\numberline {4}{\ignorespaces An example of $getCandidates$ in two different warps.\relax }}{9}{figure.caption.7}%
+\contentsline {figure}{\numberline {5}{\ignorespaces An example of dividing and copying tasks from a target warp.\relax }}{11}{figure.caption.9}%
+\contentsline {figure}{\numberline {6}{\ignorespaces Work stealing across threadblocks.\relax }}{12}{figure.caption.10}%
+\contentsline {figure}{\numberline {7}{\ignorespaces An unrolled version of the loop in Fig.\nobreakspace {}\ref {fig:while_loop_orig}.\relax }}{14}{figure.caption.11}%
+\contentsline {figure}{\numberline {8}{\ignorespaces Perform multiple set operations in one warp.\relax }}{15}{figure.caption.12}%
+\contentsline {figure}{\numberline {9}{\ignorespaces The set dependence graph for unlabeled query of Fig.\nobreakspace {}\ref {fig:example_query}.\relax }}{17}{figure.caption.13}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Set dependence graph}}}{17}{subfigure.9.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {A compact storage}}}{17}{subfigure.9.2}%
+\contentsline {figure}{\numberline {10}{\ignorespaces The set dependence graph for labeled query of Fig.\nobreakspace {}\ref {fig:example_query}. `' denotes the label(s) of nodes in a set.\relax }}{17}{figure.caption.14}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Separate label sets}}}{17}{subfigure.10.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Merged label sets}}}{17}{subfigure.10.2}%
+\contentsline {figure}{\numberline {11}{\ignorespaces Speedups of labeled and unlabeled size-6 queries across multiple GPUs. \relax }}{21}{figure.caption.17}%
+\contentsline {figure}{\numberline {12}{\ignorespaces Speedups of labeled size-6 queries with and without work-stealing and loop unrolling. \relax }}{23}{figure.caption.19}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Enron}}}{23}{subfigure.12.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {MiCo}}}{23}{subfigure.12.2}%
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {YouTube}}}{23}{subfigure.12.3}%
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {LiveJournal}}}{23}{subfigure.12.4}%
+\contentsline {figure}{\numberline {13}{\ignorespaces Thread utilization with different unrolling sizes. \relax }}{23}{figure.caption.20}%
+\contentsline {figure}{\numberline {14}{\ignorespaces An example of continuous subgraph matching.\relax }}{27}{figure.caption.21}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Query Q}}}{27}{subfigure.14.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Data graph $G_0$}}}{27}{subfigure.14.2}%
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Graph update: $G_0 + \Delta E_0$}}}{27}{subfigure.14.3}%
+\contentsline {figure}{\numberline {15}{\ignorespaces Continuous subgraph matching implemented as worst-case optimal join. $E$ represents the edges in the initial graph. $\Delta E$ represents a batch of edge updates. $N$ and $N'$ represent the original and the updated neighbor lists respectively. \relax }}{31}{figure.caption.22}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Matching $Q$ on $G_0$}}}{31}{subfigure.15.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {$\Delta M_1$}}}{31}{subfigure.15.2}%
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {$\Delta M_2$}}}{31}{subfigure.15.3}%
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {$\Delta M_3$}}}{31}{subfigure.15.4}%
+\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {$\Delta M_4$}}}{31}{subfigure.15.5}%
+\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {$\Delta M_5$}}}{31}{subfigure.15.6}%
+\contentsline {figure}{\numberline {16}{\ignorespaces Workflow of GCSM.\relax }}{36}{figure.caption.23}%
+\contentsline {figure}{\numberline {17}{\ignorespaces Sampling multiple paths from an execution tree. \relax }}{37}{figure.caption.24}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {An example execution tree}}}{37}{subfigure.17.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Two sampled paths}}}{37}{subfigure.17.2}%
+\contentsline {figure}{\numberline {18}{\ignorespaces Maintenance of graph data structure on the CPU for the graph update in Fig.\nobreakspace {}\ref {fig:csm}. New edges (colored in green) are appended to the end of corresponding neighbor lists; Deleted edges (colored in orange) are marked as negative values.\relax }}{41}{figure.caption.25}%
+\contentsline {figure}{\numberline {19}{\ignorespaces Graph data sent to GPU in DCSR format.\relax }}{43}{figure.caption.26}%
+\contentsline {figure}{\numberline {20}{\ignorespaces Query graphs.\relax }}{46}{figure.caption.28}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Q1}}}{46}{subfigure.20.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Q2}}}{46}{subfigure.20.2}%
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Q3}}}{46}{subfigure.20.3}%
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {Q4}}}{46}{subfigure.20.4}%
+\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {Q5}}}{46}{subfigure.20.5}%
+\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {Q6}}}{46}{subfigure.20.6}%
+\contentsline {figure}{\numberline {21}{\ignorespaces Execution time for matching different query patterns from a batch of 4096 edges on FR graph. Data access sizes from CPU are labeled on each bar.\relax }}{48}{figure.caption.29}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Q1}}}{48}{subfigure.21.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Q2}}}{48}{subfigure.21.2}%
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Q3}}}{48}{subfigure.21.3}%
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {Q4}}}{48}{subfigure.21.4}%
+\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {Q5}}}{48}{subfigure.21.5}%
+\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {Q6}}}{48}{subfigure.21.6}%
+\contentsline {figure}{\numberline {22}{\ignorespaces Execution time for matching different query patterns from a batch of 4096 edges on SF3K graph.\relax }}{49}{figure.caption.30}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Q1}}}{49}{subfigure.22.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Q2}}}{49}{subfigure.22.2}%
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Q3}}}{49}{subfigure.22.3}%
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {Q4}}}{49}{subfigure.22.4}%
+\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {Q5}}}{49}{subfigure.22.5}%
+\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {Q6}}}{49}{subfigure.22.6}%
+\contentsline {figure}{\numberline {23}{\ignorespaces Execution time for matching different query patterns from a batch of 8192 edges on SF10K graph.\relax }}{50}{figure.caption.31}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Q1}}}{50}{subfigure.23.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Q2}}}{50}{subfigure.23.2}%
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Q3}}}{50}{subfigure.23.3}%
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {Q4}}}{50}{subfigure.23.4}%
+\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {Q5}}}{50}{subfigure.23.5}%
+\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {Q6}}}{50}{subfigure.23.6}%
+\contentsline {figure}{\numberline {24}{\ignorespaces Execution time for counting size-3, 4, and 5 motifs on RoadNetPA and RoadNetCA. The batch size is set to 4096.\relax }}{51}{figure.caption.32}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {PA-MC3}}}{51}{subfigure.24.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {PA-MC4}}}{51}{subfigure.24.2}%
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {PA-MC5}}}{51}{subfigure.24.3}%
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {CA-MC3}}}{51}{subfigure.24.4}%
+\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {CA-MC4}}}{51}{subfigure.24.5}%
+\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {CA-MC5}}}{51}{subfigure.24.6}%
+\contentsline {figure}{\numberline {25}{\ignorespaces Execution time of different batch size for matching Q6 on SF3K graph and Q5 on SF10K graph. The speedups of GCSM against zero-copy are marked above the line.\relax }}{52}{figure.caption.33}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {SF3K-Q6}}}{52}{subfigure.25.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {SF10K-Q5}}}{52}{subfigure.25.2}%
+\contentsline {figure}{\numberline {26}{\ignorespaces Breakdown execution time of VSGM and GCSM. `DC' includes the time for identifying the caching vertices and copying their neighbor lists to GPU. `Match' is the matching kernel execution time on GPU. \relax }}{53}{figure.caption.35}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {SF3K-Q1}}}{53}{subfigure.26.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {SF3K-Q2}}}{53}{subfigure.26.2}%
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {SF3K-Q3}}}{53}{subfigure.26.3}%
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {SF10K-Q1}}}{53}{subfigure.26.4}%
+\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {SF10K-Q2}}}{53}{subfigure.26.5}%
+\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {SF10K-Q3}}}{53}{subfigure.26.6}%
+\contentsline {figure}{\numberline {27}{\ignorespaces Performance comparison with RapidFlow. \relax }}{54}{figure.caption.36}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {LJ-Q1}}}{54}{subfigure.27.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {LJ-Q2}}}{54}{subfigure.27.2}%
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {LJ-Q3}}}{54}{subfigure.27.3}%
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {AZ-Q4}}}{54}{subfigure.27.4}%
+\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {AZ-Q5}}}{54}{subfigure.27.5}%
+\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {AZ-Q6}}}{54}{subfigure.27.6}%
+\contentsline {figure}{\numberline {28}{\ignorespaces Memory access distribution and cache coverage of incremental matching.\relax }}{54}{figure.caption.37}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Memory Access Distribution}}}{54}{subfigure.28.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Cache Coverage}}}{54}{subfigure.28.2}%
+\contentsline {figure}{\numberline {29}{\ignorespaces Example data graph and query pattern. \relax }}{58}{figure.caption.39}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Data Graph $G$}}}{58}{subfigure.29.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Query $Q$}}}{58}{subfigure.29.2}%
+\contentsline {figure}{\numberline {30}{\ignorespaces Compiling a Matcha program to C++ code. The IR of each ASG node contains an output (out), some auxiliary data (aux), and instructions (inst) for computing the output.\relax }}{67}{figure.caption.43}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {ASG to IR}}}{67}{subfigure.30.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Generated C++ code}}}{67}{subfigure.30.2}%
+\contentsline {figure}{\numberline {31}{\ignorespaces Graph $G$ from Fig.\nobreakspace {}\ref {fig:graph}(a) stored in four \texttt {Arrays}.\relax }}{68}{figure.caption.44}%
+\contentsline {figure}{\numberline {32}{\ignorespaces Effect of thread-grouping (TG) and work-stealing (WS) on mGM for 3-MC. `ocp', `ut' stand for SM occupancy and thread utilization.\relax }}{75}{figure.caption.49}%
+\contentsline {figure}{\numberline {33}{\ignorespaces Scalability of multi-threaded mDM on CPU. \relax }}{75}{figure.caption.50}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {4-MC}}}{75}{subfigure.33.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {5-MC}}}{75}{subfigure.33.2}%
+\contentsline {figure}{\numberline {34}{\ignorespaces Query patterns for subgraph listing.\relax }}{76}{figure.caption.51}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Q1}}}{76}{subfigure.34.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Q2}}}{76}{subfigure.34.2}%
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Q3}}}{76}{subfigure.34.3}%
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {Q4}}}{76}{subfigure.34.4}%
+\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {Q5}}}{76}{subfigure.34.5}%
+\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {Q6}}}{76}{subfigure.34.6}%
+\contentsline {figure}{\numberline {35}{\ignorespaces Effect of thread-grouping (TG) and work-stealing (WS) on mGM for subgraph listing on DBLP graph.\relax }}{77}{figure.caption.53}%
+\contentsline {figure}{\numberline {36}{\ignorespaces Effect of code motion and multi-threading on RM for labeled subgraph listing. \relax }}{79}{figure.caption.56}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Multi-threading}}}{79}{subfigure.36.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Code motion on DBLP graph}}}{79}{subfigure.36.2}%
+\contentsline {figure}{\numberline {37}{\ignorespaces Temporal Queries.\relax }}{81}{figure.caption.59}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Q7}}}{81}{subfigure.37.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Q8}}}{81}{subfigure.37.2}%
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Q9}}}{81}{subfigure.37.3}%
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {Q10}}}{81}{subfigure.37.4}%
+\contentsline {figure}{\numberline {38}{\ignorespaces An example of continuous subgraph matching. $G_{k+1}$ is the data graph after applyting update on $G_{k}$. $Q_{d}$ is the query of "diamond" structure. $abcd$ next to the vertices are the vertex labels.\relax }}{82}{figure.caption.61}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Query $Q_{d}$}}}{82}{subfigure.38.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {$t$=$0$: Data graph $G_0$}}}{82}{subfigure.38.2}%
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {$t$=$3$: Data graph $G_1$}}}{82}{subfigure.38.3}%
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {$t$=$5$: Data graph $G_2$}}}{82}{subfigure.38.4}%
+\contentsline {figure}{\numberline {39}{\ignorespaces Average response time and GPU utilization of GCSM. GCSM-x denotes GCSM processing with batch size x. \textbf {Query:} Q4 (Figure\nobreakspace {}\ref {fig:queries}). \textbf {Graph:} Unlabeled Netflow\nobreakspace {}\cite {netflow}.\relax }}{83}{figure.caption.62}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Response Time}}}{83}{subfigure.39.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {GPU Utilization}}}{83}{subfigure.39.2}%
+\contentsline {figure}{\numberline {40}{\ignorespaces Overview of DCSM. DCSM consists of three functional modules: Graph Updater (GU), Executor (EX), and Garbage Collector (GC). The edge updates $\Delta e_{k}$ flows through these modules sequentially.\relax }}{87}{figure.caption.63}%
+\contentsline {figure}{\numberline {41}{\ignorespaces Comparison between GCSM and DCSM. Eight updates $\Delta e_{1}$ - $\Delta e_{8}$ arrive sequentially. The bar in the figure denotes warp activity along the time axis. Each bar is associated with an update $\Delta e_{k}$, labeled inside the bar. In practice, DCSM uses 5,000-10,000 warps for incremental matching, while only 1-4 warps are assigned for graph updates.\relax }}{88}{figure.caption.64}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {GCSM with batch size $1$.}}}{88}{subfigure.41.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {GCSM with batch size $2$.}}}{88}{subfigure.41.2}%
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {DCSM with inter-batch parallelism.}}}{88}{subfigure.41.3}%
+\contentsline {figure}{\numberline {42}{\ignorespaces The multi-version graph (MVG) data structure and the procedure for updating it with a batch. The MVG before update represents $G_0$ in Figure\nobreakspace {}\ref {fig:csm}. The vertex ID indexes the $pSlab$, pointing to a $Slab$. Each row of the $Slab$ corresponds to a neighbor array version, storing its creation time ($ct_{min}$), deletion time ($dt_{max}$), and address ($pNb$). Each column of the neighbor array stores the ID, creation time ($ct$), and deletion time ($dt$) of an edge. We use \textbf {$v_x$: ($ct$, $dt$]} to denote a neighbor array version of $v_x$. For example, $v_1$ has two neighbor array versions: $v_1$: ($0$, $3$] and $v_1$: ($3$, $m$] where $m$ means infinity.\relax }}{89}{figure.caption.65}%
+\contentsline {figure}{\numberline {43}{\ignorespaces The process of copying three different-sized arrays in parallel using $8$ threads of a warp. $*v_i$ represents the address of $v_i$'s latest neighbor array version in the MVG.\relax }}{90}{figure.caption.66}%
+\contentsline {figure}{\numberline {44}{\ignorespaces Visualization of edge $e_k$'s lifetime and visibility across other updates.\relax }}{92}{figure.caption.67}%
+\contentsline {figure}{\numberline {45}{\ignorespaces A garbage collection graph (GCG) built from the 3 updates $\Delta e_0$, $\Delta e_1$, $\Delta e_2$ in Figure\nobreakspace {}\ref {fig:adjlist}.\relax }}{95}{figure.caption.68}%
+\contentsline {figure}{\numberline {46}{\ignorespaces (a)–(d) illustrate how GC releases neighbor arrays on the GCG in Figure\nobreakspace {}\ref {fig:aux}. This GCG is stored in an adjacency-list format.\relax }}{96}{figure.caption.69}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {The incremental matching of $\Delta e_0$ is finished, $v_1$:$(0, 3 ]$ and $v_3$:$(0, 3 ]$ can be released.}}}{96}{subfigure.46.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {The incremental matching of $\Delta e_2$ is finished.}}}{96}{subfigure.46.2}%
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {The incremental matching of $\Delta e_1$ is finished, $v_5$:$(0, 7 ]$ can be released.}}}{96}{subfigure.46.3}%
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {A new $\Delta e_3$ = $(v_1, v_4, +)$ is appended to the end of GCG.}}}{96}{subfigure.46.4}%
+\contentsline {figure}{\numberline {47}{\ignorespaces Query patterns for evaluation.\relax }}{98}{figure.caption.71}%
+\contentsline {figure}{\numberline {48}{\ignorespaces (a) and (b) show the trend of GCSM performance with batch size $b$ on unlabeled db-Q5 and labeled lj-Q5. "All" refers to the batch size being equal to the total number of edge updates in the test data. The numbers marked on the line stand for GPU utilization.\relax }}{104}{figure.caption.75}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{104}{subfigure.48.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{104}{subfigure.48.2}%
+\contentsline {figure}{\numberline {49}{\ignorespaces Response time over different update rates. The time unit is seconds for Netflow Q4 and milliseconds for all others. GCSM-4096 refers to GCSM configured with a batch size of 4096.\relax }}{105}{figure.caption.76}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Netflow Q4}}}{105}{subfigure.49.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Netflow Q6}}}{105}{subfigure.49.2}%
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {LSBench Q4}}}{105}{subfigure.49.3}%
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {LiveJournal Q9}}}{105}{subfigure.49.4}%
+\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {LiveJournal Q8}}}{105}{subfigure.49.5}%
+\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {LSBench Q8}}}{105}{subfigure.49.6}%
+\contentsline {figure}{\numberline {50}{\ignorespaces GPU utilization vs. update rate (k: thousand, m: million) for different systems\relax }}{105}{figure.caption.77}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Netflow Q4}}}{105}{subfigure.50.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Netflow Q6}}}{105}{subfigure.50.2}%
+\contentsline {figure}{\numberline {51}{\ignorespaces Speedups brought by parallel graph updater on different data graphs. Naive refers to a single warp sequentially copying different arrays, rather than copying multiple arrays in parallel.\relax }}{107}{figure.caption.79}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Batch Size = $64$}}}{107}{subfigure.51.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Batch Size = $128$}}}{107}{subfigure.51.2}%

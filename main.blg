@@ -4,52 +4,420 @@ The top-level auxiliary file: main.aux
 A level-1 auxiliary file: text/7_toc.aux
 The style file: plain.bst
 Database file #1: ref.bib
+Repeated entry---line 1510 of file ref.bib
+ : @article{Bressan2019MotivoFM
+ :                             ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 1548 of file ref.bib
+ : @article{pavan2013counting
+ :                           ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 1579 of file ref.bib
+ : @article{Milo824
+ :                 ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 1590 of file ref.bib
+ : @inproceedings{10.1145/2488388.2488502
+ :                                       ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 1607 of file ref.bib
+ : @article{noel2018review
+ :                        ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 1623 of file ref.bib
+ : @article{hartmanis1982computers
+ :                                ,
+I'm skipping whatever remains of this entry
 Repeated entry---line 1637 of file ref.bib
  : @article{ullmann1976algorithm
  :                              ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 1658 of file ref.bib
+ : @article{10.14778/1453856.1453899
+ :                                  ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 1686 of file ref.bib
+ : @inproceedings{10.1145/3299869.3319880
+ :                                       ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 1731 of file ref.bib
+ : @inproceedings{mawhirter2021dryadic
+ :                                    ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 1748 of file ref.bib
+ : @inproceedings{tran2015fast
+ :                            ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 1765 of file ref.bib
+ : @inproceedings{zeng2020gsi
+ :                           ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 1775 of file ref.bib
+ : @inproceedings{xiang2021cuts
+ :                             ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 1803 of file ref.bib
+ : @inproceedings{guo2020gpu
+ :                          ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 1919 of file ref.bib
+ : @misc{snapnets
+ :               ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2105 of file ref.bib
+ : @inproceedings{abdelhamid2016scalemine
+ :                                       ,
 I'm skipping whatever remains of this entry
 Repeated entry---line 2147 of file ref.bib
  : @article{ullmann1976algorithm
  :                              ,
 I'm skipping whatever remains of this entry
+Repeated entry---line 2161 of file ref.bib
+ : @inproceedings{cordella2001improved
+ :                                    ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2236 of file ref.bib
+ : @article{10.14778/1453856.1453899
+ :                                  ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2275 of file ref.bib
+ : @incollection{he2010query
+ :                          ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2285 of file ref.bib
+ : @inproceedings{10.1145/3299869.3319880
+ :                                       ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2335 of file ref.bib
+ : @inproceedings{bhattarai2019ceci
+ :                                 ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2344 of file ref.bib
+ : @inproceedings{bi2016efficient
+ :                               ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2380 of file ref.bib
+ : @inproceedings{mawhirter2019automine
+ :                                     ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2388 of file ref.bib
+ : @inproceedings{mawhirter2021dryadic
+ :                                    ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2397 of file ref.bib
+ : @article{mawhirter2019graphzero
+ :                                ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2405 of file ref.bib
+ : @inproceedings{tran2015fast
+ :                            ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2414 of file ref.bib
+ : @article{wang2020fast
+ :                      ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2422 of file ref.bib
+ : @inproceedings{zeng2020gsi
+ :                           ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2432 of file ref.bib
+ : @inproceedings{xiang2021cuts
+ :                             ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2440 of file ref.bib
+ : @inproceedings{6968748
+ :                       ,
+I'm skipping whatever remains of this entry
 Repeated entry---line 2451 of file ref.bib
  : @inproceedings{wei2022stmatch
  :                              ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2460 of file ref.bib
+ : @inproceedings{guo2020gpu
+ :                          ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2468 of file ref.bib
+ : @inproceedings{10.5555/3571885.3571954
+ :                                       ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2531 of file ref.bib
+ : @article{10.14778/3389133.3389137
+ :                                  ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2626 of file ref.bib
+ : @inproceedings{chen2018g
+ :                         ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2661 of file ref.bib
+ : @inproceedings{shi2020graphpi
+ :                              ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2671 of file ref.bib
+ : @inproceedings{kankanamge2017graphflow
+ :                                       ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2765 of file ref.bib
+ : @article{iosup2016ldbc
+ :                       ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2777 of file ref.bib
+ : @misc{snapnets
+ :               ,
 I'm skipping whatever remains of this entry
 Repeated entry---line 2786 of file ref.bib
  : @misc{netflow
  :              ,
 I'm skipping whatever remains of this entry
+Repeated entry---line 2793 of file ref.bib
+ : @misc{cuda
+ :           ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2815 of file ref.bib
+ : @inproceedings{veldhuizen2014leapfrog
+ :                                      ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2822 of file ref.bib
+ : @inproceedings{atserias2008size
+ :                                ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2831 of file ref.bib
+ : @article{mhedhbi2019optimizing
+ :                               ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2838 of file ref.bib
+ : @article{ngo2018worst
+ :                      ,
+I'm skipping whatever remains of this entry
 Repeated entry---line 2849 of file ref.bib
  : @article{sun2020rapidmatch
+ :                           ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2860 of file ref.bib
+ : @article{aberger2017emptyheaded
+ :                                ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2895 of file ref.bib
+ : @inproceedings{iyer2018asap
+ :                            ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2905 of file ref.bib
+ : @inproceedings{abdelhamid2016scalemine
+ :                                       ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2926 of file ref.bib
+ : @inproceedings{jiang2022samplemine
+ :                                   ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2934 of file ref.bib
+ : @inproceedings{pandey2020c
  :                           ,
 I'm skipping whatever remains of this entry
 Repeated entry---line 2947 of file ref.bib
  : @inproceedings{wang2015detecting
  :                                 ,
 I'm skipping whatever remains of this entry
+Repeated entry---line 2958 of file ref.bib
+ : @article{pavan2013counting
+ :                           ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2969 of file ref.bib
+ : @book{wasserman2010statistics
+ :                              ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2987 of file ref.bib
+ : @article{Milo824
+ :                 ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2999 of file ref.bib
+ : @inproceedings{10.1145/2488388.2488502
+ :                                       ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 3007 of file ref.bib
+ : @article{noel2018review
+ :                        ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 3023 of file ref.bib
+ : @article{hartmanis1982computers
+ :                                ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 3215 of file ref.bib
+ : @inproceedings{pinar2017escape
+ :                               ,
+I'm skipping whatever remains of this entry
 Repeated entry---line 3424 of file ref.bib
  : @article{ullmann1976algorithm
  :                              ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 3435 of file ref.bib
+ : @inproceedings{cordella2001improved
+ :                                    ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 3477 of file ref.bib
+ : @article{bonnici2013subgraph
+ :                             ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 3500 of file ref.bib
+ : @article{10.14778/1453856.1453899
+ :                                  ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 3539 of file ref.bib
+ : @incollection{he2010query
+ :                          ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 3549 of file ref.bib
+ : @inproceedings{10.1145/3299869.3319880
+ :                                       ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 3599 of file ref.bib
+ : @inproceedings{bhattarai2019ceci
+ :                                 ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 3608 of file ref.bib
+ : @inproceedings{bi2016efficient
+ :                               ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 3644 of file ref.bib
+ : @inproceedings{mawhirter2019automine
+ :                                     ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 3652 of file ref.bib
+ : @inproceedings{mawhirter2021dryadic
+ :                                    ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 3661 of file ref.bib
+ : @article{mawhirter2019graphzero
+ :                                ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 3669 of file ref.bib
+ : @inproceedings{tran2015fast
+ :                            ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 3678 of file ref.bib
+ : @article{wang2020fast
+ :                      ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 3686 of file ref.bib
+ : @inproceedings{zeng2020gsi
+ :                           ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 3696 of file ref.bib
+ : @inproceedings{xiang2021cuts
+ :                             ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 3704 of file ref.bib
+ : @inproceedings{6968748
+ :                       ,
 I'm skipping whatever remains of this entry
 Repeated entry---line 3715 of file ref.bib
  : @inproceedings{wei2022stmatch
  :                              ,
 I'm skipping whatever remains of this entry
+Repeated entry---line 3724 of file ref.bib
+ : @inproceedings{guo2020gpu
+ :                          ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 3732 of file ref.bib
+ : @inproceedings{10.5555/3571885.3571954
+ :                                       ,
+I'm skipping whatever remains of this entry
 Repeated entry---line 3749 of file ref.bib
  : @inproceedings{chen2022decomine
  :                                ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 3768 of file ref.bib
+ : @inproceedings{jamshidi2020peregrine
+ :                                     ,
 I'm skipping whatever remains of this entry
 Repeated entry---line 3777 of file ref.bib
  : @inproceedings{chen2022efficient
  :                                 ,
 I'm skipping whatever remains of this entry
+Repeated entry---line 3795 of file ref.bib
+ : @article{10.14778/3389133.3389137
+ :                                  ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 3853 of file ref.bib
+ : @article{lou2020neural
+ :                       ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 3861 of file ref.bib
+ : @inproceedings{wang2022reinforcement
+ :                                     ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 3890 of file ref.bib
+ : @inproceedings{chen2018g
+ :                         ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 3908 of file ref.bib
+ : @inproceedings{chen2021sandslash
+ :                                 ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 3925 of file ref.bib
+ : @inproceedings{shi2020graphpi
+ :                              ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 3935 of file ref.bib
+ : @inproceedings{kankanamge2017graphflow
+ :                                       ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 4040 of file ref.bib
+ : @article{iosup2016ldbc
+ :                       ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 4052 of file ref.bib
+ : @misc{snapnets
+ :               ,
+I'm skipping whatever remains of this entry
 Repeated entry---line 4061 of file ref.bib
  : @misc{netflow
  :              ,
 I'm skipping whatever remains of this entry
+Repeated entry---line 4068 of file ref.bib
+ : @misc{cuda
+ :           ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 4075 of file ref.bib
+ : @misc{pybind11
+ :               ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 4083 of file ref.bib
+ : @inproceedings{veldhuizen2014leapfrog
+ :                                      ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 4090 of file ref.bib
+ : @inproceedings{atserias2008size
+ :                                ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 4099 of file ref.bib
+ : @article{mhedhbi2019optimizing
+ :                               ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 4106 of file ref.bib
+ : @article{ngo2018worst
+ :                      ,
+I'm skipping whatever remains of this entry
 Repeated entry---line 4117 of file ref.bib
  : @article{sun2020rapidmatch
+ :                           ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 4128 of file ref.bib
+ : @article{aberger2017emptyheaded
+ :                                ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 4163 of file ref.bib
+ : @inproceedings{iyer2018asap
+ :                            ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 4173 of file ref.bib
+ : @inproceedings{abdelhamid2016scalemine
+ :                                       ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 4194 of file ref.bib
+ : @inproceedings{jiang2022samplemine
+ :                                   ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 4202 of file ref.bib
+ : @inproceedings{pandey2020c
  :                           ,
 I'm skipping whatever remains of this entry
 Repeated entry---line 4215 of file ref.bib
@@ -60,6 +428,34 @@ Repeated entry---line 4224 of file ref.bib
  : @article{qiu2018real
  :                     ,
 I'm skipping whatever remains of this entry
+Repeated entry---line 4251 of file ref.bib
+ : @article{pavan2013counting
+ :                           ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 4262 of file ref.bib
+ : @book{wasserman2010statistics
+ :                              ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 4280 of file ref.bib
+ : @article{Milo824
+ :                 ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 4291 of file ref.bib
+ : @inproceedings{10.1145/2488388.2488502
+ :                                       ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 4308 of file ref.bib
+ : @article{noel2018review
+ :                        ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 4324 of file ref.bib
+ : @article{hartmanis1982computers
+ :                                ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 4516 of file ref.bib
+ : @inproceedings{pinar2017escape
+ :                               ,
+I'm skipping whatever remains of this entry
 Repeated entry---line 4581 of file ref.bib
  : @article{yuan2023everest
  :                         ,
@@ -68,8 +464,24 @@ Repeated entry---line 4653 of file ref.bib
  : @inproceedings{wang2015detecting
  :                                 ,
 I'm skipping whatever remains of this entry
+Repeated entry---line 4665 of file ref.bib
+ : @article{fan2013incremental
+ :                            ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 4676 of file ref.bib
+ : @inproceedings{kankanamge2017graphflow
+ :                                       ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 4685 of file ref.bib
+ : @article{choudhury2015selectivity
+ :                                  ,
+I'm skipping whatever remains of this entry
 Repeated entry---line 4693 of file ref.bib
  : @inproceedings{kim2018turboflux
+ :                                ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 4702 of file ref.bib
+ : @inproceedings{idris2017dynamic
  :                                ,
 I'm skipping whatever remains of this entry
 Repeated entry---line 4711 of file ref.bib
@@ -80,45 +492,67 @@ Repeated entry---line 4718 of file ref.bib
  : @article{sun2022rapidflow
  :                          ,
 I'm skipping whatever remains of this entry
-You've used 17 entries,
+Repeated entry---line 4730 of file ref.bib
+ : @article{sun2022depth
+ :                      ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 4785 of file ref.bib
+ : @book{ramakrishnan2003database
+ :                               ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 4793 of file ref.bib
+ : @inproceedings{griffin1995incremental
+ :                                      ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 4802 of file ref.bib
+ : @misc{nsight
+ :             ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 4808 of file ref.bib
+ : @misc{cuda
+ :           ,
+I'm skipping whatever remains of this entry
+Warning--to sort, need author or key in nsight
+Warning--empty journal in pavan2013counting
+You've used 97 entries,
             2118 wiz_defined-function locations,
-            594 strings with 7524 characters,
-and the built_in function-call counts, 7658 in all, are:
-= -- 761
-> -- 394
-< -- 9
-+ -- 157
-- -- 138
-* -- 530
-:= -- 1190
-add.period$ -- 56
-call.type$ -- 17
-change.case$ -- 119
+            997 strings with 22961 characters,
+and the built_in function-call counts, 42308 in all, are:
+= -- 4204
+> -- 2201
+< -- 48
++ -- 876
+- -- 768
+* -- 2929
+:= -- 6567
+add.period$ -- 313
+call.type$ -- 97
+change.case$ -- 668
 chr.to.int$ -- 0
-cite$ -- 17
-duplicate$ -- 296
-empty$ -- 571
-format.name$ -- 138
-if$ -- 1657
+cite$ -- 99
+duplicate$ -- 1669
+empty$ -- 3116
+format.name$ -- 768
+if$ -- 9167
 int.to.chr$ -- 0
-int.to.str$ -- 17
-missing$ -- 16
-newline$ -- 88
-num.names$ -- 34
-pop$ -- 146
+int.to.str$ -- 97
+missing$ -- 92
+newline$ -- 485
+num.names$ -- 192
+pop$ -- 794
 preamble$ -- 1
-purify$ -- 102
+purify$ -- 573
 quote$ -- 0
-skip$ -- 237
+skip$ -- 1361
 stack$ -- 0
-substring$ -- 500
-swap$ -- 112
-text.length$ -- 9
+substring$ -- 2615
+swap$ -- 628
+text.length$ -- 48
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 68
-warning$ -- 0
-while$ -- 69
-width$ -- 19
-write$ -- 190
-(There were 19 error messages)
+type$ -- 384
+warning$ -- 2
+while$ -- 370
+width$ -- 99
+write$ -- 1077
+(There were 127 error messages)
