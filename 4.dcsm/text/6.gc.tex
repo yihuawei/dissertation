@@ -1,0 +1,99 @@
+
+\section{Garbage Collector} 
+\label{sec:gc}
+
+
+The multiple neighbor array versions allocated by the graph updater (GU) consume a large amount of GPU memory. 
+These neighbor arrays should be released once they are no longer in use; otherwise, GPU memory usage will keep growing. 
+This section describes our strategy for releasing these neighbor array versions. 
+
+\subsection{Release Conditions}
+\label{sec:rc}
+
+A neighbor array version with lifetime $(ct_{min}$, $dt_{max}]$ can be released once all updates $\Delta e_k$ whose $T(\Delta e_k)$ $\in$ $(ct_{min}$, $dt_{max}]$ have finished their matching tasks.
+
+We can see this point from another perspective of Property~\ref{lemma3}. According to Property~\ref{lemma3}, a neighbor array will be accessed by $\Delta e_k$'s matching procedure if $T(\Delta e_k)$ lies within the array's lifetime $(ct_{min}$, $dt_{max}]$. From another viewpoint, once all updates $\Delta e_k$ with $T(\Delta e_k) \in (ct_{min}$, $dt_{max}]$ have finished their matching tasks, this neighbor array version will no longer be used and can be deleted.
+
+
+\subsection{Garbage Collection Graph (GCG)}
+
+The garbage collector (GC) operates on a garbage collection graph (GCG), which helps GC release neighbor array versions that are no longer in use.
+
+\begin{figure}[h]
+    \centering
+        \includegraphics[scale=0.63, page=10]{./fig/slides-crop.pdf}
+   \caption{A garbage collection graph (GCG) built from the 3 updates $\Delta e_0$, $\Delta e_1$, $\Delta e_2$ in Figure~\ref{fig:adjlist}.}
+   \label{fig:aux}
+\end{figure}
+
+The GCG's vertices include a \textit{Zero} vertex and all $\Delta e_k$ that have been processed by the graph updater (GU).  
+Each vertex in GCG is an edge update $\Delta e_k$ timestamped with its arrival time, and the \textit{Zero} vertex is a dummy edge update timestamped with $0$. 
+Each edge in GCG corresponds to a "deletable" neighbor array. Once we create a new neighbor version on MVG, the previous neighbor version becomes "deletable". 
+For each deletable neighbor array $v_x$:($ct_{min}$, $dt_{max}$], we add a directed edge to GCG from the vertex (edge update) whose creation time is $ct_{min}$ to the vertex whose creation time is $dt_{max}$.
+
+
+
+Figure~\ref{fig:aux} shows a GCG example; it has four vertices, three of which are the edge updates in Figure~\ref{fig:adjlist}. 
+Since GU has created $v_1$:$(3, m]$, $v_3$:$(3, m]$, and $v_5$:$(7, m]$, the arrays $v_1$:$(0, 3]$, $v_3$:$(0, 3]$, and $v_5$:$(0, 7]$ become deletable. Therefore, three edges are added to the GCG and are marked with their corresponding deletable neighbor arrays.
+
+
+The GCG guides the release of neighbor arrays. 
+An edge $v_x$:($ct_{min}$, $dt_{max}$] in the GCG corresponds to a neighbor array version, where the vertices (edge updates) below this edge represent updates $\Delta e_k$ with $T(\Delta e_k) \in (ct_{min}, dt_{max}]$.
+According to Section~\ref{sec:rc}, once all edge updates below a GCG edge have completed incremental matching, the corresponding neighbor array can be released.
+For example, in Figure~\ref{fig:aux}, if $\Delta e_0$, $\Delta e_1$, and $\Delta e_2$ under $v_5$:(0, 7] have finished their incremental matching, the neighbor array corresponding to $v_5$:(0, 7] can be released.
+
+
+\subsection{Implementation}
+
+In this section, we introduce how the garbage collector (GC) runs on the garbage collection graph (GCG), and its logic to release neighbor arrays.
+
+\begin{figure}[t]
+    \centering
+    \subfloat[The incremental matching of $\Delta e_0$ is finished, $v_1$:$(0, 3 \rbrack $ and $v_3$:$(0, 3 \rbrack $ can be released.]{
+        \includegraphics[scale=0.63, page=11]{./fig/slides-crop.pdf}
+        \label{fig:gc_1}
+    } \hfil
+    \subfloat[The incremental matching of $\Delta e_2$ is finished.]{
+        \includegraphics[scale=0.63, page=12]{./fig/slides-crop.pdf}
+        \label{fig:gc_2}
+    } \\
+    \subfloat[The incremental matching of $\Delta e_1$ is finished, $v_5$:$(0, 7 \rbrack $ can be released.]{
+        \includegraphics[scale=0.63, page=13]{./fig/slides-crop.pdf}
+        \label{fig:gc_3}
+    } \hfil
+    \subfloat[A new $\Delta e_3$ = $(v_1, v_4, +)$ is appended to the end of GCG.]{
+        \includegraphics[scale=0.63, page=14]{./fig/slides-crop.pdf}
+        \label{fig:gc_4}
+    }
+    \caption{(a)–(d) illustrate how GC releases neighbor arrays on the GCG in Figure~\ref{fig:aux}. This GCG is stored in an adjacency-list format.}
+    \label{fig:gc_step}
+    %\vspace{-1em}
+\end{figure}
+
+GCG is stored in adjacency list format and manipulated collaboratively by GU, EX, and GC. 
+GU appends vertices to GCG for each incoming $\Delta e_k$ and appends edges for each deletable neighbor array created.
+EX marks whether each edge update in GCG has finished its incremental matching, and GC releases the corresponding neighbor array versions based on these marks.
+GC maintains a GC pointer pointing to $\Delta e_k$ such that all incremental matchings from $\Delta e_0$ through $\Delta e_k$ have been completed. 
+Once the GC pointer reaches a $\Delta e_k$, the neighbor array versions associated with the edges starting from $\Delta e_k$ will be released.
+
+Figure~\ref{fig:gc_step} shows how GC releases the neighbor arrays on the GCG in Figure~\ref{fig:aux}. 
+In (a), once the incremental matching of $\Delta e_0$ is completed, we can move the GC pointer to $\Delta e_0$, and then $v_1$:$(0, 3]$ and $v_3$:$(0, 3]$ are released by GC.
+In (b), the incremental matching of $\Delta e_2$ is finished, but the GC pointer cannot be moved to it since $\Delta e_1$ before $\Delta e_2$ is unfinished.
+In (c), once the incremental matching of $\Delta e_1$ is finished, the GC pointer is moved to $\Delta e_2$, and thus $v_5:(0, 7]$ is released by GC.
+In (d), an edge $\Delta e_3$ = $(v_1, v_4, +)$ at time $T(\Delta e_3)$ = $9$ is added to the GCG by GU. This edge insertion creates new neighbor versions for both $v_1$ and $v_4$. Therefore, $\Delta e_3$ has two out-edges, each corresponding to a newly created deletable neighbor array.
+
+
+As described above, the condition for the GC pointer to move to $\Delta e_k$ is that the incremental matchings of $\Delta e_0$ to $\Delta e_{k-1}$ are all completed, which means that the neighbor arrays corresponding to out-edges of $\Delta e_k$ can be released. This logic is also based on the release condition in Section~\ref{sec:rc}. 
+
+Since edge updates are added dynamically, GCG is a dynamic graph. 
+Each vertex in this dynamic graph has at most two out-edges, so the overhead of maintaining this dynamic graph is very light. Unlike GU, which involves data copying, and EX, which performs NP-hard space search, GC is a lightweight module that does not pose any performance issues.
+
+
+
+
+% Each vertex ($\Delta e_k$) in GCG has two statuses: finished or ongoing, which means the incremental matching on it has been finished or unfinished. 
+% In Fig.~\ref{fig:aux}, $\Delta e_0$, $\Delta e_2$ is finished while $\Delta e_1$ is still ongoing. å
+% the range of the edge $v_3:(0, 3]$ is $(0, 3]$, and there are two only one vertices $\Delta e_0$ in this range and $\Delta e_0$ is finished, so the neighbor array $v_3:(0, 3]$ in MVG can be deleted. Similarly, $v_1:(0, 3]$ in MVG can also be deleted. åå
+% The neighbor array $v_5:(0, 7]$ in MVG can not be deleted since the matching of $\Delta e_1$ is still ongoing. The garbage collector traverses the GCG to release the neighbor arrays based on the logic described above. A vertex marked as finished will be consumed and discarded by the GC, and any edge pointing to it will be redirected to point to the \textit{Zero} vertex.
+
+% 

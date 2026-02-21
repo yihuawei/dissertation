@@ -1,0 +1,90 @@
+\section{Background}
+
+\label{sec:Background}
+
+ \subsection{A Formal Definition of CSM}
+%This section gives formal definitions of continuous subgraph matching problem. 
+\label{sec:Preliminaries}
+
+\begin{definition}[Graph]
+A graph $G$ = $(V, E, L)$, consists of a set of vertices $V$, a set of edges $E$, and a labeling function $L$ that assigns labels to vertices. 
+\end{definition}
+
+\begin{definition}[Subgraph]
+A graph $G'$ = $(V', E', L')$ is a subgraph of graph $G = (V, E, L)$ if $V'$ is a subset of $V$, $E'$ is a subset of $E$, and $L'(v) = L(v)$, for all $v$ in $V'$. 
+\end{definition} 
+
+\begin{definition}[Isomorphism]
+Two graphs $G_a$ = $(V_a, E_a, L_a)$ and $G_b$ = $(V_b, E_b, L_b)$ are isomorphic if there is a bijective function $f: V_a\Rightarrow V_b$ such that $(v_i, v_j)\in E_a$ if and only if $(f(v_i), f(v_j))\in E_b$ and $L_a(v_i)$ = $L_b(f(v_i)), L_a(v_j)=L_b(f(v_j))$. 
+\end{definition}
+
+\begin{definition}[Static Subgraph Matching]
+The static subgraph matching problem is finding all the subgraphs in a data graph $G$ that are isomorphic to a query pattern $Q$. 
+\end{definition}
+
+\begin{definition}[Dynamic Graph]
+A dynamic graph $G$ = $(G_0, \Delta G)$ is a sequence of edge updates $\Delta G$ = [$\Delta e_0$, $\ldots$, $\Delta e_k$, $\ldots $] applied to an initial graph $G_0$. Each update $\Delta e_k$ = $(v_i, v_j, \oplus)$ inserts or deletes edge $(v_i, v_j)$ from the graph $G_{k}$. The symbol $\oplus$ can be $+$ or $-$, meaning an edge insertion or deletion. Each update $\Delta e_k$ arrives at a random time $T(\Delta e_k)$ $>$ $0$, and $T(\Delta e_{k+1})$ $>$ $T(\Delta e_k)$. The edge updates generate a sequence of graph snapshots [$G_0, $$G_1, G_2, G_3, \ldots $] where $G_{k+1} $= $G_{k}$ $\oplus$ $\Delta e_k$.
+\end{definition}
+
+
+\begin{definition}[Continuous Subgraph Matching]
+Continuous subgraph matching (CSM) aims to find the incremental subgraphs $\Delta m_k$ that are isomorphic to a query pattern $Q$ in a dynamic graph $(G_0, \Delta G)$ for each update $\Delta e_{k} \in \Delta G$. 
+\end{definition}
+
+%\begin{definition}[Incremental Matching]
+%We call the matching procedure for each $\Delta e_k \in \Delta G$ {\em incremental matching}.
+%\end{definition}
+
+
+%-----------------------------------------------------------------------------------------------------------------------------------------%
+
+% \newpage
+\iffalse
+\subsection{Continuous Subgraph Matching Algorithm}
+\label{sec:csk_algo}
+Previous systems can be categorized into two types: those that process updates edge by edge and those that process them batch by batch. Readers interested in algorithmic details may refer to~\cite{wei2024gcsm}. Understanding the details of the continuous subgraph matching algorithm is not necessary for following this paper.
+\fi
+ 
+
+%-----------------------------------------------------------------------------------------------------------------------------------------%
+
+
+\subsection{Existing GPU-based CSM systems}
+\label{sec:previous_systems}
+%\textcolor{blue}{In this section, we introduce the NVIDIA GPU architecture and CUDA programming model, followed by an overview of prior GPU-based systems.}
+
+A GPU contains tens of streaming multiprocessors (SMs), each with 32-192 CUDA cores depending on the architecture. GPU kernels are organized as grids of thread blocks, where each block contains multiple 32-thread warps. Thread blocks are assigned to SMs for execution, with each SM capable of hosting multiple blocks. Threads within a warp execute in SIMT fashion, and all threads can access the GPU's global memory.
+
+Previous GPU-based CSM systems \cite{wei2024gcsm, qiu2024gpu} are designed to operate with a fixed batch size: they wait until a predefined number of edge updates are accumulated to form a batch, process that batch on the GPU, and then move on to the next one. 
+Each batch is processed in three steps:
+
+\begin{itemize}[leftmargin=0.3cm, itemindent=0cm]
+\item \textbf{Prepare:} Construct a batch graph $G_b$ from the edges in the batch on the CPU and transfer $G_b$ to the GPU’s global memory. The system now maintains two graphs: the data graph $G_k$ (to be updated) and the batch graph $G_b$.
+\item \textbf{Match:} Perform incremental matching for each edge in the batch. Each GPU warp processes one edge and explores its $k$-hop neighborhood in both $G_b$ and $G_k$. Larger batch sizes provide higher parallelism.
+\item \textbf{Update:} Merge the edges from $G_b$ into $G_k$, and then sort each updated neighbor list in $G_k$ by vertex ID. Prior GPU systems differ in their data graph placement: GCSM \cite{wei2024gcsm} stores $G_k$ in the CPU’s main memory, whereas GAMMA \cite{qiu2024gpu} stores $G_k$ in the GPU’s global memory.
+\end{itemize}
+% If a new edge arrives before the previous batch is finished, it waits in the queue. 
+
+
+% \textcolor{green}{merge the following three paragraphs into one brief intro to GPU architecture..}
+% \textcolor{green}{modify/improve the following paragraphs to a single paragraph that explains how previous GPU-based CSM systems work, how are the computations mapped to GPU cores? How are data cached in shared memory? why a batch is needed to achieve good performance? how data are batched on CPU and passed to GPU? etc...}
+% The large-scale GPU parallelism occurs in this step.
+
+% These systems adopt algorithms that require the dynamic data graph $G$=$(G_0, \Delta G)$ to keep organized according to certain rules. 
+% For example, most prior systems adopt the set operation-based (set intersection $\cap$ and set difference $-$) algorithm, which requires the neighbor lists of $G$ to be sorted by vertex ID. That means inserting a new update will affect the matching results of $\Delta E_t$ if $\Delta E_t$ is still unfinished. 
+% The GPU kernels in prior systems \cite{wei2024gcsm, qiu2024gpu} cannot achieve good GPU utilization for a $\Delta E_t$ with a small batch size, they have attempted to exploit intra-$\Delta E_t$ parallelism to saturate the GPU, but none have been effective for small batch sizes. Both CSM and SSM are implemented as a nested loop that traverses a search tree (see section \ref{sec:inter_batch_algo}). There are two intra-$\Delta E_t$ parallel traversal strategies: parallel depth-first search (DFS) and parallel breadth-first search (BFS). DFS is commonly adopted in previous GPU CSM systems \cite{wei2024gcsm, qiu2024gpu}, which requires $|\Delta E_t|$ to be larger than the number of processing units, but that is not a realistic scenario and severely lacks flexibility. BFS or hybrid BFS-DFS \cite{wei2022stmatch, xiang2021cuts} can be used to process a single $\Delta E_t$ with higher parallelism even if $|\Delta E_t|$ is small, but previous studies \cite{wei2022stmatch, xiang2021cuts} have shown that BFS incurs high overhead due to intensive memory writing, huge memory consumption, and threads synchronization, leading to significant performance degradation. 
+
+% Due to the above reasons, it is necessary to enable parallel processing across different $\Delta E_t$. 
+% \textcolor{blue}{The graph data structures proposed in prior systems all emphasis on insertion and deletion efficiency but can not hanlde the problem mentioned above. For example, cuStinger ..., Hornet ..., Gunrock ..., Faimgraph ..., GPMA ..., LPMA .... 
+% }
+
+% Global memory is accessible by all SMs but has high latency.  Proper use of shared memory and registers is crucial for efficient GPU kernel performance.
+% Each CPU has its own main memory which is shared among different GPUs. 
+% and registers for thread-private data with the lowest latency.
+% Shared memory is exclusive to a block and shared among warps within that block.
+% The memory space has a hierarchy of main memory, GPU global memory, and shared memory. 
+% Across SMs, active blocks are executed in parallel.
+% Within an SM, n warps within a block 32 x n CUDA cores simultaneously, with each warp’s 32 threads executed in parallel by 32 CUDA cores
+% CUDA has a thread hierarchy of Kernel $\to$ Block $\to$ Warp $\to$ Thread. 
+%NVIDIA GPUs have a hardware hierarchy \cite{cuda} of CPU Host $\to$ GPU $\to$ Streaming Processor (SM) $\to$ CUDA Core. 
+%----------------------------------------------------------------------

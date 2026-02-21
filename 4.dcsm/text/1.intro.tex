@@ -1,0 +1,180 @@
+\section{Introduction}
+\label{sec:Intro}
+\textit{Continuous subgraph matching} (CSM) refers to the process of incrementally matching a query pattern against a dynamic data graph. 
+CSM plays a critical role in many real-world graph analytics applications. 
+For example, transactions in e-commerce platforms can be modeled as a dynamic graph, and CSM can be employed to detect fraudulent merchants \cite{qin2019towards}. 
+It can also be applied to monitor money laundering in transaction networks \cite{qiu2018real}, trace rumor propagation paths in social networks \cite{wang2015detecting}, and identify system anomalies in computer communication networks \cite{manzoor2016fast}.
+
+Figure~\ref{fig:csm} illustrates an example of CSM.
+Given an initial data graph $G_0$ at time $t=0$ and a query pattern $Q_d$, $G_0$ contains one matching subgraph $(v_0, v_2, v_3, v_5)$.
+At $t=3$, an edge $(v_1, v_3)$ is added to $G_0$, the updated graph $G_1$ produces an additional match $(v_0, v_1, v_2, v_3)$ for the query. 
+At $t=5$, the edge $(v_3, v_5)$ is deleted from the graph, which invalidates the previous match $(v_0, v_2, v_3, v_5)$. 
+
+\begin{figure}[ht]
+    \centering
+    % \captionsetup[subfigure]{width=75pt}%
+    \subfloat[Query $Q_{d}$]{
+        \includegraphics[scale=0.32, page=1]{./fig/slides-crop.pdf}
+        \label{fig:query}
+    } \hfil
+    \hspace{2em}
+    \captionsetup[subfigure]{width=75pt}%
+    \subfloat[$t$=$0$: Data graph $G_0$]{
+        \includegraphics[scale=0.32, page=2]{./fig/slides-crop.pdf}
+        \label{fig:g0}
+    } \\
+    \captionsetup[subfigure]{width=75pt}%
+    \subfloat[$t$=$3$: Data graph $G_1$]{
+        \includegraphics[scale=0.32, page=3]{./fig/slides-crop.pdf}
+        \label{fig:g1}
+    } \hfil
+    % \hspace{-3em}
+    \captionsetup[subfigure]{width=75pt}%
+    \subfloat[$t$=$5$: Data graph $G_2$]{
+        \includegraphics[scale=0.32, page=4]{./fig/slides-crop.pdf}
+        \label{fig:g1}
+    }
+    \caption{An example of continuous subgraph matching. $G_{k+1}$ is the data graph after applyting update on $G_{k}$. $Q_{d}$ is the query of "diamond" structure. $abcd$ next to the vertices are the vertex labels.}
+    \label{fig:csm}
+    %\vspace{-1em}
+\end{figure}
+
+Many efforts have been made to improve the performance of CSM on CPUs, primarily by reducing the search space during the matching process~\cite{kim2018turboflux, min2021symmetric, sun2022rapidflow, li2024newsp}.
+However, due to the exponential time complexity of subgraph matching~\cite{ullmann1976algorithm}, CSM remains a computationally expensive procedure.
+To address this limitation, recent systems \cite{wei2024gcsm, qiu2024gpu} have begun exploiting the massive parallelism of GPUs to accelerate CSM. 
+
+The existing GPU-based CSM systems process updates using fixed-size batches.
+Specifically, they wait until a predefined number of edge updates accumulate before grouping them into a batch and launching it on the GPU.
+To fully utilize GPU cores, the batch size is typically set to a large value (e.g., 4096).
+While a large batch size improves the GPU occupancy during the matching procedure, it increases the response time of individual updates and may even reduce overall GPU utilization, since edges must wait for the entire batch to be formed before execution. 
+
+To validate this point, we tested the state-of-the-art GPU-based CSM system (GCSM~\cite{wei2024gcsm}) under different batch sizes. 
+The performance results are presented in Figure~\ref{fig:rtime}. We define the response time of a graph update as the interval between its arrival and the start of its processing. 
+We observe that GCSM exhibits poor response time under different graph update rates. 
+With a batch size of 4096, GCSM-4096 suffers from long response times at low update rates, as it must wait to accumulate a sufficient number of updates to form a large batch. 
+Conversely, with a batch size of 128, GCSM-128 experiences longer response times at high update rates due to its limited parallelism and thus low GPU utilization, as shown in Figure~\ref{fig:gutil}. 
+
+% \textcolor{blue}{ } 
+
+\begin{figure}[h]
+    \centering
+    \subfloat[Response Time]{
+        \includegraphics[scale=0.42, page=1]{./fig/profile-crop.pdf}
+        \label{fig:rtime}
+    } \hfil
+    \subfloat[GPU Utilization]{
+        \includegraphics[scale=0.42, page=1]{./fig/profile2-crop.pdf}
+        \label{fig:gutil}
+    } 
+    \caption{Average response time and GPU utilization of GCSM. GCSM-x denotes GCSM processing with batch size x. \textbf{Query:} Q4 (Figure~\ref{fig:queries}). \textbf{Graph:} Unlabeled Netflow~\cite{netflow}.}
+    \label{fig:profile}
+\end{figure}
+
+
+To address the limitation of existing GPU-based CSM systems, we propose DCSM in this work. 
+We find that the problem with existing systems stems from the fact that they cannot process different batches in parallel. 
+A batch must wait for the previous batch to finish processing before it can be launched. 
+DCSM addresses the response time and utilization issue by enabling parallel execution across batches. 
+Intuitively, such inter-batch parallelism allows our system to process graph updates in small batches while keeping a high GPU occupancy. 
+As shown in Figure~\ref{fig:profile}, our system maintains short response times across a wide range of update rates and achieves higher average GPU utilization than GCSM. 
+
+
+The key technique that enables inter-batch parallelism in our system is resolving data races on the data graph while processing multiple batches concurrently.
+We propose the first {\bf multi-version graph data structure} for CSM. It records a distinct graph version with minimum overhead for each batch update, allowing safe and efficient inter-batch parallelism. 
+To manage memory consumption, we develop a {\bf garbage collection mechanism} that releases graph versions no longer in use.
+We further introduce several system-level optimizations, including {\bf pipelined and parallel updates} to the multi-version graph using GPU warps, speeding up the creation of new graph versions, and a {\bf dynamic scheduling strategy} that assigns pending batches to idle warps to achieve better load balance among warps.
+
+% These techniques help our system achieve
+% \textcolor{red}{These techniques help our system achieve....}
+%\textcolor{blue}{an efficient neighbor accessing strategy for multi-version graphs, and a garbage collector implementation on GPU.}
+% \textcolor{red}{To ensure the correctness of the matching on this new multi-version graph, we provide a formal proof. we don't need this in the intro..}
+
+
+We evaluate our system against state-of-the-art CPU and GPU systems. 
+The experiments demonstrate that DCSM ensures optimal response time and throughput across different update rates. 
+Compared to GCSM~\cite{wei2024gcsm}, DCSM achieves up to 87.9x speedup under high update rates and up to 312x speedup under low update rates. 
+Furthermore, DCSM achieves 10.5x higher throughput compared to the state-of-the-art CPU-based CSM system RapidFlow~\cite{sun2022rapidflow}.
+
+
+%
+% \textcolor{blue}{Under high arrival rate, DCSM achieves an average 60x speedup in response time compared to GCSM-128. Under low arrival rate, DCSM achieves an average 21x speedup compared to GCSM-4096. } 
+
+% 要测试测试GCSM不同的batch size
+% 不同的arrival rate下，不同的batch size下，都比GCSM更好
+% Most case下都比GCSM好，极端case下和GCSM一样、
+
+% \begin{itemize}[leftmargin=0.3cm, itemindent=0cm]
+% \item \textcolor{green}{It's better to test with different batch sizes for all graph update rates, say something like: no matter what batch size is used for GCSM, we outperform the best GCSM configuration across a wide range of graph update rates...also, add some CPU comparison results.. }
+% \item \textcolor{green}{can we change the system to a better name? reflecting the inter-batch parallelism design?}
+% \item \textcolor{green}{I removed the contribution bullets, as they are duplicate to this paragraph, you may add a little bit more details in the paragraph. }
+% \end{itemize}
+
+
+
+
+
+\iffalse
+In summary, the main contributions of this work are as follows:
+\noindent
+\begin{itemize}[leftmargin=0.3cm, itemindent=0cm]
+\item We design a strategy to enable inter-batch parallelism, which provides flexibility in handling varying update arrival rates.
+\item We design an efficient system on GPU and address various performance issues, such as memory access inefficiency and load imbalance, thereby fully utilizing GPU resources.
+\item Through the overall system design, we ensure that our system achieves good throughput, response time, and GPU utilization, enabling it to flexibly adapt to real-world demands.
+\end{itemize}
+\fi
+% \textcolor{green}{Problems resolved}
+% \noindent
+% \begin{itemize}[leftmargin=0.3cm, itemindent=0cm]
+% \item  \textcolor{green}{I think we want to show small batch size leads to shorter response time, right?}
+% \item  \textcolor{green}{describe our results...} 
+% \item  \textcolor{green}{briefly describe the techniques you used, 3-5 sentences..}
+% \end{itemize}
+\iffalse
+\textcolor{green}{Problems resolved}
+\noindent
+\begin{itemize}[leftmargin=0.3cm, itemindent=0cm]
+\item \textcolor{green}{why $Q_d$? change it $Q$?}
+\item \textcolor{green}{this paragraph needs to be rewritten...give more details, explain why inter-batch parallelism can address the response time and utilization problem...}
+\item \textcolor{green}{what is GCSM-6000?} 
+\item \textcolor{green}{using what query pattern on what data graph, give reference..remove Rapidflow data...} 
+\item \textcolor{green}{explain response time, GCSM-1000...each figure should have three lines: GCSM-128, GCSM-4096, Our}
+\item \textcolor{green}{add some highlights of experimental results, for example, compared to what system, the response time is reduced by xxx, the overall query processing time is reduced by xxx.}
+\end{itemize}
+\fi
+%GCSM-4096 exhibits localized valleys in GPU utilization, as the GPU remains idle during batch formation periods. GCSM-128 maintains consistently low GPU utilization due to insufficient parallelism with a batch size of 128. However, neither can fully utilize the GPU.}
+
+% \textcolor{blue}{To validate this point, we tested the state-of-the-art GPU-based CSM system (GCSM~\cite{wei2024gcsm}) with different batch sizes for matching a 3-star pattern (Q4 in Fig.~\ref{fig:queries}) on the Netflow graph~\cite{netflow}. 
+% The results are shown in Fig.~\ref{fig:rtime}. 
+% We define the response time of a graph update as the time interval between its arrival and the start of its processing. 
+% We observe that GCSM-4096's response time first decreases until the arrival rate reaches a threshold (12K updates/second), and then increases. Before the threshold, higher arrival rates shorten the time needed to form a batch, resulting in lower response times. After the threshold, arrival rates exceed GCSM-4096's maximum throughput, causing new batches to wait for previous ones to complete. GCSM-128 exhibits a similar trend, but with some differences. GCSM-128 performs better at low arrival rates as smaller batches form more quickly, but has significantly higher response times at high arrival rates because its low parallelism limits throughput. We also profile GCSM's GPU utilization, and show the results in Fig.~\ref{fig:gutil}. GCSM-4096 exhibits localized valleys in GPU utilization, as the GPU remains idle during batch formation periods. GCSM-128 maintains consistently low GPU utilization due to insufficient parallelism with a batch size of 128. However, neither can fully utilize the GPU.}
+
+% We design a multi-version graph data structure to resolve update-match conflicts between batches. Our multi-version graph incurs negligible overhead compared to incremental matching. We also propose optimizations to the multi-version graph to improve GPU utilization. In summary, we make the following contributions:
+
+%
+%In some real-world scenarios, an update requires a quick response. For example, a merchant fraud detection system receives real-time transaction records and should alert the monitoring system as quickly as possible \cite{qin2019towards}. 
+
+
+% 换一个名字，不要用DCSM
+
+% 要测试测试GCSM不同的batch size
+% 不同的arrival rate下，不同的batch size下，都比GCSM更好
+% Most case下都比GCSM好，极端case下和GCSM一样、
+
+
+%Fig4分成A B C三个子图， legend改成箭头，指向Form batch graph指向对应位置。
+
+
+
+
+
+%俩typically
+
+%4.3说的具体一些
+
+% Property不能被proof。
+
+% 不能有任何的proof
+
+%EX加一张图。
+
+% Property可以保留，用一个框或者图片来说明。

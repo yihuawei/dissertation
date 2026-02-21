@@ -1,0 +1,88 @@
+
+
+
+\section{Overview of DCSM}
+\label{sec:overview}
+
+
+%To addresses the problem discussed in Section~\ref{sec:Challenges}, we propose DCSM. 
+
+
+Figure~\ref{fig:dcsm_overview} provides an overview of our DCSM system, which consists of three modules: a graph updater (GU), an executor (EX), and a garbage collector (GC). 
+
+Each edge update $\Delta e_{k} = (v_i, v_j, \oplus)$ flows through these three modules, which process multiple updates in a pipelined manner. 
+The graph updater (GU) accepts batches of edge updates $\Delta e_{k}$ from the CPU and applies them to the data graph on the GPU using 1-4 warps, where all warps work together to process each batch in parallel.
+The executor (EX) performs incremental matching for each $\Delta e_{k}$ and produces the matching results; it runs on thousands of warps and dynamically schedules new updates to idle warps. 
+The garbage collector (GC) runs on the GPU and reclaims the memory allocated by GU back to the memory pool.
+To ensure correctness, edge updates must preserve their order of arrival—i.e., $\Delta e_{k+1}$ cannot pass through GU, EX, or GC before $\Delta e_{k}$.
+
+Each functional module serves as both a consumer and a producer, and its workload influences the flow speed. 
+For instance, if GU is a lightweight module and EX is a heavy module, it will lead to multiple $\Delta e_{k}$ accumulating between GU and EX. Conversely, if GU is heavier than EX, it will cause EX to become idle most time. 
+DCSM adopts a warp-specialized design, in which each module is executed by one or more warps on a GPU. 
+Each module can also adjust itself based on the accumulation of $\Delta e_{k}$ on its left and right sides. 
+For example, if too many $\Delta e_{k}$ accumulate between GU and EX, then GU will pause and wait for the accumulated $\Delta e_{k}$ to be consumed by EX.
+
+% By specifying the number of warps allocated to each module, we can control their consuming and producing speed, thereby enabling effective coordination among different functional modules.
+
+% \begin{itemize}[leftmargin=0.3cm, itemindent=0cm]
+% \item \textcolor{green}{point out GU accepts edge updates from CPU, and updates the data graph on GPU, explain how it uses GPU warps...}
+% \item \textcolor{green}{explain how it's executed on GPU..}
+% \item \textcolor{green}{GU is also executed on GPU? You may want to point out this difference with previous systems.}
+% \item \textcolor{green}{I think the drawing of this figure can be improved: use three subfigures and reference them in the text, use annotation?}
+% \end{itemize}
+
+
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.7, page=6]{./fig/slides-crop.pdf}
+    \caption{Overview of DCSM. DCSM consists of three functional modules: Graph Updater (GU), Executor (EX), and Garbage Collector (GC). The edge updates $\Delta e_{k}$ flows through these modules sequentially.}
+    \label{fig:dcsm_overview}
+\end{figure}
+
+
+
+Figure~\ref{fig:dcsm_benefit} illustrates how DCSM processes a sequence of contiguous graph updates.
+In this example, the GPU has two parallel computing units: warp~0 and warp~1.
+In GCSM~\cite{wei2024gcsm} with a batch size of~2, $\Delta e_{3}$ must wait until $\Delta e_{4}$ arrives to form a batch, which delays the processing of $\Delta e_{3}$.
+In contrast, GCSM with a smaller batch size of~1 processes all $\Delta e_{k}$ serially, resulting in lower throughput and longer average response time.
+DCSM, by enabling inter-batch parallelism, can flexibly schedule any newly formed batch to an idle warp, thereby improving both response time and throughput. 
+
+The rest of the paper is organized as follows.
+Sections~\ref{sec:mvg},~\ref{sec:ex}, and~\ref{sec:gc} describe the three functional modules—GU, EX, and GC, respectively.
+Section~\ref{sec:exp} presents the evaluation results. 
+
+% \textcolor{green}{I dont understand this pargraph, try to polish/rewrite it}
+
+% \begin{figure}
+%     \centering
+%     \includegraphics[scale=0.75, page=5]{./fig/slides-crop.pdf}
+%     \caption{\textbf{Top}: GCSM with batch size $1$. \textbf{Middle}: GCSM with batch size $2$. \textbf{Bottom}: DCSM. Eight updates $\Delta e_{1}$ - $\Delta e_{8}$ arrive sequentially. The bar in the figure denotes warp activity along the time axis. Each bar is associated with an update $\Delta e_{i}$, labeled inside the bar. In practice, DCSM uses 1-8 warps for graph updates, while 5000-10000 warps for incremental matching.}
+%     \label{fig:dcsm_benefit}
+% \end{figure}
+
+
+\begin{figure}[ht]
+    \centering
+    \subfloat[GCSM with batch size $1$.]{
+        \includegraphics[scale=0.7, page=1]{./fig/compare-crop.pdf}
+        \label{fig:gcsm1}
+    } \\
+    \hspace{2em}
+    \subfloat[GCSM with batch size $2$.]{
+        \includegraphics[scale=0.7, page=2]{./fig/compare-crop.pdf}
+        \label{fig:gcsm2}
+    } \\
+    \subfloat[DCSM with inter-batch parallelism.]{
+        \includegraphics[scale=0.7, page=3]{./fig/compare-crop.pdf}
+        \label{fig:dcsm}
+    } \hfil
+    \caption{Comparison between GCSM and DCSM. Eight updates $\Delta e_{1}$ - $\Delta e_{8}$ arrive sequentially. The bar in the figure denotes warp activity along the time axis. Each bar is associated with an update $\Delta e_{k}$, labeled inside the bar. In practice, DCSM uses 5,000-10,000 warps for incremental matching, while only 1-4 warps are assigned for graph updates.}
+    \label{fig:dcsm_benefit}
+\end{figure}
+
+
+
+
+
+

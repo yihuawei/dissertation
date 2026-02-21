@@ -1,0 +1,137 @@
+\documentclass[sigconf]{acmart}
+
+\usepackage{amsmath, amsfonts}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usepackage{wrapfig}
+\usepackage{tikz}
+\usepackage{subfig}
+\usepackage{url}
+\usepackage{ragged2e}
+\usepackage{booktabs,makecell, multirow, tabularx}
+\usepackage{bigstrut}
+\usepackage{multirow}
+\usepackage{amsthm}
+\usepackage{enumitem}
+\usepackage{circledsteps}
+\usepackage{listings}
+\usepackage{soul} 
+\usepackage{color, xcolor}
+\usepackage[most]{tcolorbox}
+\usepackage[10pt]{moresize}
+\usepackage{pifont}
+\usepackage{rotating}
+
+\AtBeginDocument{%
+  \providecommand\BibTeX{{%
+    Bib\TeX}}}
+
+
+\setcopyright{acmlicensed}
+\copyrightyear{2018}
+\acmYear{2018}
+\acmDOI{XXXXXXX.XXXXXXX}
+%% These commands are for a PROCEEDINGS abstract or paper.
+\acmConference[Conference acronym 'XX]{Make sure to enter the correct
+    conference title from your rights confirmation email}{June 03--05,
+    2018}{Woodstock, NY}
+%%
+%%  Uncomment \acmBooktitle if the title of the proceedings is different
+%%  from ``Proceedings of ...''!
+%%
+%%\acmBooktitle{Woodstock '18: ACM Symposium on Neural Gaze Detection,
+%%  June 03--05, 2018, Woodstock, NY}
+\acmISBN{978-1-4503-XXXX-X/2018/06}
+
+
+\settopmatter{printfolios=true}
+\settopmatter{printacmref=false}
+%\pagestyle{plain}
+%https://arxiv.org/pdf/2412.06993
+%%
+%% end of the preamble, start of the body of the document source.
+\begin{document}
+
+
+\title{DCSM: Enabling Inter-Batch Parallelism for Continuous Subgraph Matching on GPU}
+% \subtitle{\normalsize{ICS 2025 Submission
+%     \textbf{\#NaN} -- Confidential Draft -- Do NOT Distribute!!}}
+
+% \tcolorboxenvironment{lstlisting}{
+%   spartan,
+%   frame empty,
+%   boxsep=0mm,
+%   left=1mm,right=1mm,top=-1mm,bottom=-1mm,
+%   colback=gray!45,
+% }
+
+\newtheorem{property}{Property}
+
+\definecolor{block-gray}{gray}{0.9}
+\newtcolorbox{myquote}{colback=block-gray, boxrule=0pt,boxsep=0pt, breakable}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{blue}, 
+    numberstyle=\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\small\ttfamily,       
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                                 
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=4,
+    mathescape=true
+}
+\lstset{style=mystyle}
+
+
+\author{anonymous authors}
+% \affiliation{%
+%   \institution{Anonymous Institution}
+% }
+
+\begin{abstract}
+Continuous subgraph matching (CSM) is a fundamental building block in many real-world applications. 
+While prior studies have explored executing CSM on heterogeneous systems with GPUs, they only exploit intra-batch parallelism and cannot process multiple batches concurrently—a capability essential for handling real-time requests. 
+In this work, we propose a GPU-based system to accelerate CSM in practical, real-world settings. 
+We adopt an algorithm-system co-design approach to unlock inter-batch parallelism. 
+We introduce several key components, including a warp-specialized execution model and a multi-version graph data structure, along with version control logic for CSM tasks. 
+Additionally, we propose optimizations such as warp-level parallel execution for data copying and incremental matching. 
+Experimental results show that our system demonstrates optimal throughput and response time on GPU platforms across various update arrival rates.
+
+\end{abstract}
+
+% \keywords{Do, Not, Us, This, Code, Put, the, Correct, Terms, for, Your, Paper}
+
+
+\maketitle
+
+
+\input{text/1.intro}
+\input{text/2.background}
+\input{text/3.overview}
+\input{text/4.mvg}
+\input{text/5.kernel}
+\input{text/6.gc}
+\input{text/7.experiment}
+
+
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{jp}
+\end{document}
+\endinput
+%%
+%% End of file `sample-sigconf.tex'.

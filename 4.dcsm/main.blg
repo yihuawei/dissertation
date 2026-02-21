@@ -1,0 +1,116 @@
+This is BibTeX, Version 0.99d (TeX Live 2022/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main.aux
+The style file: ACM-Reference-Format.bst
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Database file #1: jp.bib
+Repeated entry---line 1233 of file jp.bib
+ : @inproceedings{wang2015detecting
+ :                                 ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 1256 of file jp.bib
+ : @inproceedings{kankanamge2017graphflow
+ :                                       ,
+I'm skipping whatever remains of this entry
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
+Reallocated global_strs (elt_size=200001) to 20 items from 10.
+Reallocated glb_str_end (elt_size=4) to 20 items from 10.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Warning--empty publisher in chen2022decomine
+Warning--empty address in chen2022decomine
+Warning--empty publisher in chen2022efficient
+Warning--empty address in chen2022efficient
+Warning--empty publisher in chen2021sandslash
+Warning--empty address in chen2021sandslash
+Warning--no number and no volume in choudhury2015selectivity
+Warning--page numbers missing in both pages and numpages fields in choudhury2015selectivity
+Warning--empty publisher in guo2020gpu
+Warning--empty address in guo2020gpu
+Warning--empty publisher in idris2017dynamic
+Warning--empty address in idris2017dynamic
+Warning--empty publisher in jamshidi2020peregrine
+Warning--empty address in jamshidi2020peregrine
+Warning--empty publisher in kankanamge2017graphflow
+Warning--empty address in kankanamge2017graphflow
+Warning--empty publisher in kim2018turboflux
+Warning--empty address in kim2018turboflux
+Warning--empty publisher in le2012linked
+Warning--empty address in le2012linked
+Warning--empty publisher in li2024newsp
+Warning--empty address in li2024newsp
+Warning--empty publisher in manzoor2016fast
+Warning--empty address in manzoor2016fast
+Warning--empty publisher in mawhirter2021dryadic
+Warning--empty address in mawhirter2021dryadic
+Warning--no number and no volume in mawhirter2019graphzero
+Warning--page numbers missing in both pages and numpages fields in mawhirter2019graphzero
+Warning--empty publisher in mawhirter2019automine
+Warning--empty address in mawhirter2019automine
+Warning--no number and no volume in min2021symmetric
+Warning--page numbers missing in both pages and numpages fields in min2021symmetric
+Warning--empty publisher in qin2019towards
+Warning--empty address in qin2019towards
+Warning--page numbers missing in both pages and numpages fields in qin2019towards
+Warning--empty publisher in qiu2024gpu
+Warning--empty address in qiu2024gpu
+Warning--empty publisher in shi2020graphpi
+Warning--empty address in shi2020graphpi
+Warning--empty publisher in tran2015fast
+Warning--empty address in tran2015fast
+Warning--no number and no volume in wang2020fast
+Warning--page numbers missing in both pages and numpages fields in wang2020fast
+Warning--empty publisher in wang2015detecting
+Warning--empty address in wang2015detecting
+Warning--empty publisher in wei2022stmatch
+Warning--empty address in wei2022stmatch
+Warning--empty publisher in wei2024gcsm
+Warning--empty address in wei2024gcsm
+Warning--empty publisher in xiang2021cuts
+Warning--empty address in xiang2021cuts
+Warning--empty publisher in zeng2020gsi
+Warning--empty address in zeng2020gsi
+You've used 35 entries,
+            5981 wiz_defined-function locations,
+            1656 strings with 25149 characters,
+and the built_in function-call counts, 42721 in all, are:
+= -- 5131
+> -- 1459
+< -- 0
++ -- 506
+- -- 505
+* -- 2988
+:= -- 4105
+add.period$ -- 175
+call.type$ -- 35
+change.case$ -- 282
+chr.to.int$ -- 35
+cite$ -- 88
+duplicate$ -- 3894
+empty$ -- 2723
+format.name$ -- 629
+if$ -- 10403
+int.to.chr$ -- 2
+int.to.str$ -- 1
+missing$ -- 150
+newline$ -- 298
+num.names$ -- 245
+pop$ -- 1684
+preamble$ -- 1
+purify$ -- 562
+quote$ -- 0
+skip$ -- 1442
+stack$ -- 0
+substring$ -- 3127
+swap$ -- 372
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 910
+warning$ -- 53
+while$ -- 230
+width$ -- 0
+write$ -- 686
+(There were 2 error messages)

@@ -15,229 +15,169 @@
 \providecommand\HyField@AuxAddToCoFields[2]{}
 \providecommand \oddpage@label [2]{}
 \@input{text/7_toc.aux}
-\citation{Milo824}
-\citation{10.1145/2488388.2488502}
-\citation{noel2018review}
-\citation{akoglu2015graph,noble2003graph}
-\citation{bhattacharya2006entity}
-\citation{schaeffer2007graph}
+\citation{qin2019towards}
+\citation{qiu2018real}
+\citation{wang2015detecting}
+\citation{manzoor2016fast}
+\citation{kim2018turboflux,min2021symmetric,sun2022rapidflow,li2024newsp}
 \citation{ullmann1976algorithm}
-\citation{cordella2001improved,bonnici2013subgraph,10.1145/3299869.3319880,aberger2017emptyheaded,kankanamge2017graphflow}
-\citation{sun2020rapidmatch,10.14778/1453856.1453899,10.1145/3299869.3319880,mawhirter2019automine,mawhirter2021dryadic,chen2022decomine}
-\citation{sun2020rapidmatch}
-\citation{chen2022efficient}
-\@writefile{toc}{\contentsline {section}{\numberline {1}Matcha: A Language and Compiler for Backtracking-based Subgraph Matching}{1}{section.1}\protected@file@percent }
+\citation{wei2024gcsm,qiu2024gpu}
+\@writefile{toc}{\contentsline {section}{\numberline {1}DCSM: Enabling Inter-Batch Parallelism for Continuous Subgraph Matching on GPU}{1}{section.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.1}Introduction}{1}{subsection.1.1}\protected@file@percent }
-\citation{chen2018g,chen2022efficient,10.14778/3389133.3389137}
-\citation{chen2022efficient}
-\citation{sun2020rapidmatch}
-\citation{yuan2023everest}
+\newlabel{sec:Intro}{{1.1}{1}{Introduction}{subsection.1.1}{}}
+\newlabel{sec:Intro@cref}{{[subsection][1][1]1.1}{[1][1][]1}}
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
-\newlabel{fig:g0}{{1a}{2}{Subfigure 1a}{subfigure.1.1}{}}
-\newlabel{fig:g0@cref}{{[subfigure][1][1]1a}{[1][1][]2}}
-\newlabel{sub@fig:g0}{{(a)}{a}{Subfigure 1a\relax }{subfigure.1.1}{}}
-\newlabel{fig:query}{{1b}{2}{Subfigure 1b}{subfigure.1.2}{}}
-\newlabel{fig:query@cref}{{[subfigure][2][1]1b}{[1][1][]2}}
-\newlabel{sub@fig:query}{{(b)}{b}{Subfigure 1b\relax }{subfigure.1.2}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Example data graph and query pattern. \relax }}{2}{figure.caption.3}\protected@file@percent }
-\newlabel{fig:graph}{{1}{2}{Example data graph and query pattern. \relax }{figure.caption.3}{}}
-\newlabel{fig:graph@cref}{{[figure][1][]1}{[1][1][]2}}
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Data Graph $G$}}}{2}{subfigure.1.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Query $Q$}}}{2}{subfigure.1.2}\protected@file@percent }
-\citation{chen2022efficient}
-\citation{wei2022stmatch}
-\citation{chen2022decomine}
-\citation{sun2020rapidmatch}
-\citation{yuan2023everest}
-\citation{chen2022efficient}
-\citation{wei2022stmatch}
-\citation{chen2022decomine}
-\citation{sun2020rapidmatch}
-\citation{yuan2023everest}
+\newlabel{fig:query}{{1a}{1}{Subfigure 1a}{subfigure.1.1}{}}
+\newlabel{fig:query@cref}{{[subfigure][1][1]1a}{[1][1][]1}}
+\newlabel{sub@fig:query}{{(a)}{a}{Subfigure 1a\relax }{subfigure.1.1}{}}
+\newlabel{fig:g0}{{1b}{1}{Subfigure 1b}{subfigure.1.2}{}}
+\newlabel{fig:g0@cref}{{[subfigure][2][1]1b}{[1][1][]1}}
+\newlabel{sub@fig:g0}{{(b)}{b}{Subfigure 1b\relax }{subfigure.1.2}{}}
+\newlabel{fig:g1}{{1c}{1}{Subfigure 1c}{subfigure.1.3}{}}
+\newlabel{fig:g1@cref}{{[subfigure][3][1]1c}{[1][1][]1}}
+\newlabel{sub@fig:g1}{{(c)}{c}{Subfigure 1c\relax }{subfigure.1.3}{}}
+\newlabel{fig:g1}{{1d}{1}{Subfigure 1d}{subfigure.1.4}{}}
+\newlabel{fig:g1@cref}{{[subfigure][4][1]1d}{[1][1][]1}}
+\newlabel{sub@fig:g1}{{(d)}{d}{Subfigure 1d\relax }{subfigure.1.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces An example of continuous subgraph matching. $G_{k+1}$ is the data graph after applyting update on $G_{k}$. $Q_{d}$ is the query of "diamond" structure. $abcd$ next to the vertices are the vertex labels.\relax }}{1}{figure.caption.3}\protected@file@percent }
+\newlabel{fig:csm}{{1}{1}{An example of continuous subgraph matching. $G_{k+1}$ is the data graph after applyting update on $G_{k}$. $Q_{d}$ is the query of "diamond" structure. $abcd$ next to the vertices are the vertex labels.\relax }{figure.caption.3}{}}
+\newlabel{fig:csm@cref}{{[figure][1][]1}{[1][1][]1}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Query $Q_{d}$}}}{1}{subfigure.1.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {$t$=$0$: Data graph $G_0$}}}{1}{subfigure.1.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {$t$=$3$: Data graph $G_1$}}}{1}{subfigure.1.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {$t$=$5$: Data graph $G_2$}}}{1}{subfigure.1.4}\protected@file@percent }
+\citation{wei2024gcsm}
+\citation{netflow}
+\citation{netflow}
+\newlabel{fig:rtime}{{2a}{2}{Subfigure 2a}{subfigure.2.1}{}}
+\newlabel{fig:rtime@cref}{{[subfigure][1][2]2a}{[1][2][]2}}
+\newlabel{sub@fig:rtime}{{(a)}{a}{Subfigure 2a\relax }{subfigure.2.1}{}}
+\newlabel{fig:gutil}{{2b}{2}{Subfigure 2b}{subfigure.2.2}{}}
+\newlabel{fig:gutil@cref}{{[subfigure][2][2]2b}{[1][2][]2}}
+\newlabel{sub@fig:gutil}{{(b)}{b}{Subfigure 2b\relax }{subfigure.2.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Average response time and GPU utilization of GCSM. GCSM-x denotes GCSM processing with batch size x. \textbf  {Query:} Q4 (Figure\nobreakspace  {}\ref {fig:queries}). \textbf  {Graph:} Unlabeled Netflow\nobreakspace  {}\cite  {netflow}.\relax }}{2}{figure.caption.4}\protected@file@percent }
+\newlabel{fig:profile}{{2}{2}{Average response time and GPU utilization of GCSM. GCSM-x denotes GCSM processing with batch size x. \textbf {Query:} Q4 (Figure~\ref {fig:queries}). \textbf {Graph:} Unlabeled Netflow~\cite {netflow}.\relax }{figure.caption.4}{}}
+\newlabel{fig:profile@cref}{{[figure][2][]2}{[1][2][]2}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Response Time}}}{2}{subfigure.2.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {GPU Utilization}}}{2}{subfigure.2.2}\protected@file@percent }
+\citation{wei2024gcsm}
+\citation{sun2022rapidflow}
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Background}{3}{subsection.1.2}\protected@file@percent }
-\newlabel{sec:background}{{1.2}{3}{Background}{subsection.1.2}{}}
-\newlabel{sec:background@cref}{{[subsection][2][1]1.2}{[1][3][]3}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.2.1}Subgraph Matching Problems}{3}{subsubsection.1.2.1}\protected@file@percent }
-\newlabel{sec:background_problem}{{1.2.1}{3}{Subgraph Matching Problems}{subsubsection.1.2.1}{}}
-\newlabel{sec:background_problem@cref}{{[subsubsection][1][1,2]1.2.1}{[1][3][]3}}
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Comparison of state-of-the-art subgraph matching systems: G2Miner (GM) \cite  {chen2022efficient}, STMatch (STM) \cite  {wei2022stmatch}, DecoMine (DM) \cite  {chen2022decomine}, RapidMatch (RM) \cite  {sun2020rapidmatch}, Everest (EV) \cite  {yuan2023everest}, and our system Matcha (Mt), in terms of support for algorithms, performance optimizations, and matching tasks.\relax }}{4}{table.caption.4}\protected@file@percent }
-\newlabel{tab:intro}{{1}{4}{Comparison of state-of-the-art subgraph matching systems: G2Miner (GM) \cite {chen2022efficient}, STMatch (STM) \cite {wei2022stmatch}, DecoMine (DM) \cite {chen2022decomine}, RapidMatch (RM) \cite {sun2020rapidmatch}, Everest (EV) \cite {yuan2023everest}, and our system Matcha (Mt), in terms of support for algorithms, performance optimizations, and matching tasks.\relax }{table.caption.4}{}}
-\newlabel{tab:intro@cref}{{[table][1][]1}{[1][3][]4}}
-\citation{li2019graph,lou2020neural,wang2022reinforcement}
+\newlabel{sec:Background}{{1.2}{3}{Background}{subsection.1.2}{}}
+\newlabel{sec:Background@cref}{{[subsection][2][1]1.2}{[1][3][]3}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.2.1}A Formal Definition of CSM}{3}{subsubsection.1.2.1}\protected@file@percent }
+\newlabel{sec:Preliminaries}{{1.2.1}{3}{A Formal Definition of CSM}{subsubsection.1.2.1}{}}
+\newlabel{sec:Preliminaries@cref}{{[subsubsection][1][1,2]1.2.1}{[1][3][]3}}
+\citation{wei2024gcsm,qiu2024gpu}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.2.2}Existing GPU-based CSM systems}{4}{subsubsection.1.2.2}\protected@file@percent }
+\newlabel{sec:previous_systems}{{1.2.2}{4}{Existing GPU-based CSM systems}{subsubsection.1.2.2}{}}
+\newlabel{sec:previous_systems@cref}{{[subsubsection][2][1,2]1.2.2}{[1][4][]4}}
+\citation{wei2024gcsm}
+\citation{qiu2024gpu}
+\citation{wei2024gcsm}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.3}Overview of DCSM}{5}{subsection.1.3}\protected@file@percent }
+\newlabel{sec:overview}{{1.3}{5}{Overview of DCSM}{subsection.1.3}{}}
+\newlabel{sec:overview@cref}{{[subsection][3][1]1.3}{[1][5][]5}}
+\citation{wei2024gcsm,qiu2024gpu}
+\citation{wei2022stmatch,chen2022efficient}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Overview of DCSM. DCSM consists of three functional modules: Graph Updater (GU), Executor (EX), and Garbage Collector (GC). The edge updates $\Delta e_{k}$ flows through these modules sequentially.\relax }}{6}{figure.caption.5}\protected@file@percent }
+\newlabel{fig:dcsm_overview}{{3}{6}{Overview of DCSM. DCSM consists of three functional modules: Graph Updater (GU), Executor (EX), and Garbage Collector (GC). The edge updates $\Delta e_{k}$ flows through these modules sequentially.\relax }{figure.caption.5}{}}
+\newlabel{fig:dcsm_overview@cref}{{[figure][3][]3}{[1][5][]6}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.4}Graph Updater and Multi-Version Graph}{6}{subsection.1.4}\protected@file@percent }
+\newlabel{sec:mvg}{{1.4}{6}{Graph Updater and Multi-Version Graph}{subsection.1.4}{}}
+\newlabel{sec:mvg@cref}{{[subsection][4][1]1.4}{[1][6][]6}}
+\newlabel{fig:gcsm1}{{4a}{7}{Subfigure 4a}{subfigure.4.1}{}}
+\newlabel{fig:gcsm1@cref}{{[subfigure][1][4]4a}{[1][6][]7}}
+\newlabel{sub@fig:gcsm1}{{(a)}{a}{Subfigure 4a\relax }{subfigure.4.1}{}}
+\newlabel{fig:gcsm2}{{4b}{7}{Subfigure 4b}{subfigure.4.2}{}}
+\newlabel{fig:gcsm2@cref}{{[subfigure][2][4]4b}{[1][6][]7}}
+\newlabel{sub@fig:gcsm2}{{(b)}{b}{Subfigure 4b\relax }{subfigure.4.2}{}}
+\newlabel{fig:dcsm}{{4c}{7}{Subfigure 4c}{subfigure.4.3}{}}
+\newlabel{fig:dcsm@cref}{{[subfigure][3][4]4c}{[1][6][]7}}
+\newlabel{sub@fig:dcsm}{{(c)}{c}{Subfigure 4c\relax }{subfigure.4.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Comparison between GCSM and DCSM. Eight updates $\Delta e_{1}$ - $\Delta e_{8}$ arrive sequentially. The bar in the figure denotes warp activity along the time axis. Each bar is associated with an update $\Delta e_{k}$, labeled inside the bar. In practice, DCSM uses 5,000-10,000 warps for incremental matching, while only 1-4 warps are assigned for graph updates.\relax }}{7}{figure.caption.6}\protected@file@percent }
+\newlabel{fig:dcsm_benefit}{{4}{7}{Comparison between GCSM and DCSM. Eight updates $\Delta e_{1}$ - $\Delta e_{8}$ arrive sequentially. The bar in the figure denotes warp activity along the time axis. Each bar is associated with an update $\Delta e_{k}$, labeled inside the bar. In practice, DCSM uses 5,000-10,000 warps for incremental matching, while only 1-4 warps are assigned for graph updates.\relax }{figure.caption.6}{}}
+\newlabel{fig:dcsm_benefit@cref}{{[figure][4][]4}{[1][6][]7}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {GCSM with batch size $1$.}}}{7}{subfigure.4.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {GCSM with batch size $2$.}}}{7}{subfigure.4.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {DCSM with inter-batch parallelism.}}}{7}{subfigure.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.4.1}Multi-Version Graph (MVG) Data Structure}{7}{subsubsection.1.4.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces The multi-version graph (MVG) data structure and the procedure for updating it with a batch. The MVG before update represents $G_0$ in Figure\nobreakspace  {}\ref {fig:csm}. The vertex ID indexes the $pSlab$, pointing to a $Slab$. Each row of the $Slab$ corresponds to a neighbor array version, storing its creation time ($ct_{min}$), deletion time ($dt_{max}$), and address ($pNb$). Each column of the neighbor array stores the ID, creation time ($ct$), and deletion time ($dt$) of an edge. We use \textbf  {$v_x$: ($ct$, $dt$]} to denote a neighbor array version of $v_x$. For example, $v_1$ has two neighbor array versions: $v_1$: ($0$, $3$] and $v_1$: ($3$, $m$] where $m$ means infinity.\relax }}{8}{figure.caption.7}\protected@file@percent }
+\newlabel{fig:adjlist}{{5}{8}{The multi-version graph (MVG) data structure and the procedure for updating it with a batch. The MVG before update represents $G_0$ in Figure~\ref {fig:csm}. The vertex ID indexes the $pSlab$, pointing to a $Slab$. Each row of the $Slab$ corresponds to a neighbor array version, storing its creation time ($ct_{min}$), deletion time ($dt_{max}$), and address ($pNb$). Each column of the neighbor array stores the ID, creation time ($ct$), and deletion time ($dt$) of an edge. We use \textbf {$v_x$: ($ct$, $dt$]} to denote a neighbor array version of $v_x$. For example, $v_1$ has two neighbor array versions: $v_1$: ($0$, $3$] and $v_1$: ($3$, $m$] where $m$ means infinity.\relax }{figure.caption.7}{}}
+\newlabel{fig:adjlist@cref}{{[figure][5][]5}{[1][6][]8}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.4.2}Update Procedure}{8}{subsubsection.1.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.4.3}Parallel Graph Updater}{9}{subsubsection.1.4.3}\protected@file@percent }
+\newlabel{sec:async_gu}{{1.4.3}{9}{Parallel Graph Updater}{subsubsection.1.4.3}{}}
+\newlabel{sec:async_gu@cref}{{[subsubsection][3][1,4]1.4.3}{[1][9][]9}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces The process of copying three different-sized arrays in parallel using $8$ threads of a warp. $*v_i$ represents the address of $v_i$'s latest neighbor array version in the MVG.\relax }}{9}{figure.caption.8}\protected@file@percent }
+\newlabel{fig:copy}{{6}{9}{The process of copying three different-sized arrays in parallel using $8$ threads of a warp. $*v_i$ represents the address of $v_i$'s latest neighbor array version in the MVG.\relax }{figure.caption.8}{}}
+\newlabel{fig:copy@cref}{{[figure][6][]6}{[1][9][]9}}
 \citation{ullmann1976algorithm}
-\citation{mhedhbi2019optimizing,aberger2017emptyheaded,kankanamge2017graphflow,atserias2008size}
-\citation{mhedhbi2019optimizing,kankanamge2017graphflow}
-\citation{pinar2017escape,chen2022decomine}
-\citation{10.1145/3299869.3319880,bi2016efficient,cordella2001improved}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.2.2}Subgraph Matching Algorithms}{5}{subsubsection.1.2.2}\protected@file@percent }
-\citation{mawhirter2019automine,mawhirter2021dryadic,wei2022stmatch,yuan2023everest,chen2022decomine,pinar2017escape,sun2020rapidmatch,aberger2017emptyheaded}
-\citation{chen2022decomine}
-\citation{pinar2017escape}
-\citation{sun2020rapidmatch}
-\citation{mawhirter2019automine}
-\citation{sun2020rapidmatch,10.14778/1453856.1453899,10.1145/3299869.3319880,mawhirter2019automine,mawhirter2021dryadic,chen2022decomine}
-\citation{zeng2020gsi,xiang2021cuts,wei2022stmatch,chen2022efficient}
-\citation{sun2020rapidmatch}
-\citation{wei2022stmatch}
-\citation{chen2022efficient}
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.3}Limitations with Existing Subgraph Matching Systems}{6}{subsection.1.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.4}The Matcha DSL}{7}{subsection.1.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.4.1}Programming Interface}{7}{subsubsection.1.4.1}\protected@file@percent }
-\citation{sun2020rapidmatch}
-\citation{pinar2017escape,chen2022decomine}
-\@writefile{lol}{\contentsline {lstlisting}{3.matcha/codelistings/rapidmatch.py}{9}{lstlisting.-1}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {1}{\ignorespaces Join-based algorithm implemented in Matcha for the query in Fig.\nobreakspace  {}\ref {fig:graph}(b).\relax }}{9}{figure.caption.5}\protected@file@percent }
-\newlabel{fig:rapidmatch}{{1}{9}{Join-based algorithm implemented in Matcha for the query in Fig.~\ref {fig:graph}(b).\relax }{figure.caption.5}{}}
-\newlabel{fig:rapidmatch@cref}{{[listing][1][]1}{[1][9][]9}}
-\@writefile{lol}{\contentsline {lstlisting}{3.matcha/codelistings/decomine2.py}{10}{lstlisting.-2}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {2}{\ignorespaces Decomposition-based algorithm implemented in Matcha for the query in Fig.\nobreakspace  {}\ref {fig:graph}(b).\relax }}{10}{figure.caption.6}\protected@file@percent }
-\newlabel{fig:decomine_code}{{2}{10}{Decomposition-based algorithm implemented in Matcha for the query in Fig.~\ref {fig:graph}(b).\relax }{figure.caption.6}{}}
-\newlabel{fig:decomine_code@cref}{{[listing][2][]2}{[1][9][]10}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.5}Matcha Compilation Pipeline}{10}{subsection.1.5}\protected@file@percent }
-\newlabel{sec:pipeline}{{1.5}{10}{Matcha Compilation Pipeline}{subsection.1.5}{}}
-\newlabel{sec:pipeline@cref}{{[subsection][5][1]1.5}{[1][9][]10}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.5.1}Generating IR on ASG}{10}{subsubsection.1.5.1}\protected@file@percent }
-\newlabel{sec:gen_ir}{{1.5.1}{10}{Generating IR on ASG}{subsubsection.1.5.1}{}}
-\newlabel{sec:gen_ir@cref}{{[subsubsection][1][1,5]1.5.1}{[1][10][]10}}
-\@writefile{lol}{\contentsline {lstlisting}{3.matcha/codelistings/cpu3.cpp}{11}{lstlisting.-3}\protected@file@percent }
-\newlabel{fig:ccode}{{2b}{11}{Subfigure 2b}{lstnumber.-3.27}{}}
-\newlabel{fig:ccode@cref}{{[subfigure][2][2]2b}{[1][10][]11}}
-\newlabel{sub@fig:ccode}{{(b)}{b}{Subfigure 2b\relax }{lstnumber.-3.27}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Compiling a Matcha program to C++ code. The IR of each ASG node contains an output (out), some auxiliary data (aux), and instructions (inst) for computing the output.\relax }}{11}{figure.caption.7}\protected@file@percent }
-\newlabel{fig:pipeline}{{2}{11}{Compiling a Matcha program to C++ code. The IR of each ASG node contains an output (out), some auxiliary data (aux), and instructions (inst) for computing the output.\relax }{figure.caption.7}{}}
-\newlabel{fig:pipeline@cref}{{[figure][2][]2}{[1][10][]11}}
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {ASG to IR}}}{11}{subfigure.2.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Generated C++ code}}}{11}{subfigure.2.2}\protected@file@percent }
-\citation{sun2020rapidmatch}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Graph $G$ from Fig.\nobreakspace  {}\ref {fig:graph}(a) stored in four \texttt  {Arrays}.\relax }}{12}{figure.caption.8}\protected@file@percent }
-\newlabel{fig:gaux_eg}{{3}{12}{Graph $G$ from Fig.~\ref {fig:graph}(a) stored in four \texttt {Arrays}.\relax }{figure.caption.8}{}}
-\newlabel{fig:gaux_eg@cref}{{[figure][3][]3}{[1][12][]12}}
-\citation{pybind11}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.5.2}Translating IR to C++ Code}{13}{subsubsection.1.5.2}\protected@file@percent }
-\citation{mawhirter2021dryadic}
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.6}Optimization and Parallelization}{14}{subsection.1.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.6.1}Operator Fusion}{14}{subsubsection.1.6.1}\protected@file@percent }
-\citation{mawhirter2019automine}
-\citation{chen2022efficient,wei2022stmatch}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.6.2}Loop-Invariant Code Motion}{15}{subsubsection.1.6.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.6.3}Automatic Parallelization}{15}{subsubsection.1.6.3}\protected@file@percent }
-\citation{chen2022efficient,wei2022stmatch}
-\citation{yuan2023everest}
-\citation{threadgroup}
-\citation{chen2022efficient}
-\citation{wei2022stmatch}
-\citation{wei2022stmatch}
-\@writefile{lol}{\contentsline {lstlisting}{3.matcha/codelistings/cpu2.cpp}{16}{lstlisting.-4}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {3}{\ignorespaces Optimized code after operator fusion and code motion for the example in Fig\nobreakspace  {}\ref {fig:pipeline}.\relax }}{16}{figure.caption.9}\protected@file@percent }
-\newlabel{fig:ccode2}{{3}{16}{Optimized code after operator fusion and code motion for the example in Fig~\ref {fig:pipeline}.\relax }{figure.caption.9}{}}
-\newlabel{fig:ccode2@cref}{{[listing][3][]3}{[1][15][]16}}
-\citation{chen2018g,chen2022decomine}
-\citation{wei2022stmatch}
-\citation{sun2020rapidmatch}
-\citation{chen2022decomine}
-\citation{chen2022efficient}
-\citation{yuan2023everest}
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.7}Evaluation}{17}{subsection.1.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.7.1}Experimental Setup}{17}{subsubsection.1.7.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Graph datasets.\relax }}{17}{table.caption.10}\protected@file@percent }
-\newlabel{tab:datasets}{{2}{17}{Graph datasets.\relax }{table.caption.10}{}}
-\newlabel{tab:datasets@cref}{{[table][2][]2}{[1][17][]17}}
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Execution time of motif counting with vertex-extension algorithm. `ms', `s', and `m' stand for milliseconds, seconds, and minutes.\relax }}{18}{table.caption.11}\protected@file@percent }
-\newlabel{tab:motif1}{{3}{18}{Execution time of motif counting with vertex-extension algorithm. `ms', `s', and `m' stand for milliseconds, seconds, and minutes.\relax }{table.caption.11}{}}
-\newlabel{tab:motif1@cref}{{[table][3][]3}{[1][18][]18}}
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Execution time of motif counting with a decomposition-based algorithm. \relax }}{18}{table.caption.12}\protected@file@percent }
-\newlabel{tab:motif2}{{4}{18}{Execution time of motif counting with a decomposition-based algorithm. \relax }{table.caption.12}{}}
-\newlabel{tab:motif2@cref}{{[table][4][]4}{[1][18][]18}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.7.2}Results for Motif Counting}{18}{subsubsection.1.7.2}\protected@file@percent }
-\citation{nsight}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Effect of thread-grouping (TG) and work-stealing (WS) on mGM for 3-MC. `ocp', `ut' stand for SM occupancy and thread utilization.\relax }}{19}{figure.caption.13}\protected@file@percent }
-\newlabel{fig:motif_ablation}{{4}{19}{Effect of thread-grouping (TG) and work-stealing (WS) on mGM for 3-MC. `ocp', `ut' stand for SM occupancy and thread utilization.\relax }{figure.caption.13}{}}
-\newlabel{fig:motif_ablation@cref}{{[figure][4][]4}{[1][19][]19}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Scalability of multi-threaded mDM on CPU. \relax }}{19}{figure.caption.14}\protected@file@percent }
-\newlabel{fig:motif_ablation2}{{5}{19}{Scalability of multi-threaded mDM on CPU. \relax }{figure.caption.14}{}}
-\newlabel{fig:motif_ablation2@cref}{{[figure][5][]5}{[1][19][]19}}
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {4-MC}}}{19}{subfigure.5.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {5-MC}}}{19}{subfigure.5.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.7.3}Results for Subgraph Listing}{20}{subsubsection.1.7.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Query patterns for subgraph listing.\relax }}{20}{figure.caption.15}\protected@file@percent }
-\newlabel{fig:static_query}{{6}{20}{Query patterns for subgraph listing.\relax }{figure.caption.15}{}}
-\newlabel{fig:static_query@cref}{{[figure][6][]6}{[1][20][]20}}
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Q1}}}{20}{subfigure.6.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Q2}}}{20}{subfigure.6.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {Q3}}}{20}{subfigure.6.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {Q4}}}{20}{subfigure.6.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(e)}{\ignorespaces {Q5}}}{20}{subfigure.6.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(f)}{\ignorespaces {Q6}}}{20}{subfigure.6.6}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Execution time of unlabeled subgraph listing with vertex extension. `s' stands for seconds. All other numbers are in milliseconds. `$-$' indicates timeout after 4 hours. \relax }}{21}{table.caption.16}\protected@file@percent }
-\newlabel{tab:unlabeled_ssl1}{{5}{21}{Execution time of unlabeled subgraph listing with vertex extension. `s' stands for seconds. All other numbers are in milliseconds. `$-$' indicates timeout after 4 hours. \relax }{table.caption.16}{}}
-\newlabel{tab:unlabeled_ssl1@cref}{{[table][5][]5}{[1][20][]21}}
-\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Effect of thread-grouping (TG) and work-stealing (WS) on mGM for subgraph listing on DBLP graph.\relax }}{21}{figure.caption.17}\protected@file@percent }
-\newlabel{fig:ssl_ablation}{{7}{21}{Effect of thread-grouping (TG) and work-stealing (WS) on mGM for subgraph listing on DBLP graph.\relax }{figure.caption.17}{}}
-\newlabel{fig:ssl_ablation@cref}{{[figure][7][]7}{[1][21][]21}}
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Execution time (in milliseconds) of labeled subgraph listing with vertex extension. \relax }}{22}{table.caption.18}\protected@file@percent }
-\newlabel{tab:labeled_ssl2}{{6}{22}{Execution time (in milliseconds) of labeled subgraph listing with vertex extension. \relax }{table.caption.18}{}}
-\newlabel{tab:labeled_ssl2@cref}{{[table][6][]6}{[1][22][]22}}
-\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Execution time of labeled subgraph listing with a join-based algorithm. `s' stands for seconds. All other numbers are in milliseconds.\relax }}{22}{table.caption.19}\protected@file@percent }
-\newlabel{tab:labeled_ssl1}{{7}{22}{Execution time of labeled subgraph listing with a join-based algorithm. `s' stands for seconds. All other numbers are in milliseconds.\relax }{table.caption.19}{}}
-\newlabel{tab:labeled_ssl1@cref}{{[table][7][]7}{[1][22][]22}}
-\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Effect of code motion and multi-threading on RM for labeled subgraph listing. \relax }}{23}{figure.caption.20}\protected@file@percent }
-\newlabel{fig:ssl_ablation2}{{8}{23}{Effect of code motion and multi-threading on RM for labeled subgraph listing. \relax }{figure.caption.20}{}}
-\newlabel{fig:ssl_ablation2@cref}{{[figure][8][]8}{[1][22][]23}}
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Multi-threading}}}{23}{subfigure.8.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Code motion on DBLP graph}}}{23}{subfigure.8.2}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Execution time (in milliseconds) of labeled subgraph counting with decomposition-based and join-based algorithms.\relax }}{23}{table.caption.21}\protected@file@percent }
-\newlabel{fig:ssl_mix}{{8}{23}{Execution time (in milliseconds) of labeled subgraph counting with decomposition-based and join-based algorithms.\relax }{table.caption.21}{}}
-\newlabel{fig:ssl_mix@cref}{{[table][8][]8}{[1][23][]23}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.7.4}Results for Clique Counting}{24}{subsubsection.1.7.4}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces Execution time of clique counting with the backtracking algorithm accelerated by edge pruning. `s' stands for seconds. All other numbers are in milliseconds.\relax }}{24}{table.caption.22}\protected@file@percent }
-\newlabel{tab:cl}{{9}{24}{Execution time of clique counting with the backtracking algorithm accelerated by edge pruning. `s' stands for seconds. All other numbers are in milliseconds.\relax }{table.caption.22}{}}
-\newlabel{tab:cl@cref}{{[table][9][]9}{[1][24][]24}}
-\citation{yuan2023everest}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.7.5}Results for Temporal Subgraph Listing}{25}{subsubsection.1.7.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Temporal Queries.\relax }}{25}{figure.caption.23}\protected@file@percent }
-\newlabel{fig:temporal_query}{{9}{25}{Temporal Queries.\relax }{figure.caption.23}{}}
-\newlabel{fig:temporal_query@cref}{{[figure][9][]9}{[1][24][]25}}
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Q7}}}{25}{subfigure.9.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Q8}}}{25}{subfigure.9.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {Q9}}}{25}{subfigure.9.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {Q10}}}{25}{subfigure.9.4}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {10}{\ignorespaces Execution time (in milliseconds) of temporal subgraph listing with edge-extension based backtracking.\relax }}{25}{table.caption.24}\protected@file@percent }
-\newlabel{tab:tsl}{{10}{25}{Execution time (in milliseconds) of temporal subgraph listing with edge-extension based backtracking.\relax }{table.caption.24}{}}
-\newlabel{tab:tsl@cref}{{[table][10][]10}{[1][25][]25}}
+\citation{wei2022stmatch,chen2022efficient}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.5}Executor}{10}{subsection.1.5}\protected@file@percent }
+\newlabel{sec:ex}{{1.5}{10}{Executor}{subsection.1.5}{}}
+\newlabel{sec:ex@cref}{{[subsection][5][1]1.5}{[1][10][]10}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.5.1}Correctness Guarantee}{10}{subsubsection.1.5.1}\protected@file@percent }
+\newlabel{sec:mvnv}{{1.5.1}{10}{Correctness Guarantee}{subsubsection.1.5.1}{}}
+\newlabel{sec:mvnv@cref}{{[subsubsection][1][1,5]1.5.1}{[1][10][]10}}
+\newlabel{lemma1}{{1}{11}{}{property.1}{}}
+\newlabel{lemma1@cref}{{[property][1][]1}{[1][10][]11}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Visualization of edge $e_k$'s lifetime and visibility across other updates.\relax }}{11}{figure.caption.9}\protected@file@percent }
+\newlabel{fig:lifetime}{{7}{11}{Visualization of edge $e_k$'s lifetime and visibility across other updates.\relax }{figure.caption.9}{}}
+\newlabel{fig:lifetime@cref}{{[figure][7][]7}{[1][11][]11}}
+\newlabel{lemma2}{{2}{11}{}{property.2}{}}
+\newlabel{lemma2@cref}{{[property][2][]2}{[1][11][]11}}
+\newlabel{lemma3}{{3}{12}{}{property.3}{}}
+\newlabel{lemma3@cref}{{[property][3][]3}{[1][12][]12}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.5.2}Continuous Subgraph Matching-Specific Optimizations}{12}{subsubsection.1.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.6}Garbage Collector}{13}{subsection.1.6}\protected@file@percent }
+\newlabel{sec:gc}{{1.6}{13}{Garbage Collector}{subsection.1.6}{}}
+\newlabel{sec:gc@cref}{{[subsection][6][1]1.6}{[1][13][]13}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.6.1}Release Conditions}{13}{subsubsection.1.6.1}\protected@file@percent }
+\newlabel{sec:rc}{{1.6.1}{13}{Release Conditions}{subsubsection.1.6.1}{}}
+\newlabel{sec:rc@cref}{{[subsubsection][1][1,6]1.6.1}{[1][13][]13}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.6.2}Garbage Collection Graph (GCG)}{14}{subsubsection.1.6.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces A garbage collection graph (GCG) built from the 3 updates $\Delta e_0$, $\Delta e_1$, $\Delta e_2$ in Figure\nobreakspace  {}\ref {fig:adjlist}.\relax }}{14}{figure.caption.10}\protected@file@percent }
+\newlabel{fig:aux}{{8}{14}{A garbage collection graph (GCG) built from the 3 updates $\Delta e_0$, $\Delta e_1$, $\Delta e_2$ in Figure~\ref {fig:adjlist}.\relax }{figure.caption.10}{}}
+\newlabel{fig:aux@cref}{{[figure][8][]8}{[1][14][]14}}
+\newlabel{fig:gc_1}{{9a}{15}{Subfigure 9a}{subfigure.9.1}{}}
+\newlabel{fig:gc_1@cref}{{[subfigure][1][9]9a}{[1][15][]15}}
+\newlabel{sub@fig:gc_1}{{(a)}{a}{Subfigure 9a\relax }{subfigure.9.1}{}}
+\newlabel{fig:gc_2}{{9b}{15}{Subfigure 9b}{subfigure.9.2}{}}
+\newlabel{fig:gc_2@cref}{{[subfigure][2][9]9b}{[1][15][]15}}
+\newlabel{sub@fig:gc_2}{{(b)}{b}{Subfigure 9b\relax }{subfigure.9.2}{}}
+\newlabel{fig:gc_3}{{9c}{15}{Subfigure 9c}{subfigure.9.3}{}}
+\newlabel{fig:gc_3@cref}{{[subfigure][3][9]9c}{[1][15][]15}}
+\newlabel{sub@fig:gc_3}{{(c)}{c}{Subfigure 9c\relax }{subfigure.9.3}{}}
+\newlabel{fig:gc_4}{{9d}{15}{Subfigure 9d}{subfigure.9.4}{}}
+\newlabel{fig:gc_4@cref}{{[subfigure][4][9]9d}{[1][15][]15}}
+\newlabel{sub@fig:gc_4}{{(d)}{d}{Subfigure 9d\relax }{subfigure.9.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces (a)–(d) illustrate how GC releases neighbor arrays on the GCG in Figure\nobreakspace  {}\ref {fig:aux}. This GCG is stored in an adjacency-list format.\relax }}{15}{figure.caption.11}\protected@file@percent }
+\newlabel{fig:gc_step}{{9}{15}{(a)–(d) illustrate how GC releases neighbor arrays on the GCG in Figure~\ref {fig:aux}. This GCG is stored in an adjacency-list format.\relax }{figure.caption.11}{}}
+\newlabel{fig:gc_step@cref}{{[figure][9][]9}{[1][15][]15}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {The incremental matching of $\Delta e_0$ is finished, $v_1$:$(0, 3 ]$ and $v_3$:$(0, 3 ]$ can be released.}}}{15}{subfigure.9.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {The incremental matching of $\Delta e_2$ is finished.}}}{15}{subfigure.9.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {The incremental matching of $\Delta e_1$ is finished, $v_5$:$(0, 7 ]$ can be released.}}}{15}{subfigure.9.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {A new $\Delta e_3$ = $(v_1, v_4, +)$ is appended to the end of GCG.}}}{15}{subfigure.9.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.6.3}Implementation}{15}{subsubsection.1.6.3}\protected@file@percent }
 \bibstyle{plain}
 \bibdata{ref.bib}
-\bibcite{aberger2017emptyheaded}{1}
-\bibcite{akoglu2015graph}{2}
-\bibcite{atserias2008size}{3}
-\bibcite{bhattacharya2006entity}{4}
-\bibcite{bi2016efficient}{5}
-\bibcite{bonnici2013subgraph}{6}
-\bibcite{chen2018g}{7}
-\bibcite{chen2022decomine}{8}
-\bibcite{10.14778/3389133.3389137}{9}
-\@writefile{toc}{\contentsline {section}{References}{26}{table.caption.24}\protected@file@percent }
-\bibcite{chen2022efficient}{10}
-\bibcite{cordella2001improved}{11}
-\bibcite{10.1145/3299869.3319880}{12}
-\bibcite{pybind11}{13}
-\bibcite{kankanamge2017graphflow}{14}
-\bibcite{li2019graph}{15}
-\bibcite{lou2020neural}{16}
-\bibcite{mawhirter2021dryadic}{17}
-\bibcite{mawhirter2019automine}{18}
-\bibcite{mhedhbi2019optimizing}{19}
-\bibcite{Milo824}{20}
-\bibcite{noble2003graph}{21}
-\bibcite{noel2018review}{22}
-\bibcite{pinar2017escape}{23}
-\bibcite{schaeffer2007graph}{24}
-\bibcite{10.14778/1453856.1453899}{25}
-\bibcite{sun2020rapidmatch}{26}
-\bibcite{10.1145/2488388.2488502}{27}
-\bibcite{ullmann1976algorithm}{28}
-\bibcite{wang2022reinforcement}{29}
-\bibcite{wei2022stmatch}{30}
-\bibcite{xiang2021cuts}{31}
-\bibcite{yuan2023everest}{32}
-\bibcite{zeng2020gsi}{33}
-\gdef \@abspage@last{34}
+\bibcite{netflow}{1}
+\bibcite{chen2022decomine}{2}
+\bibcite{chen2022efficient}{3}
+\bibcite{kim2018turboflux}{4}
+\bibcite{li2024newsp}{5}
+\bibcite{manzoor2016fast}{6}
+\bibcite{min2021symmetric}{7}
+\bibcite{qin2019towards}{8}
+\@writefile{toc}{\contentsline {section}{References}{17}{figure.caption.11}\protected@file@percent }
+\bibcite{qiu2024gpu}{9}
+\bibcite{qiu2018real}{10}
+\bibcite{sun2020rapidmatch}{11}
+\bibcite{sun2022rapidflow}{12}
+\bibcite{ullmann1976algorithm}{13}
+\bibcite{wang2015detecting}{14}
+\bibcite{wei2022stmatch}{15}
+\bibcite{wei2024gcsm}{16}
+\bibcite{yuan2023everest}{17}
+\gdef \@abspage@last{23}

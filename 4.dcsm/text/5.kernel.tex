@@ -1,0 +1,83 @@
+
+
+
+\section{Executor} 
+\label{sec:ex}
+% \begingroup
+% \color{blue}
+
+The Executor (EX) consumes updates $\Delta e_k$ produced by GU and performs incremental matching for each $\Delta e_k$. Since subgraph matching is NP-hard \cite{ullmann1976algorithm}, the EX is the performance bottleneck of the system and needs to be parallelized across multiple GPU warps. 
+This section explains how we adapt an existing subgraph matching kernel \cite{wei2022stmatch, chen2022efficient} for EX to ensure both correctness and efficiency in CSM.
+
+%However, our system faces two challanges that did not exist in previous systems: (1) Our matching program is based on a novel multi-version graph (MVG) that we propose, rather than the classic graph data structure used in previous systems. Thus, we must ensure the correctness and efficiency of our program on the MVG. (2) The updates $\Delta e_k$ before EX increase dynamically as the GU produces. Therefore, we need to dynamically schedule newly added $\Delta e_k$ to idle warps.
+
+%In the following three subsections, we first prove the correctness of our matching algorithm on the MVG, then demonstrate its efficiency, and finally illustrate how we dynamically schedule newly arriving $\Delta e_k$ to idle warps.
+
+\noindent
+\subsection{Correctness Guarantee}
+\label{sec:mvnv}
+
+For any update $\Delta e_k = (v_{i}, v_{j}, \oplus)$ that arrives at time $T(\Delta e_k)$, its incremental matching will access the neighbor arrays of $v_i$ and $v_j$'s k-hop neighbor vertices. However, our multi-version graph (MVG) data structure introduces a problem: which neighbor array version should be used when visited? Property~\ref{lemma1} to Property~\ref{lemma3} provide guidance on how the Executor's GPU kernels can correctly access the MVG. 
+
+% \textcolor{red}{this section doesn't look good. Proofs seem to be overuse. They are not appropriate for explanating system properties. Replace them with plain text and (even better) figures to explain the properties.  }
+
+
+\begin{property}
+\label{lemma1}
+For an edge $e_k$ that is added to the data graph at time $t_1$ and deleted at time $t_2$, the incremental matching for updates arriving within $(t_1, t_2]$ should see $e_k$ as existing in the data graph. Conversely, the incremental matching for updates outside $(t_1, t_2]$ should not.
+\end{property}
+
+
+For a specific edge $e_k$ = $(v_{i}, v_{j})$, there is exactly one edge insertion $\Delta e_k^+ = (v_{i}, v_{j}, +)$ and at most one edge deletion $\Delta e_k^- = (v_{i}, v_{j}, -)$. We have $T(\Delta e_k^+) = 0$ if $e_k$ exists in the initial data graph $G_0$, and $T(\Delta e_k^-) = \infty$ (or $m$) if $e_k$ is never deleted. For both $\Delta e_k^+$ and $\Delta e_k^-$, the \textbf{Update} step starts after \textbf{Matching} (see Section~\ref{sec:previous_systems}), and we regard each edge update as a single batch. Therefore, $e_k$ is invisible to $M(\Delta e_k^+)$, and $e_k$ is visible to $M(\Delta e_k^-)$. In addition, it is obvious that $e_k$ is visible to $M(\Delta e_x)$ for all $\Delta e_x$ such that $T(\Delta e_k^+) < T(\Delta e_x) < T(\Delta e_k^-)$. Even though our multi-version graph allows \textbf{Update} and \textbf{Matching} to execute in parallel, the visibility order mentioned above remains unchanged. In summary, the incremental matching for updates arriving within $(T(\Delta e_k^+), T(\Delta e_k^-)]$ should see $e_k$ as existing in the data graph.
+
+\begin{figure}[h]
+    \centering
+   \includegraphics[scale=0.8, page=16]{./fig/slides-crop.pdf}
+   \caption{Visualization of edge $e_k$'s lifetime and visibility across other updates.}
+   \label{fig:lifetime}
+\end{figure}
+
+
+We therefore define the lifetime of an edge and a neighbor array version. The \textbf{lifetime of an edge $e_k$} is $(t_1$, $t_2]$, where $e_k$ is added to the data graph at time $t_1$ and deleted at time $t_2$. \textbf{The lifetime of a neighbor array version} in a multi-version graph is $(ct_{min}, dt_{max}]$, where $ct_{min}$ and $dt_{max}$ are the minimum creation time and maximum deletion time of entries in this neighbor array, respectively. Figure~\ref{fig:lifetime} visualizes the lifetime of an edge $e_k$ and which edge updates can see $e_k$ existing in the data graph.
+
+\begin{property}
+\label{lemma2}
+To ensure correctness, the incremental matching for an update $\Delta e_k$ should only visit edges whose lifetime $(t_1, t_2]$ contains $T(\Delta e_k)$ ($T(\Delta e_k)$ $\in$ $(t_1, t_2]$). 
+\end{property}
+
+
+According to Property~\ref{lemma1}, an edge $e_x$ in the data graph should only be visible to the incremental matching procedure for updates arriving within $e_x$'s lifetime $(t_1, t_2]$. In other words, for an update $\Delta e_k$ arriving at time $T(\Delta e_k)$, its matching procedure should only visit edges whose lifetime $(t_1, t_2]$ contains $T(\Delta e_k)$.
+
+
+\begin{property}
+\label{lemma3}
+To ensure correctness, the incremental matching for an update $\Delta e_k$ should only visit the neighbor array versions whose lifetime $(ct_{min}$, $dt_{max}]$ contains $T(\Delta e_k)$ and filter out the edges whose lifetime does not contain $T(\Delta e_k)$. 
+\end{property}
+
+
+In the MVG shown in Figure~\ref{fig:adjlist}, each $(ct, dt]$ pair represents a segment of an edge's lifetime. For example, the lifetime of edge $(v_1, v_0)$ consists of two segments, $(0, 3]$ and $(3, m]$, while edge $(v_1, v_5)$ has a lifetime of $(7, m]$. The lifetime of a neighbor array covers the time ranges of edges in it. Therefore, according to Property~\ref{lemma2}, the valid neighbor edges must be in neighbor array versions whose lifetime $(ct_{min}, dt_{max}]$ contains $T(\Delta e_k)$.
+
+
+\begin{example}
+For an update arriving at time $6$, if its matching procedure visits $v_5$'s neighbor array, it should visit the neighbor array version with lifetime $(0, 7]$ since $6 \in (0, 7]$. However, the neighbor vertex $v_3$ in this version should be ignored because its deletion time is $5$, which means $v_3$ does not exist at time $6$.
+\end{example}
+
+\noindent
+\subsection{Continuous Subgraph Matching-Specific Optimizations}
+
+\subsubsection{Efficient Neighbor Array Access}
+The slab design in the multi-version graph (MVG), together with CUDA warp-level primitives, enables our system to efficiently access neighbor arrays. Each slab in the MVG contains 32 entries, and multiple slabs are connected as a linked list. 
+The matching for an update $\Delta e_k$ is performed by a single warp. 
+When a warp accesses a vertex's neighbor array, it traverses the slab linked list.
+For each slab, the warp's 32 thread lanes check in parallel whether $T(\Delta e_k)$ falls within the lifetime of any of the 32 slab entries. We leverage the warp-level primitives \texttt{\_\_ballot\_sync} and \texttt{\_\_ffs} to perform parallel checks. 
+The two functional modules, GU and GC, collaboratively make the number of valid entries in a slab list dynamically grow and shrink. For almost all graphs, the average number of valid entries per slab list remains between 1 and 5, which is much smaller than 32. Therefore, compared with previous systems, our design does not increase the time complexity of neighbor array access.
+
+
+\subsubsection{Dynamic Task Scheduler}
+The updates $\Delta e_k$ before EX increase dynamically as the GU produces. Therefore, we need to dynamically schedule newly added $\Delta e_k$ to idle warps. To solve this problem, we propose a dynamic scheduling strategy. For a $\Delta e_k$ to be consumed by EX, $n$ idle warps will simultaneously compete for this $\Delta e_k$. The warp wins will asynchronously execute this $\Delta e_k$, then the remaining $ n-1$ idle warps will compete for the next $\Delta e_k$. Once a warp finishes the matching of a $\Delta e_k$, this warp returns to the competition status to compete for its next $\Delta e_k$. Therefore, multiple $\Delta e_k$ are dynamically scheduled to the idle warps, which can ensure the load balance among warps. 
+
+\subsubsection{Output of Executor}
+EX not only forwards each $\Delta e_k$ it processes to GC, but also outputs the matching result of each $\Delta e_k$. The matching results of an edge insertion mean that we obtain additional valid matches in the data graph, while the matching results of an edge deletion mean that previously valid matches are no longer valid in the data graph. In some scenarios, it is necessary to obtain the matching result for an entire batch. We can compute the union of the matching results of all individual updates in the batch to obtain the overall batch matching result. 
+
+
+

@@ -1,0 +1,454 @@
+%%% -*-BibTeX-*-
+%%% Do NOT edit. File created by BibTeX with style
+%%% ACM-Reference-Format-Journals [18-Jan-2012].
+
+\begin{thebibliography}{35}
+
+%%% ====================================================================
+%%% NOTE TO THE USER: you can override these defaults by providing
+%%% customized versions of any of these macros before the \bibliography
+%%% command.  Each of them MUST provide its own final punctuation,
+%%% except for \shownote{}, \showDOI{}, and \showURL{}.  The latter two
+%%% do not use final punctuation, in order to avoid confusing it with
+%%% the Web address.
+%%%
+%%% To suppress output of a particular field, define its macro to expand
+%%% to an empty string, or better, \unskip, like this:
+%%%
+%%% \newcommand{\showDOI}[1]{\unskip}   % LaTeX syntax
+%%%
+%%% \def \showDOI #1{\unskip}           % plain TeX syntax
+%%%
+%%% ====================================================================
+
+\ifx \showCODEN    \undefined \def \showCODEN     #1{\unskip}     \fi
+\ifx \showDOI      \undefined \def \showDOI       #1{#1}\fi
+\ifx \showISBNx    \undefined \def \showISBNx     #1{\unskip}     \fi
+\ifx \showISBNxiii \undefined \def \showISBNxiii  #1{\unskip}     \fi
+\ifx \showISSN     \undefined \def \showISSN      #1{\unskip}     \fi
+\ifx \showLCCN     \undefined \def \showLCCN      #1{\unskip}     \fi
+\ifx \shownote     \undefined \def \shownote      #1{#1}          \fi
+\ifx \showarticletitle \undefined \def \showarticletitle #1{#1}   \fi
+\ifx \showURL      \undefined \def \showURL       {\relax}        \fi
+% The following commands are used for tagged output and should be
+% invisible to TeX
+\providecommand\bibfield[2]{#2}
+\providecommand\bibinfo[2]{#2}
+\providecommand\natexlab[1]{#1}
+\providecommand\showeprint[2][]{arXiv:#2}
+
+\bibitem[CAIDA(2013)]%
+        {netflow}
+\bibfield{author}{\bibinfo{person}{CAIDA}.} \bibinfo{year}{2013}\natexlab{}.
+\newblock \bibinfo{title}{The CAIDA UCSD Anonymized Internet Traces 2013}.
+\newblock
+  \bibinfo{howpublished}{\url{https://catalog.caida.org/dataset/passive_2013_dataset.xml}}.
+\newblock
+
+
+\bibitem[CAIDA(2019)]%
+        {caida2019caida}
+\bibfield{author}{\bibinfo{person}{JE CAIDA}.} \bibinfo{year}{2019}\natexlab{}.
+\newblock \bibinfo{title}{The CAIDA UCSD anonymized internet traces}.
+\newblock
+\newblock
+
+
+\bibitem[Chen and Qian(2022)]%
+        {chen2022decomine}
+\bibfield{author}{\bibinfo{person}{Jingji Chen} {and} \bibinfo{person}{Xuehai
+  Qian}.} \bibinfo{year}{2022}\natexlab{}.
+\newblock \showarticletitle{DecoMine: A Compilation-Based Graph Pattern Mining
+  System with Pattern Decomposition}. In \bibinfo{booktitle}{\emph{Proceedings
+  of the 28th ACM International Conference on Architectural Support for
+  Programming Languages and Operating Systems, Volume 1}}.
+  \bibinfo{pages}{47--61}.
+\newblock
+
+
+\bibitem[Chen et~al\mbox{.}(2022)]%
+        {chen2022efficient}
+\bibfield{author}{\bibinfo{person}{Xuhao Chen} {et~al\mbox{.}}}
+  \bibinfo{year}{2022}\natexlab{}.
+\newblock \showarticletitle{Efficient and scalable graph pattern mining on
+  $\{$GPUs$\}$}. In \bibinfo{booktitle}{\emph{16th USENIX Symposium on
+  Operating Systems Design and Implementation (OSDI 22)}}.
+  \bibinfo{pages}{857--877}.
+\newblock
+
+
+\bibitem[Chen et~al\mbox{.}(2021)]%
+        {chen2021sandslash}
+\bibfield{author}{\bibinfo{person}{Xuhao Chen}, \bibinfo{person}{Roshan
+  Dathathri}, \bibinfo{person}{Gurbinder Gill}, \bibinfo{person}{Loc Hoang},
+  {and} \bibinfo{person}{Keshav Pingali}.} \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{Sandslash: a two-level framework for efficient
+  graph pattern mining}. In \bibinfo{booktitle}{\emph{Proceedings of the ACM
+  International Conference on Supercomputing}}. \bibinfo{pages}{378--391}.
+\newblock
+
+
+\bibitem[Choudhury et~al\mbox{.}(2015)]%
+        {choudhury2015selectivity}
+\bibfield{author}{\bibinfo{person}{Sutanay Choudhury},
+  \bibinfo{person}{Lawrence Holder}, \bibinfo{person}{George Chin},
+  \bibinfo{person}{Khushbu Agarwal}, {and} \bibinfo{person}{John Feo}.}
+  \bibinfo{year}{2015}\natexlab{}.
+\newblock \showarticletitle{A selectivity based approach to continuous pattern
+  detection in streaming graphs}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:1503.00849}}
+  (\bibinfo{year}{2015}).
+\newblock
+
+
+\bibitem[Fan et~al\mbox{.}(2013)]%
+        {fan2013incremental}
+\bibfield{author}{\bibinfo{person}{Wenfei Fan}, \bibinfo{person}{Xin Wang},
+  {and} \bibinfo{person}{Yinghui Wu}.} \bibinfo{year}{2013}\natexlab{}.
+\newblock \showarticletitle{Incremental graph pattern matching}.
+\newblock \bibinfo{journal}{\emph{ACM Transactions on Database Systems (TODS)}}
+  \bibinfo{volume}{38}, \bibinfo{number}{3} (\bibinfo{year}{2013}),
+  \bibinfo{pages}{1--47}.
+\newblock
+
+
+\bibitem[Guo et~al\mbox{.}(2020)]%
+        {guo2020gpu}
+\bibfield{author}{\bibinfo{person}{Wentian Guo}, \bibinfo{person}{Yuchen Li},
+  \bibinfo{person}{Mo Sha}, \bibinfo{person}{Bingsheng He},
+  \bibinfo{person}{Xiaokui Xiao}, {and} \bibinfo{person}{Kian-Lee Tan}.}
+  \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{Gpu-accelerated subgraph enumeration on partitioned
+  graphs}. In \bibinfo{booktitle}{\emph{Proceedings of the 2020 ACM SIGMOD
+  International Conference on Management of Data}}.
+  \bibinfo{pages}{1067--1082}.
+\newblock
+
+
+\bibitem[Idris et~al\mbox{.}(2017)]%
+        {idris2017dynamic}
+\bibfield{author}{\bibinfo{person}{Muhammad Idris},
+  \bibinfo{person}{Mart{\'\i}n Ugarte}, {and} \bibinfo{person}{Stijn
+  Vansummeren}.} \bibinfo{year}{2017}\natexlab{}.
+\newblock \showarticletitle{The dynamic yannakakis algorithm: Compact and
+  efficient query processing under updates}. In
+  \bibinfo{booktitle}{\emph{Proceedings of the 2017 ACM International
+  Conference on Management of Data}}. \bibinfo{pages}{1259--1274}.
+\newblock
+
+
+\bibitem[Jamshidi et~al\mbox{.}(2020)]%
+        {jamshidi2020peregrine}
+\bibfield{author}{\bibinfo{person}{Kasra Jamshidi}, \bibinfo{person}{Rakesh
+  Mahadasa}, {and} \bibinfo{person}{Keval Vora}.}
+  \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{Peregrine: a pattern-aware graph mining system}. In
+  \bibinfo{booktitle}{\emph{Proceedings of the Fifteenth European Conference on
+  Computer Systems}}. \bibinfo{pages}{1--16}.
+\newblock
+
+
+\bibitem[Kankanamge et~al\mbox{.}(2017)]%
+        {kankanamge2017graphflow}
+\bibfield{author}{\bibinfo{person}{Chathura Kankanamge},
+  \bibinfo{person}{Siddhartha Sahu}, \bibinfo{person}{Amine Mhedbhi},
+  \bibinfo{person}{Jeremy Chen}, {and} \bibinfo{person}{Semih Salihoglu}.}
+  \bibinfo{year}{2017}\natexlab{}.
+\newblock \showarticletitle{Graphflow: An active graph database}. In
+  \bibinfo{booktitle}{\emph{Proceedings of the 2017 ACM International
+  Conference on Management of Data}}. \bibinfo{pages}{1695--1698}.
+\newblock
+
+
+\bibitem[Kim et~al\mbox{.}(2018)]%
+        {kim2018turboflux}
+\bibfield{author}{\bibinfo{person}{Kyoungmin Kim}, \bibinfo{person}{In Seo},
+  \bibinfo{person}{Wook-Shin Han}, \bibinfo{person}{Jeong-Hoon Lee},
+  \bibinfo{person}{Sungpack Hong}, \bibinfo{person}{Hassan Chafi},
+  \bibinfo{person}{Hyungyu Shin}, {and} \bibinfo{person}{Geonhwa Jeong}.}
+  \bibinfo{year}{2018}\natexlab{}.
+\newblock \showarticletitle{Turboflux: A fast continuous subgraph matching
+  system for streaming graph data}. In \bibinfo{booktitle}{\emph{Proceedings of
+  the 2018 international conference on management of data}}.
+  \bibinfo{pages}{411--426}.
+\newblock
+
+
+\bibitem[Le-Phuoc et~al\mbox{.}(2012)]%
+        {le2012linked}
+\bibfield{author}{\bibinfo{person}{Danh Le-Phuoc}, \bibinfo{person}{Minh
+  Dao-Tran}, \bibinfo{person}{Minh-Duc Pham}, \bibinfo{person}{Peter Boncz},
+  \bibinfo{person}{Thomas Eiter}, {and} \bibinfo{person}{Michael Fink}.}
+  \bibinfo{year}{2012}\natexlab{}.
+\newblock \showarticletitle{Linked stream data processing engines: Facts and
+  figures}. In \bibinfo{booktitle}{\emph{International Semantic Web
+  Conference}}. Springer, \bibinfo{pages}{300--312}.
+\newblock
+
+
+\bibitem[Leskovec and Krevl(2014)]%
+        {snapnets}
+\bibfield{author}{\bibinfo{person}{Jure Leskovec} {and} \bibinfo{person}{Andrej
+  Krevl}.} \bibinfo{year}{2014}\natexlab{}.
+\newblock \bibinfo{title}{{SNAP Datasets}: {Stanford} Large Network Dataset
+  Collection}.
+\newblock \bibinfo{howpublished}{\url{http://snap.stanford.edu/data}}.
+\newblock
+
+
+\bibitem[Li et~al\mbox{.}(2024)]%
+        {li2024newsp}
+\bibfield{author}{\bibinfo{person}{Ziming Li}, \bibinfo{person}{Youhuan Li},
+  \bibinfo{person}{Xinhuan Chen}, \bibinfo{person}{Lei Zou},
+  \bibinfo{person}{Yang Li}, \bibinfo{person}{Xiaofeng Yang}, {and}
+  \bibinfo{person}{Hongbo Jiang}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{NewSP: A New Search Process for Continuous Subgraph
+  Matching over Dynamic Graphs}. In \bibinfo{booktitle}{\emph{2024 IEEE 40th
+  International Conference on Data Engineering (ICDE)}}. IEEE,
+  \bibinfo{pages}{3324--3337}.
+\newblock
+
+
+\bibitem[Manzoor et~al\mbox{.}(2016)]%
+        {manzoor2016fast}
+\bibfield{author}{\bibinfo{person}{Emaad Manzoor}, \bibinfo{person}{Sadegh~M
+  Milajerdi}, {and} \bibinfo{person}{Leman Akoglu}.}
+  \bibinfo{year}{2016}\natexlab{}.
+\newblock \showarticletitle{Fast memory-efficient anomaly detection in
+  streaming heterogeneous graphs}. In \bibinfo{booktitle}{\emph{Proceedings of
+  the 22nd ACM SIGKDD international conference on knowledge discovery and data
+  mining}}. \bibinfo{pages}{1035--1044}.
+\newblock
+
+
+\bibitem[Mawhirter et~al\mbox{.}(2021)]%
+        {mawhirter2021dryadic}
+\bibfield{author}{\bibinfo{person}{Daniel Mawhirter}, \bibinfo{person}{Samuel
+  Reinehr}, \bibinfo{person}{Wei Han}, \bibinfo{person}{Noah Fields},
+  \bibinfo{person}{Miles Claver}, \bibinfo{person}{Connor Holmes},
+  \bibinfo{person}{Jedidiah McClurg}, \bibinfo{person}{Tongping Liu}, {and}
+  \bibinfo{person}{Bo Wu}.} \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{Dryadic: Flexible and fast graph pattern matching
+  at scale}. In \bibinfo{booktitle}{\emph{2021 30th International Conference on
+  Parallel Architectures and Compilation Techniques (PACT)}}. IEEE,
+  \bibinfo{pages}{289--303}.
+\newblock
+
+
+\bibitem[Mawhirter et~al\mbox{.}(2019)]%
+        {mawhirter2019graphzero}
+\bibfield{author}{\bibinfo{person}{Daniel Mawhirter}, \bibinfo{person}{Sam
+  Reinehr}, \bibinfo{person}{Connor Holmes}, \bibinfo{person}{Tongping Liu},
+  {and} \bibinfo{person}{Bo Wu}.} \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{Graphzero: Breaking symmetry for efficient graph
+  mining}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:1911.12877}}
+  (\bibinfo{year}{2019}).
+\newblock
+
+
+\bibitem[Mawhirter and Wu(2019)]%
+        {mawhirter2019automine}
+\bibfield{author}{\bibinfo{person}{Daniel Mawhirter} {and} \bibinfo{person}{Bo
+  Wu}.} \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{Automine: harmonizing high-level abstraction and
+  high performance for graph mining}. In \bibinfo{booktitle}{\emph{Proceedings
+  of the 27th ACM Symposium on Operating Systems Principles}}.
+  \bibinfo{pages}{509--523}.
+\newblock
+
+
+\bibitem[Min et~al\mbox{.}(2021)]%
+        {min2021symmetric}
+\bibfield{author}{\bibinfo{person}{Seunghwan Min}, \bibinfo{person}{Sung~Gwan
+  Park}, \bibinfo{person}{Kunsoo Park}, \bibinfo{person}{Dora Giammarresi},
+  \bibinfo{person}{Giuseppe~F Italiano}, {and} \bibinfo{person}{Wook-Shin
+  Han}.} \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{Symmetric continuous subgraph matching with
+  bidirectional dynamic programming}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2104.00886}}
+  (\bibinfo{year}{2021}).
+\newblock
+
+
+\bibitem[Qin et~al\mbox{.}(2019)]%
+        {qin2019towards}
+\bibfield{author}{\bibinfo{person}{L Qin}, \bibinfo{person}{Y Peng},
+  \bibinfo{person}{Y Zhang}, \bibinfo{person}{X Lin}, \bibinfo{person}{W
+  Zhang}, {and} \bibinfo{person}{Jingren Zhou}.}
+  \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{Towards bridging theory and practice:
+  hop-constrained st simple path enumeration}. In
+  \bibinfo{booktitle}{\emph{International Conference on Very Large Data
+  Bases}}. VLDB Endowment.
+\newblock
+
+
+\bibitem[Qiu et~al\mbox{.}(2024)]%
+        {qiu2024gpu}
+\bibfield{author}{\bibinfo{person}{Linshan Qiu}, \bibinfo{person}{Lu Chen},
+  \bibinfo{person}{Hailiang Jie}, \bibinfo{person}{Xiangyu Ke},
+  \bibinfo{person}{Yunjun Gao}, \bibinfo{person}{Yang Liu}, {and}
+  \bibinfo{person}{Zetao Zhang}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{GPU-Accelerated Batch-Dynamic Subgraph Matching}.
+  In \bibinfo{booktitle}{\emph{2024 IEEE 40th International Conference on Data
+  Engineering (ICDE)}}. IEEE, \bibinfo{pages}{3204--3216}.
+\newblock
+
+
+\bibitem[Qiu et~al\mbox{.}(2018)]%
+        {qiu2018real}
+\bibfield{author}{\bibinfo{person}{Xiafei Qiu}, \bibinfo{person}{Wubin Cen},
+  \bibinfo{person}{Zhengping Qian}, \bibinfo{person}{You Peng},
+  \bibinfo{person}{Ying Zhang}, \bibinfo{person}{Xuemin Lin}, {and}
+  \bibinfo{person}{Jingren Zhou}.} \bibinfo{year}{2018}\natexlab{}.
+\newblock \showarticletitle{Real-time constrained cycle detection in large
+  dynamic graphs}.
+\newblock \bibinfo{journal}{\emph{Proceedings of the VLDB Endowment}}
+  \bibinfo{volume}{11}, \bibinfo{number}{12} (\bibinfo{year}{2018}),
+  \bibinfo{pages}{1876--1888}.
+\newblock
+
+
+\bibitem[Shi et~al\mbox{.}(2020)]%
+        {shi2020graphpi}
+\bibfield{author}{\bibinfo{person}{Tianhui Shi}, \bibinfo{person}{Mingshu
+  Zhai}, \bibinfo{person}{Yi Xu}, {and} \bibinfo{person}{Jidong Zhai}.}
+  \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{Graphpi: High performance graph pattern matching
+  through effective redundancy elimination}. In \bibinfo{booktitle}{\emph{SC20:
+  International Conference for High Performance Computing, Networking, Storage
+  and Analysis}}. IEEE, \bibinfo{pages}{1--14}.
+\newblock
+
+
+\bibitem[Sun et~al\mbox{.}(2020)]%
+        {sun2020rapidmatch}
+\bibfield{author}{\bibinfo{person}{Shixuan Sun}, \bibinfo{person}{Xibo Sun},
+  \bibinfo{person}{Yulin Che}, \bibinfo{person}{Qiong Luo}, {and}
+  \bibinfo{person}{Bingsheng He}.} \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{Rapidmatch: A holistic approach to subgraph query
+  processing}.
+\newblock \bibinfo{journal}{\emph{Proceedings of the VLDB Endowment}}
+  \bibinfo{volume}{14}, \bibinfo{number}{2} (\bibinfo{year}{2020}),
+  \bibinfo{pages}{176--188}.
+\newblock
+
+
+\bibitem[Sun et~al\mbox{.}(2022)]%
+        {sun2022rapidflow}
+\bibfield{author}{\bibinfo{person}{Shixuan Sun}, \bibinfo{person}{Xibo Sun},
+  \bibinfo{person}{Bingsheng He}, {and} \bibinfo{person}{Qiong Luo}.}
+  \bibinfo{year}{2022}\natexlab{}.
+\newblock \showarticletitle{RapidFlow: an efficient approach to continuous
+  subgraph matching}.
+\newblock \bibinfo{journal}{\emph{Proceedings of the VLDB Endowment}}
+  \bibinfo{volume}{15}, \bibinfo{number}{11} (\bibinfo{year}{2022}),
+  \bibinfo{pages}{2415--2427}.
+\newblock
+
+
+\bibitem[Tran et~al\mbox{.}(2015)]%
+        {tran2015fast}
+\bibfield{author}{\bibinfo{person}{Ha-Nguyen Tran}, \bibinfo{person}{Jung-jae
+  Kim}, {and} \bibinfo{person}{Bingsheng He}.} \bibinfo{year}{2015}\natexlab{}.
+\newblock \showarticletitle{Fast subgraph matching on large graphs using
+  graphics processors}. In \bibinfo{booktitle}{\emph{International Conference
+  on Database Systems for Advanced Applications}}. Springer,
+  \bibinfo{pages}{299--315}.
+\newblock
+
+
+\bibitem[Ullmann(1976)]%
+        {ullmann1976algorithm}
+\bibfield{author}{\bibinfo{person}{Julian~R Ullmann}.}
+  \bibinfo{year}{1976}\natexlab{}.
+\newblock \showarticletitle{An algorithm for subgraph isomorphism}.
+\newblock \bibinfo{journal}{\emph{Journal of the ACM (JACM)}}
+  \bibinfo{volume}{23}, \bibinfo{number}{1} (\bibinfo{year}{1976}),
+  \bibinfo{pages}{31--42}.
+\newblock
+
+
+\bibitem[Wang and Owens(2020)]%
+        {wang2020fast}
+\bibfield{author}{\bibinfo{person}{Leyuan Wang} {and} \bibinfo{person}{John~D
+  Owens}.} \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{Fast gunrock subgraph matching (gsm) on gpus}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2003.01527}}
+  (\bibinfo{year}{2020}).
+\newblock
+
+
+\bibitem[Wang and Terano(2015)]%
+        {wang2015detecting}
+\bibfield{author}{\bibinfo{person}{Shihan Wang} {and} \bibinfo{person}{Takao
+  Terano}.} \bibinfo{year}{2015}\natexlab{}.
+\newblock \showarticletitle{Detecting rumor patterns in streaming social
+  media}. In \bibinfo{booktitle}{\emph{2015 IEEE international conference on
+  big data (big data)}}. IEEE, \bibinfo{pages}{2709--2715}.
+\newblock
+
+
+\bibitem[Wei and Jiang(2022)]%
+        {wei2022stmatch}
+\bibfield{author}{\bibinfo{person}{Yihua Wei} {and} \bibinfo{person}{Peng
+  Jiang}.} \bibinfo{year}{2022}\natexlab{}.
+\newblock \showarticletitle{STMatch: accelerating graph pattern matching on GPU
+  with stack-based loop optimizations}. In
+  \bibinfo{booktitle}{\emph{Proceedings of the International Conference on High
+  Performance Computing, Networking, Storage and Analysis}}.
+  \bibinfo{pages}{1--13}.
+\newblock
+
+
+\bibitem[Wei and Jiang(2024)]%
+        {wei2024gcsm}
+\bibfield{author}{\bibinfo{person}{Yihua Wei} {and} \bibinfo{person}{Peng
+  Jiang}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{GCSM: GPU-Accelerated Continuous Subgraph Matching
+  for Large Graphs}. In \bibinfo{booktitle}{\emph{2024 IEEE International
+  Parallel and Distributed Processing Symposium (IPDPS)}}. IEEE,
+  \bibinfo{pages}{1046--1057}.
+\newblock
+
+
+\bibitem[Xiang et~al\mbox{.}(2021)]%
+        {xiang2021cuts}
+\bibfield{author}{\bibinfo{person}{Lizhi Xiang}, \bibinfo{person}{Arif Khan},
+  \bibinfo{person}{Edoardo Serra}, \bibinfo{person}{Mahantesh Halappanavar},
+  {and} \bibinfo{person}{Aravind Sukumaran-Rajam}.}
+  \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{cuTS: scaling subgraph isomorphism on distributed
+  multi-GPU systems using trie based data structure}. In
+  \bibinfo{booktitle}{\emph{Proceedings of the International Conference for
+  High Performance Computing, Networking, Storage and Analysis}}.
+  \bibinfo{pages}{1--14}.
+\newblock
+
+
+\bibitem[Yang et~al\mbox{.}(2023)]%
+        {yang2023fast}
+\bibfield{author}{\bibinfo{person}{Rongjian Yang}, \bibinfo{person}{Zhijie
+  Zhang}, \bibinfo{person}{Weiguo Zheng}, {and} \bibinfo{person}{Jeffrey~Xu
+  Yu}.} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Fast continuous subgraph matching over streaming
+  graphs via backtracking reduction}.
+\newblock \bibinfo{journal}{\emph{Proceedings of the ACM on Management of
+  Data}} \bibinfo{volume}{1}, \bibinfo{number}{1} (\bibinfo{year}{2023}),
+  \bibinfo{pages}{1--26}.
+\newblock
+
+
+\bibitem[Zeng et~al\mbox{.}(2020)]%
+        {zeng2020gsi}
+\bibfield{author}{\bibinfo{person}{Li Zeng}, \bibinfo{person}{Lei Zou},
+  \bibinfo{person}{M~Tamer {\"O}zsu}, \bibinfo{person}{Lin Hu}, {and}
+  \bibinfo{person}{Fan Zhang}.} \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{GSI: GPU-friendly subgraph isomorphism}. In
+  \bibinfo{booktitle}{\emph{2020 IEEE 36th International Conference on Data
+  Engineering (ICDE)}}. IEEE, \bibinfo{pages}{1249--1260}.
+\newblock
+
+
+\end{thebibliography}

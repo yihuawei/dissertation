@@ -1,0 +1,91 @@
+
+%---------------------------------------------------------------------------------------------------------------------------------------------------%
+\section{Graph Updater and Multi-Version Graph}
+\label{sec:mvg}
+% \textcolor{green}{reorg this section to describe the motivation, analysis, and design details of multi-version graph data update..}
+
+\begin{figure*}[h]
+    \centering
+   \includegraphics[scale=0.53, page=7]{./fig/slides-crop.pdf}
+   \caption{The multi-version graph (MVG) data structure and the procedure for updating it with a batch. The MVG before update represents $G_0$ in Figure~\ref{fig:csm}. The vertex ID indexes the $pSlab$, pointing to a $Slab$. Each row of the $Slab$ corresponds to a neighbor array version, storing its creation time ($ct_{min}$), deletion time ($dt_{max}$), and address ($pNb$). Each column of the neighbor array stores the ID, creation time ($ct$), and deletion time ($dt$) of an edge. We use \textbf{$v_x$: ($ct$, $dt$]} to denote a neighbor array version of $v_x$. For example, $v_1$ has two neighbor array versions: $v_1$: ($0$, $3$] and $v_1$: ($3$, $m$] where $m$ means infinity.}
+   \label{fig:adjlist}
+\end{figure*}
+
+% This section first explains why previous systems~\cite{wei2024gcsm, qiu2024gpu} cannot achieve inter-batch parallelism, and then describes how our system enables it through a multi-version graph data structure. 
+
+
+All existing CSM systems \cite{wei2024gcsm, qiu2024gpu} on GPUs are derived from static subgraph matching frameworks \cite{wei2022stmatch, chen2022efficient}, and they fail to address data race problems that arise when processing multiple batches concurrently. As a result, these systems are forced to handle $n$ batches ($B_1$, $\ldots$, $B_n$) in a strictly sequential manner: $P(B_1) \rightarrow M(B_1) \rightarrow U(B_1) \rightarrow \ldots \rightarrow P(B_n) \rightarrow M(B_n) \rightarrow U(B_n)$, where $P$, $M$, and $U$ represent the Prepare, Match, and Update phases in Section~\ref{sec:previous_systems}. This serialization stems from the sort operation in the Update phase: executing $U(B_k)$ concurrently with $M(B_k)$ would introduce data races, and $M(B_{k+1})$ must be deferred until $U(B_k)$ finishes, because $M(B_{k+1})$ depends on the data graph state produced by $U(B_k)$.
+To overcome this limitation, we introduce a multi-version graph data structure for CSM. 
+
+\noindent
+\subsection{Multi-Version Graph (MVG) Data Structure}
+
+Our MVG data structure adopts the classic adjacency list format, but each vertex maintains multiple neighbor arrays of different versions. Figure~\ref{fig:adjlist} shows an example; its caption provides an explanation. This design fully considers the efficiency of the matching algorithm. To satisfy the matching efficiency, each neighbor array is sorted by vertex ID. To enable dynamic extension and shrinkage, slab objects of each vertex are linked together as a list. To avoid the data race problem mentioned above, we maintain multiple neighbor array versions for each vertex. Therefore, inserting a batch of edges in the data graph will not cause data races with the ongoing matching procedures since the newly inserted edges reside in newly created versions of the neighbor arrays. The $ct_{min}$, $dt_{max}$, $ct$, and $dt$ in MVG guide the GPU kernel in determining which version to visit during incremental matching.
+
+
+\noindent
+\subsection{Update Procedure}
+
+
+Figure~\ref{fig:adjlist} visualizes the graph update process. For three edge updates arriving at times $3$, $5$, and $7$, we group them into a batch. The graph update consists of two steps. (1) Form a batch graph of adjacency list format using the edges in the batch, its neighbor arrays are sorted by edge arrival time, and record the edge update type (insertion or deletion). (2) Update the MVG. Each neighbor array in the batch graph is partitioned into two parts at the first insertion edge. The left part includes the early-arrived edges to be deleted in-place in MVG, while the right part includes the later-arrived edges to be inserted or deleted, but needs to create a new neighbor array version for the MVG. Take the example in Figure~\ref{fig:adjlist}. To update $v_5$'s neighbor array in the MVG, we first update the deletion time of $v_3$ to $5$, then create a new neighbor array version and insert $v_1$ into it.
+
+The Graph Updater (GU) can be configured with two parameters: a waiting time $t$ and a batch size $b$.  Within the time window $t$, GU waits for $b$ edge updates $\Delta e_k$ to arrive to form a batch. If the waiting time $t$ expires before $b$ edge updates arrive, all arrived $\Delta e_k$ form a batch smaller than $b$. A smaller $b$ can have better response time, but if $b$ is too small it will slow down the GU module. Typically, we set $b$ to $64$ and $t$ to a small value (e.g., $0.125\text{ms}$) that does not affect user experience.
+
+% This design considers the complexity of both the algorithm and update procedure. The time complexity of inserting an edge $(v_i, v_j)$ to the MVG data structure is just $O(2 * n)$ where $n$ is the size of neighbor array, while incremental matching has NP-hard time complexity $O(n^{|V(Q)-2|})$. Therefore, GU consumes and produces $\Delta e_k$ much faster than EX in most cases, even though EX is executed in parallel by multiple warps. 
+
+\noindent
+\subsection{Parallel Graph Updater}
+
+\label{sec:async_gu}
+\begin{figure}[h]
+    \centering
+   \includegraphics[scale=0.6, page=9]{./fig/slides-crop.pdf}
+   \caption{The process of copying three different-sized arrays in parallel using $8$ threads of a warp. $*v_i$ represents the address of $v_i$'s latest neighbor array version in the MVG.}
+   \label{fig:copy}
+\end{figure}
+
+To prevent the graph updater (GU) from becoming a performance bottleneck for lightweight query workloads, we need to accelerate it on GPU. However, because GPU warps follow the SIMT execution model and the average neighbor array is small, it is difficult to keep all 32 threads in a warp busy. 
+More specifically, to merge a batch graph $G_b$ into the MVG $G_k$, for each vertex $v$ in $G_b$, we first copy both $v$'s latest neighbor array from $G_k$ and $v$'s neighbors from $G_b$ into a newly allocated array, which becomes $v$'s updated neighbor version, and then sort this array while excluding deleted vertices. 
+A naive approach assigns one warp for the task, with each thread copying one array element. However, since the average neighbor size in most real-world graphs is only 2 to 3, only a few threads are active during the execution. To improve thread utilization, we would like the 32 threads in a warp to copy multiple neighbor arrays in parallel. 
+
+
+To copy multiple arrays in parallel with one warp, we use the following strategy.
+Figure~\ref{fig:copy} shows how a warp copies three arrays in parallel; specifically, it copies $v_1$: ($0$, $3$], $v_3$: ($0$, $3$] and $v_5$: ($0$, $7$] for the update procedure shown in Figure~\ref{fig:adjlist}. 
+In this example, \texttt{np}, \texttt{size}, etc., are register variables, and cross-thread operations on them use CUDA warp-level primitives.
+Initially, each thread stores the address (\texttt{np}) and size (\texttt{size}) of a distinct array. 
+We first compute the prefix sum (\texttt{ps}) over the \texttt{size} values. 
+Then, we broadcast \texttt{ps} and \texttt{np} into \texttt{bps} and \texttt{bnp} based on \texttt{size} value. 
+For example, since thread $2$ has \texttt{size} = 3, $*v_3$ is broadcast to three copies in \texttt{bnp}.
+Next, we compute the \texttt{idx} as \texttt{idx} = $tid$ - \texttt{bps}, where $tid$ is thread id. 
+Using \texttt{idx} and \texttt{bnp}, each thread maps to a unique element within its assigned array. 
+For instance, thread $3$ accesses the neighbor at index $2$ in $v_3$'s array, which is vertex $v_5$.
+If the sum of neighbor sizes exceeds the number of threads within a warp, the warp iterates to complete the copy. 
+In our actual system design, we treat $n$ warps as a large "super-warp" with $n \times 32$ threads, copying multiple neighbor arrays in parallel. 
+
+
+We also process two consecutive batches in a pipelined manner. Specifically, data copying is implemented using the \texttt{memcpy\_async} instruction, allowing it to overlap with the sorting phase of the previous batch.
+
+
+
+
+% \textcolor{blue}{Second, we enable parallel data copying to fully exploit memory bandwidth. We use 32n threads from n warps to update multiple neighbor arrays from the batch graph to the MVG in parallel. For special neighbor arrays with larger sizes ($>$ 32), we assign a dedicated warp to process each one. We use CUDA vectorized memory access to perform data loading and writing in 128-bit transactions. This not only improves the efficiency of GU but also allows us to control the processing speed of GU by allocating different numbers of warps.}
+
+% These two optimizations are beneficial for cases where GU becomes the bottleneck instead of EX, especially when the workload of EX is not extremely heavy.
+
+
+
+% \textcolor{blue}{First, we enable the graph updater to consume $\Delta e_k$ asynchronously. This design enables time overlap between the creation of new neighbor array versions and the matching procedures that use them, thereby hiding memory access overhead behind the matching process. As a result, some $\Delta e_k$ between GU and EX, or those currently being processed by EX, may not have their updated neighbor arrays ready. A warp in EX will stall and wait if it accesses a neighbor array version that has not yet been written to memory.}
+
+
+
+% For example, for a batch $B_k$, $M(B_k)$ depends on the batch graph formed by $F(B_k)$. $U(B_k)$ can only update the neighbor arrays after $M(B_k)$ finishes because the insertion and sorting operations in $U(B_k)$ would cause data races with $M(B_k)$. Furthermore, $M(B_{k+1})$ must wait for $U(B_k)$ to complete, because $M(B_{k+1})$ is based on the data graph version after $U(B_k)$.
+
+% \subsection{Problem Analysis}
+% \label{sec:problem_analysis}
+
+% \textcolor{red}{explain what the problem is...}
+
+% \textcolor{red}{remove this paragraph: For example, for a batch $B_k$, $M(B_k)$ depends on the batch graph formed by $F(B_k)$. $U(B_k)$ can only update the neighbor arrays after $M(B_k)$ finishes because the insertion and sorting operations in $U(B_k)$ would cause data races with $M(B_k)$. Furthermore, $M(B_{k+1})$ must wait for $U(B_k)$ to complete, because $M(B_{k+1})$ is based on the data graph version after $U(B_k)$.}
+
+% \textcolor{red}{remove this: To enable inter-batch parallelism, we need to remove the sorting operation in $U(B_k)$. We can replace the WCOJ algorithm used in previous systems with
+% an edge-extension algorithm, which doesn't require the neighbor arrays to be sorted. However, edge-extension generates significantly more intermediate results than WCOJ, slowing down the matching step. Alternatively, we could store the neighbor arrays as hash sets, but previous studies have shown that hash-set-based subgraph matching systems cannot achieve optimal performance on GPU platforms. We evaluate both approaches as baselines in the experimental section. Another potential approach is to exploit high parallelism within a small batch, such as traversing the search space in BFS order. However, previous studies \cite{wei2022stmatch} have shown that BFS incurs high overhead due to intensive memory writes, large memory consumption, and thread synchronization, leading to significant performance degradation. Therefore, we need an entirely new solution.}

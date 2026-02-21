@@ -1,0 +1,284 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyperFirstAtBeginDocument{\AtBeginDocument}
+\HyperFirstAtBeginDocument{\ifx\hyper@anchor\@undefined
+\global\let\oldnewlabel\newlabel
+\gdef\newlabel#1#2{\newlabelxx{#1}#2}
+\gdef\newlabelxx#1#2#3#4#5#6{\oldnewlabel{#1}{{#2}{#3}}}
+\AtEndDocument{\ifx\hyper@anchor\@undefined
+\let\newlabel\oldnewlabel
+\fi}
+\fi}
+\global\let\hyper@last\relax 
+\gdef\HyperFirstAtBeginDocument#1{#1}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\citation{qin2019towards}
+\citation{qiu2018real}
+\citation{wang2015detecting}
+\citation{manzoor2016fast}
+\citation{kim2018turboflux,min2021symmetric,sun2022rapidflow,li2024newsp}
+\citation{ullmann1976algorithm}
+\citation{wei2024gcsm,qiu2024gpu}
+\citation{wei2024gcsm}
+\citation{netflow}
+\citation{netflow}
+\providecommand \oddpage@label [2]{}
+\@writefile{toc}{\contentsline {section}{Abstract}{1}{section*.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
+\newlabel{sec:Intro}{{1}{1}{Introduction}{section.1}{}}
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:query}{{1a}{1}{Subfigure 1a}{subfigure.1.1}{}}
+\newlabel{sub@fig:query}{{(a)}{a}{Subfigure 1a\relax }{subfigure.1.1}{}}
+\newlabel{fig:g0}{{1b}{1}{Subfigure 1b}{subfigure.1.2}{}}
+\newlabel{sub@fig:g0}{{(b)}{b}{Subfigure 1b\relax }{subfigure.1.2}{}}
+\newlabel{fig:g1}{{1c}{1}{Subfigure 1c}{subfigure.1.3}{}}
+\newlabel{sub@fig:g1}{{(c)}{c}{Subfigure 1c\relax }{subfigure.1.3}{}}
+\newlabel{fig:g1}{{1d}{1}{Subfigure 1d}{subfigure.1.4}{}}
+\newlabel{sub@fig:g1}{{(d)}{d}{Subfigure 1d\relax }{subfigure.1.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces An example of continuous subgraph matching. $G_{k+1}$ is the data graph after applyting update on $G_{k}$. $Q_{d}$ is the query of "diamond" structure. $abcd$ next to the vertices are the vertex labels.\relax }}{1}{figure.caption.3}\protected@file@percent }
+\newlabel{fig:csm}{{1}{1}{An example of continuous subgraph matching. $G_{k+1}$ is the data graph after applyting update on $G_{k}$. $Q_{d}$ is the query of "diamond" structure. $abcd$ next to the vertices are the vertex labels.\relax }{figure.caption.3}{}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Query $Q_{d}$}}}{1}{subfigure.1.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {$t$=$0$: Data graph $G_0$}}}{1}{subfigure.1.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {$t$=$3$: Data graph $G_1$}}}{1}{subfigure.1.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {$t$=$5$: Data graph $G_2$}}}{1}{subfigure.1.4}\protected@file@percent }
+\citation{wei2024gcsm}
+\citation{sun2022rapidflow}
+\citation{wei2024gcsm,qiu2024gpu}
+\citation{wei2024gcsm}
+\citation{qiu2024gpu}
+\newlabel{fig:rtime}{{2a}{2}{Subfigure 2a}{subfigure.2.1}{}}
+\newlabel{sub@fig:rtime}{{(a)}{a}{Subfigure 2a\relax }{subfigure.2.1}{}}
+\newlabel{fig:gutil}{{2b}{2}{Subfigure 2b}{subfigure.2.2}{}}
+\newlabel{sub@fig:gutil}{{(b)}{b}{Subfigure 2b\relax }{subfigure.2.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Average response time and GPU utilization of GCSM. GCSM-x denotes GCSM processing with batch size x. \textbf  {Query:} Q4 (Figure\nonbreakingspace \ref {fig:queries}). \textbf  {Graph:} Unlabeled Netflow\nonbreakingspace \citep  {netflow}.\relax }}{2}{figure.caption.4}\protected@file@percent }
+\newlabel{fig:profile}{{2}{2}{Average response time and GPU utilization of GCSM. GCSM-x denotes GCSM processing with batch size x. \textbf {Query:} Q4 (Figure~\ref {fig:queries}). \textbf {Graph:} Unlabeled Netflow~\cite {netflow}.\relax }{figure.caption.4}{}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Response Time}}}{2}{subfigure.2.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {GPU Utilization}}}{2}{subfigure.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2}Background}{2}{section.2}\protected@file@percent }
+\newlabel{sec:Background}{{2}{2}{Background}{section.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}A Formal Definition of CSM}{2}{subsection.2.1}\protected@file@percent }
+\newlabel{sec:Preliminaries}{{2.1}{2}{A Formal Definition of CSM}{subsection.2.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Existing GPU-based CSM systems}{2}{subsection.2.2}\protected@file@percent }
+\newlabel{sec:previous_systems}{{2.2}{2}{Existing GPU-based CSM systems}{subsection.2.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Overview of DCSM}{2}{section.3}\protected@file@percent }
+\newlabel{sec:overview}{{3}{2}{Overview of DCSM}{section.3}{}}
+\citation{wei2024gcsm}
+\citation{wei2024gcsm,qiu2024gpu}
+\citation{wei2022stmatch,chen2022efficient}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Overview of DCSM. DCSM consists of three functional modules: Graph Updater (GU), Executor (EX), and Garbage Collector (GC). The edge updates $\Delta e_{k}$ flows through these modules sequentially.\relax }}{3}{figure.caption.5}\protected@file@percent }
+\newlabel{fig:dcsm_overview}{{3}{3}{Overview of DCSM. DCSM consists of three functional modules: Graph Updater (GU), Executor (EX), and Garbage Collector (GC). The edge updates $\Delta e_{k}$ flows through these modules sequentially.\relax }{figure.caption.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Graph Updater and Multi-Version Graph}{3}{section.4}\protected@file@percent }
+\newlabel{sec:mvg}{{4}{3}{Graph Updater and Multi-Version Graph}{section.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Multi-Version Graph (MVG) Data Structure}{3}{subsection.4.1}\protected@file@percent }
+\newlabel{fig:gcsm1}{{4a}{3}{Subfigure 4a}{subfigure.4.1}{}}
+\newlabel{sub@fig:gcsm1}{{(a)}{a}{Subfigure 4a\relax }{subfigure.4.1}{}}
+\newlabel{fig:gcsm2}{{4b}{3}{Subfigure 4b}{subfigure.4.2}{}}
+\newlabel{sub@fig:gcsm2}{{(b)}{b}{Subfigure 4b\relax }{subfigure.4.2}{}}
+\newlabel{fig:dcsm}{{4c}{3}{Subfigure 4c}{subfigure.4.3}{}}
+\newlabel{sub@fig:dcsm}{{(c)}{c}{Subfigure 4c\relax }{subfigure.4.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Comparison between GCSM and DCSM. Eight updates $\Delta e_{1}$ - $\Delta e_{8}$ arrive sequentially. The bar in the figure denotes warp activity along the time axis. Each bar is associated with an update $\Delta e_{k}$, labeled inside the bar. In practice, DCSM uses 5,000-10,000 warps for incremental matching, while only 1-4 warps are assigned for graph updates.\relax }}{3}{figure.caption.6}\protected@file@percent }
+\newlabel{fig:dcsm_benefit}{{4}{3}{Comparison between GCSM and DCSM. Eight updates $\Delta e_{1}$ - $\Delta e_{8}$ arrive sequentially. The bar in the figure denotes warp activity along the time axis. Each bar is associated with an update $\Delta e_{k}$, labeled inside the bar. In practice, DCSM uses 5,000-10,000 warps for incremental matching, while only 1-4 warps are assigned for graph updates.\relax }{figure.caption.6}{}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {GCSM with batch size $1$.}}}{3}{subfigure.4.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {GCSM with batch size $2$.}}}{3}{subfigure.4.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {DCSM with inter-batch parallelism.}}}{3}{subfigure.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Update Procedure}{3}{subsection.4.2}\protected@file@percent }
+\citation{ullmann1976algorithm}
+\citation{wei2022stmatch,chen2022efficient}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces The multi-version graph (MVG) data structure and the procedure for updating it with a batch. The MVG before update represents $G_0$ in Figure\nonbreakingspace \ref {fig:csm}. The vertex ID indexes the $pSlab$, pointing to a $Slab$. Each row of the $Slab$ corresponds to a neighbor array version, storing its creation time ($ct_{min}$), deletion time ($dt_{max}$), and address ($pNb$). Each column of the neighbor array stores the ID, creation time ($ct$), and deletion time ($dt$) of an edge. We use \textbf  {$v_x$: ($ct$, $dt$]} to denote a neighbor array version of $v_x$. For example, $v_1$ has two neighbor array versions: $v_1$: ($0$, $3$] and $v_1$: ($3$, $m$] where $m$ means infinity.\relax }}{4}{figure.caption.7}\protected@file@percent }
+\newlabel{fig:adjlist}{{5}{4}{The multi-version graph (MVG) data structure and the procedure for updating it with a batch. The MVG before update represents $G_0$ in Figure~\ref {fig:csm}. The vertex ID indexes the $pSlab$, pointing to a $Slab$. Each row of the $Slab$ corresponds to a neighbor array version, storing its creation time ($ct_{min}$), deletion time ($dt_{max}$), and address ($pNb$). Each column of the neighbor array stores the ID, creation time ($ct$), and deletion time ($dt$) of an edge. We use \textbf {$v_x$: ($ct$, $dt$]} to denote a neighbor array version of $v_x$. For example, $v_1$ has two neighbor array versions: $v_1$: ($0$, $3$] and $v_1$: ($3$, $m$] where $m$ means infinity.\relax }{figure.caption.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Parallel Graph Updater}{4}{subsection.4.3}\protected@file@percent }
+\newlabel{sec:async_gu}{{4.3}{4}{Parallel Graph Updater}{subsection.4.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces The process of copying three different-sized arrays in parallel using $8$ threads of a warp. $*v_i$ represents the address of $v_i$'s latest neighbor array version in the MVG.\relax }}{4}{figure.caption.8}\protected@file@percent }
+\newlabel{fig:copy}{{6}{4}{The process of copying three different-sized arrays in parallel using $8$ threads of a warp. $*v_i$ represents the address of $v_i$'s latest neighbor array version in the MVG.\relax }{figure.caption.8}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Executor}{5}{section.5}\protected@file@percent }
+\newlabel{sec:ex}{{5}{5}{Executor}{section.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Correctness Guarantee}{5}{subsection.5.1}\protected@file@percent }
+\newlabel{sec:mvnv}{{5.1}{5}{Correctness Guarantee}{subsection.5.1}{}}
+\newlabel{lemma1}{{1}{5}{}{property.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Visualization of edge $e_k$'s lifetime and visibility across other updates.\relax }}{5}{figure.caption.9}\protected@file@percent }
+\newlabel{fig:lifetime}{{7}{5}{Visualization of edge $e_k$'s lifetime and visibility across other updates.\relax }{figure.caption.9}{}}
+\newlabel{lemma2}{{2}{5}{}{property.2}{}}
+\newlabel{lemma3}{{3}{5}{}{property.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Continuous Subgraph Matching-Specific Optimizations}{5}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.2.1}Efficient Neighbor Array Access}{5}{subsubsection.5.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.2.2}Dynamic Task Scheduler}{5}{subsubsection.5.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.2.3}Output of Executor}{5}{subsubsection.5.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Garbage Collector}{6}{section.6}\protected@file@percent }
+\newlabel{sec:gc}{{6}{6}{Garbage Collector}{section.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Release Conditions}{6}{subsection.6.1}\protected@file@percent }
+\newlabel{sec:rc}{{6.1}{6}{Release Conditions}{subsection.6.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Garbage Collection Graph (GCG)}{6}{subsection.6.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces A garbage collection graph (GCG) built from the 3 updates $\Delta e_0$, $\Delta e_1$, $\Delta e_2$ in Figure\nonbreakingspace \ref {fig:adjlist}.\relax }}{6}{figure.caption.10}\protected@file@percent }
+\newlabel{fig:aux}{{8}{6}{A garbage collection graph (GCG) built from the 3 updates $\Delta e_0$, $\Delta e_1$, $\Delta e_2$ in Figure~\ref {fig:adjlist}.\relax }{figure.caption.10}{}}
+\newlabel{fig:gc_1}{{9a}{6}{Subfigure 9a}{subfigure.9.1}{}}
+\newlabel{sub@fig:gc_1}{{(a)}{a}{Subfigure 9a\relax }{subfigure.9.1}{}}
+\newlabel{fig:gc_2}{{9b}{6}{Subfigure 9b}{subfigure.9.2}{}}
+\newlabel{sub@fig:gc_2}{{(b)}{b}{Subfigure 9b\relax }{subfigure.9.2}{}}
+\newlabel{fig:gc_3}{{9c}{6}{Subfigure 9c}{subfigure.9.3}{}}
+\newlabel{sub@fig:gc_3}{{(c)}{c}{Subfigure 9c\relax }{subfigure.9.3}{}}
+\newlabel{fig:gc_4}{{9d}{6}{Subfigure 9d}{subfigure.9.4}{}}
+\newlabel{sub@fig:gc_4}{{(d)}{d}{Subfigure 9d\relax }{subfigure.9.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces (a)–(d) illustrate how GC releases neighbor arrays on the GCG in Figure\nonbreakingspace \ref {fig:aux}. This GCG is stored in an adjacency-list format.\relax }}{6}{figure.caption.11}\protected@file@percent }
+\newlabel{fig:gc_step}{{9}{6}{(a)–(d) illustrate how GC releases neighbor arrays on the GCG in Figure~\ref {fig:aux}. This GCG is stored in an adjacency-list format.\relax }{figure.caption.11}{}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {The incremental matching of $\Delta e_0$ is finished, $v_1$:$(0, 3 ]$ and $v_3$:$(0, 3 ]$ can be released.}}}{6}{subfigure.9.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {The incremental matching of $\Delta e_2$ is finished.}}}{6}{subfigure.9.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {The incremental matching of $\Delta e_1$ is finished, $v_5$:$(0, 7 ]$ can be released.}}}{6}{subfigure.9.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {A new $\Delta e_3$ = $(v_1, v_4, +)$ is appended to the end of GCG.}}}{6}{subfigure.9.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Implementation}{6}{subsection.6.3}\protected@file@percent }
+\citation{snapnets}
+\citation{caida2019caida}
+\citation{le2012linked}
+\citation{sun2022rapidflow}
+\citation{yang2023fast}
+\citation{li2024newsp}
+\citation{kankanamge2017graphflow}
+\citation{kim2018turboflux}
+\citation{choudhury2015selectivity}
+\citation{idris2017dynamic}
+\citation{min2021symmetric}
+\citation{wei2024gcsm}
+\citation{qiu2024gpu}
+\citation{chen2022efficient}
+\citation{wei2022stmatch,xiang2021cuts}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Experimental Results}{7}{section.7}\protected@file@percent }
+\newlabel{sec:exp}{{7}{7}{Experimental Results}{section.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}Experimental Setup}{7}{subsection.7.1}\protected@file@percent }
+\newlabel{sec:exp_setup}{{7.1}{7}{Experimental Setup}{subsection.7.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Graph datasets.\relax }}{7}{table.caption.12}\protected@file@percent }
+\newlabel{tab:datasets}{{1}{7}{Graph datasets.\relax }{table.caption.12}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Query patterns for evaluation.\relax }}{7}{figure.caption.13}\protected@file@percent }
+\newlabel{fig:queries}{{10}{7}{Query patterns for evaluation.\relax }{figure.caption.13}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Comparison of baselines. \textit  {Avg Time} is the average execution time on four data graphs and query patterns used in GAMMA. The \textit  {Avg Time} for GAMMA is taken from the original paper, while the \textit  {Avg Time} of others is obtained from our own experiments.\relax }}{7}{table.caption.14}\protected@file@percent }
+\newlabel{tab:baseline}{{2}{7}{Comparison of baselines. \textit {Avg Time} is the average execution time on four data graphs and query patterns used in GAMMA. The \textit {Avg Time} for GAMMA is taken from the original paper, while the \textit {Avg Time} of others is obtained from our own experiments.\relax }{table.caption.14}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}Throughput}{8}{subsection.7.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.2.1}Comparison with the CPU Systems}{8}{subsubsection.7.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.2.2}Comparison with the GPU Naive Methods}{8}{subsubsection.7.2.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Execution time of different systems for matching unlabeled and labeled query patterns. The '-' indicates a timeout after 8 hours. The default time unit for unlabeled matching is seconds, while for labeled matching it is milliseconds. The 's' after a number denotes seconds\relax }}{8}{table.caption.15}\protected@file@percent }
+\newlabel{tab:throughput}{{3}{8}{Execution time of different systems for matching unlabeled and labeled query patterns. The '-' indicates a timeout after 8 hours. The default time unit for unlabeled matching is seconds, while for labeled matching it is milliseconds. The 's' after a number denotes seconds\relax }{table.caption.15}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Performance comparison between GCSM and DCSM for matching unlabeled and labeled query patterns. The table shows the batch size $b$ used by GCSM. When the batch size is set to $b$, GCSM and DCSM exhibit nearly the same processing time. Both GCSM and DCSM are executed on a single GPU.\relax }}{9}{table.caption.16}\protected@file@percent }
+\newlabel{tab:gcsm_ul}{{4}{9}{Performance comparison between GCSM and DCSM for matching unlabeled and labeled query patterns. The table shows the batch size $b$ used by GCSM. When the batch size is set to $b$, GCSM and DCSM exhibit nearly the same processing time. Both GCSM and DCSM are executed on a single GPU.\relax }{table.caption.16}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.2.3}Comparison with GCSM}{9}{table.caption.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.3}Response Time}{9}{subsection.7.3}\protected@file@percent }
+\newlabel{fig:gcsm}{{11a}{9}{Subfigure 11a}{subfigure.11.1}{}}
+\newlabel{sub@fig:gcsm}{{(a)}{a}{Subfigure 11a\relax }{subfigure.11.1}{}}
+\newlabel{fig:gcsm2}{{11b}{9}{Subfigure 11b}{subfigure.11.2}{}}
+\newlabel{sub@fig:gcsm2}{{(b)}{b}{Subfigure 11b\relax }{subfigure.11.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces (a) and (b) show the trend of GCSM performance with batch size $b$ on unlabeled db-Q5 and labeled lj-Q5. "All" refers to the batch size being equal to the total number of edge updates in the test data. The numbers marked on the line stand for GPU utilization.\relax }}{9}{figure.caption.17}\protected@file@percent }
+\newlabel{fig:scale}{{11}{9}{(a) and (b) show the trend of GCSM performance with batch size $b$ on unlabeled db-Q5 and labeled lj-Q5. "All" refers to the batch size being equal to the total number of edge updates in the test data. The numbers marked on the line stand for GPU utilization.\relax }{figure.caption.17}{}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {}}}{9}{subfigure.11.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {}}}{9}{subfigure.11.2}\protected@file@percent }
+\newlabel{fig:rt1}{{12a}{9}{Subfigure 12a}{subfigure.12.1}{}}
+\newlabel{sub@fig:rt1}{{(a)}{a}{Subfigure 12a\relax }{subfigure.12.1}{}}
+\newlabel{fig:rt2}{{12b}{9}{Subfigure 12b}{subfigure.12.2}{}}
+\newlabel{sub@fig:rt2}{{(b)}{b}{Subfigure 12b\relax }{subfigure.12.2}{}}
+\newlabel{fig:rt3}{{12c}{9}{Subfigure 12c}{subfigure.12.3}{}}
+\newlabel{sub@fig:rt3}{{(c)}{c}{Subfigure 12c\relax }{subfigure.12.3}{}}
+\newlabel{fig:rt4}{{12d}{9}{Subfigure 12d}{subfigure.12.4}{}}
+\newlabel{sub@fig:rt4}{{(d)}{d}{Subfigure 12d\relax }{subfigure.12.4}{}}
+\newlabel{fig:rt5}{{12e}{9}{Subfigure 12e}{subfigure.12.5}{}}
+\newlabel{sub@fig:rt5}{{(e)}{e}{Subfigure 12e\relax }{subfigure.12.5}{}}
+\newlabel{fig:rt6}{{12f}{9}{Subfigure 12f}{subfigure.12.6}{}}
+\newlabel{sub@fig:rt6}{{(f)}{f}{Subfigure 12f\relax }{subfigure.12.6}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces Response time over different update rates. The time unit is seconds for Netflow Q4 and milliseconds for all others. GCSM-4096 refers to GCSM configured with a batch size of 4096.\relax }}{9}{figure.caption.18}\protected@file@percent }
+\newlabel{fig:response_time}{{12}{9}{Response time over different update rates. The time unit is seconds for Netflow Q4 and milliseconds for all others. GCSM-4096 refers to GCSM configured with a batch size of 4096.\relax }{figure.caption.18}{}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Netflow Q4}}}{9}{subfigure.12.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Netflow Q6}}}{9}{subfigure.12.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {LSBench Q4}}}{9}{subfigure.12.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {LiveJournal Q9}}}{9}{subfigure.12.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(e)}{\ignorespaces {LiveJournal Q8}}}{9}{subfigure.12.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(f)}{\ignorespaces {LSBench Q8}}}{9}{subfigure.12.6}\protected@file@percent }
+\newlabel{fig:util1}{{13a}{10}{Subfigure 13a}{subfigure.13.1}{}}
+\newlabel{sub@fig:util1}{{(a)}{a}{Subfigure 13a\relax }{subfigure.13.1}{}}
+\newlabel{fig:util1}{{13b}{10}{Subfigure 13b}{subfigure.13.2}{}}
+\newlabel{sub@fig:util1}{{(b)}{b}{Subfigure 13b\relax }{subfigure.13.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {13}{\ignorespaces GPU utilization vs. update rate (k: thousand, m: million) for different systems\relax }}{10}{figure.caption.19}\protected@file@percent }
+\newlabel{fig:gpuutil}{{13}{10}{GPU utilization vs. update rate (k: thousand, m: million) for different systems\relax }{figure.caption.19}{}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Netflow Q4}}}{10}{subfigure.13.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Netflow Q6}}}{10}{subfigure.13.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.4}Overhead Analysis}{10}{subsection.7.4}\protected@file@percent }
+\newlabel{sec:overhead}{{7.4}{10}{Overhead Analysis}{subsection.7.4}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Time (ms) spent by the graph updater (GU) to synchronously consume all updates.\relax }}{10}{table.caption.20}\protected@file@percent }
+\newlabel{tab:gu_time}{{5}{10}{Time (ms) spent by the graph updater (GU) to synchronously consume all updates.\relax }{table.caption.20}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.5}Ablation Study}{10}{subsection.7.5}\protected@file@percent }
+\citation{mawhirter2019graphzero}
+\citation{mawhirter2021dryadic}
+\citation{shi2020graphpi}
+\citation{jamshidi2020peregrine}
+\citation{mawhirter2019automine}
+\citation{chen2022efficient}
+\citation{chen2021sandslash}
+\citation{chen2022decomine}
+\citation{sun2020rapidmatch}
+\citation{wang2020fast}
+\citation{tran2015fast}
+\citation{zeng2020gsi}
+\citation{xiang2021cuts}
+\citation{guo2020gpu}
+\citation{wei2022stmatch}
+\citation{fan2013incremental}
+\citation{kankanamge2017graphflow}
+\citation{choudhury2015selectivity}
+\citation{kim2018turboflux}
+\citation{min2021symmetric}
+\citation{sun2022rapidflow}
+\citation{yang2023fast}
+\citation{li2024newsp}
+\citation{wei2024gcsm,qiu2024gpu}
+\citation{wei2024gcsm}
+\citation{qiu2024gpu}
+\bibstyle{ACM-Reference-Format}
+\bibdata{jp}
+\bibcite{netflow}{{1}{2013}{{CAIDA}}{{}}}
+\bibcite{caida2019caida}{{2}{2019}{{CAIDA}}{{}}}
+\bibcite{chen2022decomine}{{3}{2022}{{Chen and Qian}}{{}}}
+\bibcite{chen2022efficient}{{4}{2022}{{Chen et~al\mbox  {.}}}{{}}}
+\bibcite{chen2021sandslash}{{5}{2021}{{Chen et~al\mbox  {.}}}{{}}}
+\bibcite{choudhury2015selectivity}{{6}{2015}{{Choudhury et~al\mbox  {.}}}{{}}}
+\bibcite{fan2013incremental}{{7}{2013}{{Fan et~al\mbox  {.}}}{{}}}
+\bibcite{guo2020gpu}{{8}{2020}{{Guo et~al\mbox  {.}}}{{}}}
+\bibcite{idris2017dynamic}{{9}{2017}{{Idris et~al\mbox  {.}}}{{}}}
+\newlabel{fig:bs1}{{14a}{11}{Subfigure 14a}{subfigure.14.1}{}}
+\newlabel{sub@fig:bs1}{{(a)}{a}{Subfigure 14a\relax }{subfigure.14.1}{}}
+\newlabel{fig:bs2}{{14b}{11}{Subfigure 14b}{subfigure.14.2}{}}
+\newlabel{sub@fig:bs2}{{(b)}{b}{Subfigure 14b\relax }{subfigure.14.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {14}{\ignorespaces Speedups brought by parallel graph updater on different data graphs. Naive refers to a single warp sequentially copying different arrays, rather than copying multiple arrays in parallel.\relax }}{11}{figure.caption.21}\protected@file@percent }
+\newlabel{fig:async_gu_data}{{14}{11}{Speedups brought by parallel graph updater on different data graphs. Naive refers to a single warp sequentially copying different arrays, rather than copying multiple arrays in parallel.\relax }{figure.caption.21}{}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Batch Size = $64$}}}{11}{subfigure.14.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Batch Size = $128$}}}{11}{subfigure.14.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8}Related Works}{11}{section.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9}Conclusion}{11}{section.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{References}{11}{section*.23}\protected@file@percent }
+\bibcite{jamshidi2020peregrine}{{10}{2020}{{Jamshidi et~al\mbox  {.}}}{{}}}
+\bibcite{kankanamge2017graphflow}{{11}{2017}{{Kankanamge et~al\mbox  {.}}}{{}}}
+\bibcite{kim2018turboflux}{{12}{2018}{{Kim et~al\mbox  {.}}}{{}}}
+\bibcite{le2012linked}{{13}{2012}{{Le-Phuoc et~al\mbox  {.}}}{{}}}
+\bibcite{snapnets}{{14}{2014}{{Leskovec and Krevl}}{{}}}
+\bibcite{li2024newsp}{{15}{2024}{{Li et~al\mbox  {.}}}{{}}}
+\bibcite{manzoor2016fast}{{16}{2016}{{Manzoor et~al\mbox  {.}}}{{}}}
+\bibcite{mawhirter2021dryadic}{{17}{2021}{{Mawhirter et~al\mbox  {.}}}{{}}}
+\bibcite{mawhirter2019graphzero}{{18}{2019}{{Mawhirter et~al\mbox  {.}}}{{}}}
+\bibcite{mawhirter2019automine}{{19}{2019}{{Mawhirter and Wu}}{{}}}
+\bibcite{min2021symmetric}{{20}{2021}{{Min et~al\mbox  {.}}}{{}}}
+\bibcite{qin2019towards}{{21}{2019}{{Qin et~al\mbox  {.}}}{{}}}
+\bibcite{qiu2024gpu}{{22}{2024}{{Qiu et~al\mbox  {.}}}{{}}}
+\bibcite{qiu2018real}{{23}{2018}{{Qiu et~al\mbox  {.}}}{{}}}
+\bibcite{shi2020graphpi}{{24}{2020}{{Shi et~al\mbox  {.}}}{{}}}
+\bibcite{sun2020rapidmatch}{{25}{2020}{{Sun et~al\mbox  {.}}}{{}}}
+\bibcite{sun2022rapidflow}{{26}{2022}{{Sun et~al\mbox  {.}}}{{}}}
+\bibcite{tran2015fast}{{27}{2015}{{Tran et~al\mbox  {.}}}{{}}}
+\bibcite{ullmann1976algorithm}{{28}{1976}{{Ullmann}}{{}}}
+\bibcite{wang2020fast}{{29}{2020}{{Wang and Owens}}{{}}}
+\bibcite{wang2015detecting}{{30}{2015}{{Wang and Terano}}{{}}}
+\bibcite{wei2022stmatch}{{31}{2022}{{Wei and Jiang}}{{}}}
+\bibcite{wei2024gcsm}{{32}{2024}{{Wei and Jiang}}{{}}}
+\bibcite{xiang2021cuts}{{33}{2021}{{Xiang et~al\mbox  {.}}}{{}}}
+\bibcite{yang2023fast}{{34}{2023}{{Yang et~al\mbox  {.}}}{{}}}
+\bibcite{zeng2020gsi}{{35}{2020}{{Zeng et~al\mbox  {.}}}{{}}}
+\newlabel{tocindent-1}{0pt}
+\newlabel{tocindent0}{0pt}
+\newlabel{tocindent1}{4.185pt}
+\newlabel{tocindent2}{10.34999pt}
+\newlabel{tocindent3}{18.198pt}
+\newlabel{TotPages}{{12}{12}{}{page.12}{}}
+\gdef \@abspage@last{12}

@@ -1,0 +1,236 @@
+pdflatex test.tex
+bibtex test
+pdflatex test.tex
+pdflatex test.tex
+
+
+\cite{ngo2018worst} //Worst-case optimal join algorithms
+\cite{veldhuizen2014leapfrog} //Leapfrog triejoin
+\cite{atserias2008size} //Size bounds and query plans for relational joins
+\cite{mhedhbi2019optimizing} //Optimizing subgraph queries by combining binary and worst-case optimal joins
+\cite{ribeiro2021survey}
+
+Algorithm:
+
+\cite{ullmann1976algorithm} //ullmann1976algorithm
+\cite{cordella2001improved} //vf2
+\cite{carletti2015vf2} //vf2+
+\cite{juttner2018vf2++} //vf2++
+\cite{carletti2017challenging} vf3
+\cite{bonnici2013subgraph} RI
+\cite{solnon2010alldifferent} LAD
+
+
+%Backtracking Search
+\cite{10.14778/1453856.1453899} //QuickSI
+\cite{zhang2009gaddi} //GADDI
+\cite{zhao2010graph} //SPath
+\cite{he2010query} //GraphQL
+\cite{han2013turboiso} //Turboiso
+\cite{ren2015exploiting} //BoostIso
+\cite{bi2016efficient} CFLMatch CFL
+\cite{rivero2017efficient} //SGMatch
+\cite{bhattarai2019ceci} //CECI
+\cite{10.1145/3299869.3319880} //DAF, DP-iso
+\cite{sun2020rapidmatch} //Rapidmatch
+
+
+%WCOJ
+\cite{aref2015design} //LogicBlox
+\cite{aberger2017emptyheaded} //Emptyheaded
+\cite{kankanamge2017graphflow} //Graphflow
+
+
+%并行
+\cite{raman2014pgx} //PGX
+\cite{sun2012efficient} //STwig
+
+
+CSM
+\cite{wang2015detecting}
+\cite{qiu2018real}
+\cite{qin2019towards}
+\cite{manzoor2016fast}
+
+\cite{fan2013incremental} //isomatch
+\cite{kankanamge2017graphflow} //Graphflow
+\cite{choudhury2015selectivity} //SJ-Tree
+\cite{kim2018turboflux} //Turbofluw
+\cite{idris2017dynamic} //IEDyn
+\cite{min2021symmetric} //SymBi
+\cite{sun2022rapidflow} //rapidflow
+\cite{sun2022depth} //In-depth
+\cite{yang2023fast} //CaliG
+\cite{li2024newsp} //NewSP
+
+\cite{wei2024gcsm} //GCSM
+\cite{qiu2024gpu} //GAMMA
+ 
+GPM:
+\cite{teixeira2015arabesque} Arabesque
+\cite{wang2018rstream} //RStream
+\cite{10.14778/3389133.3389137} //Pangolin
+\cite{jamshidi2020peregrine} //Peregrine
+\cite{mawhirter2019automine} //Automine
+\cite{chen2022efficient} //GMiner
+
+\cite{zhao2020kaleido} Kaleido
+\cite{chen2018g} G2miner
+\cite{dias2019fractal} Fractal
+\cite{chen2021sandslash} Sandslash
+\cite{chen2021kudu} Kudu
+\cite{chen2022decomine} //Decomine
+\cite{chen2023khuzdul} //Khuzdul
+
+Subgraph Listing
+\cite{mawhirter2021dryadic} //Dryadic
+\cite{mawhirter2019graphzero} //GraphZero
+\cite{shi2020graphpi} //Graphpi
+\cite{tran2015fast} //GPSM
+\cite{wang2020fast} //Gunrock
+\cite{zeng2020gsi} //GSI
+\cite{xiang2021cuts} //cuTS
+\cite{wei2022stmatch} //STMatch
+
+\cite{guo2020gpu} //PBE
+\cite{10.5555/3571885.3571954} //vsgm
+
+Temporal
+\cite{yuan2023everest} //Everest
+\cite{mackey2018chronological} //Mackey
+\cite{kumar20182scent} //2scent
+\cite{liu2018sampling}
+\cite{paranjape2017motifs}
+\cite{pashanasangi2021faster}
+\cite{wang2020efficient}
+
+Subgraph Counting
+\cite{pinar2017escape} //Escape
+\cite{melckenbeeck2018efficiently} //Jesse
+\cite{ahmed2015efficient} //PGD
+\cite{ahmed2017graphlet}
+\cite{milo2002network}
+
+Triangle Counting
+\cite{green2018logarithmic}
+\cite{pearce2019one}
+\cite{wolf2017fast}
+\cite{shun2015multicore}
+\cite{hoang2019disttc}
+\cite{koohi2022lotus}
+\cite{yacsar2018fast}
+
+K-clique
+\cite{almasri2022parallel}
+\cite{jain2017fast}
+\cite{tsourakakis2015k}
+\cite{ye2023efficient}
+\cite{li2020ordering}
+\cite{zhou2024counting}
+
+
+Motif
+\cite{ma2019linc}
+\cite{bressan2019motivo}
+\cite{marschall2009efficient}
+
+
+
+Sampling
+\cite{iyer2018asap} /ASAP
+\cite{abdelhamid2016scalemine} //Scalemine
+\cite{preti2023maniacs} //Maniacs
+\cite{jiang2022samplemine} //SampleMine
+\cite{pandey2020c} //C-SAW
+
+
+
+\cite{chen2018tvm} //TVM
+\cite{sabne2020xla} //XLA
+\cite{zhang2018graphit} //Graphit
+\cite{iwasaki2022fregel} //Fregel
+\cite{ragan2013halide} //Halide
+\cite{kjolstad2017taco} //TACO
+\cite{feng2023tensorir} //Tensorir
+\cite{ye2023sparsetir} //SparseIR
+
+
+\cite{iosup2016ldbc} //LDBC
+\cite{snapnets} //SNAP
+\cite{netflow} //netflow
+\cite{cuda}
+\cite{han2018speeding} //set1
+\cite{schlegel2011fast} //set2
+\cite{inoue2014faster} //set3 
+\cite{zhang2020fesia} //set4
+
+
+
+
+
+
+
+
+
+@article{akoglu2015graph,
+  title={Graph based anomaly detection and description: a survey},
+  author={Akoglu, Leman and Tong, Hanghang and Koutra, Danai},
+  journal={Data mining and knowledge discovery},
+  volume={29},
+  pages={626--688},
+  year={2015},
+  publisher={Springer}
+}
+
+@inproceedings{noble2003graph,
+  title={Graph-based anomaly detection},
+  author={Noble, Caleb C and Cook, Diane J},
+  booktitle={Proceedings of the ninth ACM SIGKDD international conference on Knowledge discovery and data mining},
+  pages={631--636},
+  year={2003}
+}
+
+@article{bhattacharya2006entity,
+  title={Entity resolution in graphs},
+  author={Bhattacharya, Indrajit and Getoor, Lise},
+  journal={Mining graph data},
+  volume={311},
+  year={2006},
+  publisher={Wiley Hoboken, NJ}
+}
+
+@article{schaeffer2007graph,
+  title={Graph clustering},
+  author={Schaeffer, Satu Elisa},
+  journal={Computer science review},
+  volume={1},
+  number={1},
+  pages={27--64},
+  year={2007},
+  publisher={Elsevier}
+}
+
+
+\cite{}
+\cite{}
+\cite{}
+\cite{}
+\cite{}
+\cite{}
+\cite{}
+\cite{}
+\cite{}
+\cite{}
+\cite{}
+\cite{}
+\cite{}
+\cite{}
+\cite{}
+\cite{}
+\cite{}
+\cite{}
+\cite{}
+\cite{}
+\cite{}
+\cite{}
+\cite{}

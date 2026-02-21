@@ -1,24 +1,20 @@
-\contentsline {section}{List of Tables}{iv}{section*.1}%
-\contentsline {section}{List of Figures}{v}{section*.2}%
-\contentsline {section}{\numberline {1}Matcha: A Language and Compiler for Backtracking-based Subgraph Matching}{1}{section.1}%
+\contentsline {section}{List of Tables}{iii}{section*.1}%
+\contentsline {section}{List of Figures}{iv}{section*.2}%
+\contentsline {section}{\numberline {1}DCSM: Enabling Inter-Batch Parallelism for Continuous Subgraph Matching on GPU}{1}{section.1}%
 \contentsline {subsection}{\numberline {1.1}Introduction}{1}{subsection.1.1}%
 \contentsline {subsection}{\numberline {1.2}Background}{3}{subsection.1.2}%
-\contentsline {subsubsection}{\numberline {1.2.1}Subgraph Matching Problems}{3}{subsubsection.1.2.1}%
-\contentsline {subsubsection}{\numberline {1.2.2}Subgraph Matching Algorithms}{5}{subsubsection.1.2.2}%
-\contentsline {subsection}{\numberline {1.3}Limitations with Existing Subgraph Matching Systems}{6}{subsection.1.3}%
-\contentsline {subsection}{\numberline {1.4}The Matcha DSL}{7}{subsection.1.4}%
-\contentsline {subsubsection}{\numberline {1.4.1}Programming Interface}{7}{subsubsection.1.4.1}%
-\contentsline {subsection}{\numberline {1.5}Matcha Compilation Pipeline}{10}{subsection.1.5}%
-\contentsline {subsubsection}{\numberline {1.5.1}Generating IR on ASG}{10}{subsubsection.1.5.1}%
-\contentsline {subsubsection}{\numberline {1.5.2}Translating IR to C++ Code}{13}{subsubsection.1.5.2}%
-\contentsline {subsection}{\numberline {1.6}Optimization and Parallelization}{14}{subsection.1.6}%
-\contentsline {subsubsection}{\numberline {1.6.1}Operator Fusion}{14}{subsubsection.1.6.1}%
-\contentsline {subsubsection}{\numberline {1.6.2}Loop-Invariant Code Motion}{15}{subsubsection.1.6.2}%
-\contentsline {subsubsection}{\numberline {1.6.3}Automatic Parallelization}{15}{subsubsection.1.6.3}%
-\contentsline {subsection}{\numberline {1.7}Evaluation}{17}{subsection.1.7}%
-\contentsline {subsubsection}{\numberline {1.7.1}Experimental Setup}{17}{subsubsection.1.7.1}%
-\contentsline {subsubsection}{\numberline {1.7.2}Results for Motif Counting}{18}{subsubsection.1.7.2}%
-\contentsline {subsubsection}{\numberline {1.7.3}Results for Subgraph Listing}{20}{subsubsection.1.7.3}%
-\contentsline {subsubsection}{\numberline {1.7.4}Results for Clique Counting}{24}{subsubsection.1.7.4}%
-\contentsline {subsubsection}{\numberline {1.7.5}Results for Temporal Subgraph Listing}{25}{subsubsection.1.7.5}%
-\contentsline {section}{References}{26}{table.caption.24}%
+\contentsline {subsubsection}{\numberline {1.2.1}A Formal Definition of CSM}{3}{subsubsection.1.2.1}%
+\contentsline {subsubsection}{\numberline {1.2.2}Existing GPU-based CSM systems}{4}{subsubsection.1.2.2}%
+\contentsline {subsection}{\numberline {1.3}Overview of DCSM}{5}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}Graph Updater and Multi-Version Graph}{6}{subsection.1.4}%
+\contentsline {subsubsection}{\numberline {1.4.1}Multi-Version Graph (MVG) Data Structure}{7}{subsubsection.1.4.1}%
+\contentsline {subsubsection}{\numberline {1.4.2}Update Procedure}{8}{subsubsection.1.4.2}%
+\contentsline {subsubsection}{\numberline {1.4.3}Parallel Graph Updater}{9}{subsubsection.1.4.3}%
+\contentsline {subsection}{\numberline {1.5}Executor}{10}{subsection.1.5}%
+\contentsline {subsubsection}{\numberline {1.5.1}Correctness Guarantee}{10}{subsubsection.1.5.1}%
+\contentsline {subsubsection}{\numberline {1.5.2}Continuous Subgraph Matching-Specific Optimizations}{12}{subsubsection.1.5.2}%
+\contentsline {subsection}{\numberline {1.6}Garbage Collector}{13}{subsection.1.6}%
+\contentsline {subsubsection}{\numberline {1.6.1}Release Conditions}{13}{subsubsection.1.6.1}%
+\contentsline {subsubsection}{\numberline {1.6.2}Garbage Collection Graph (GCG)}{14}{subsubsection.1.6.2}%
+\contentsline {subsubsection}{\numberline {1.6.3}Implementation}{15}{subsubsection.1.6.3}%
+\contentsline {section}{References}{17}{figure.caption.11}%
